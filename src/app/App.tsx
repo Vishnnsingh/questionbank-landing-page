@@ -9,10 +9,30 @@ import { Footer } from './components/Footer';
 import { PolicyPage } from './components/PolicyPage';
 import { SEO } from './components/SEO';
 import { SeoLandingPage } from './components/SeoLandingPage';
+import { ChoosePlanPage } from './components/ChoosePlanPage';
+import { PaymentLoginPage } from './components/PaymentLoginPage';
+import { PaymentReturnPage } from './components/PaymentReturnPage';
+import { SignUpPage } from './components/SignUpPage';
 import { SideNav } from './components/SideNav';
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
+
+  if (path === '/signup' || path === '/register') {
+    return <SignUpPage />;
+  }
+
+  if (path === '/login') {
+    return <PaymentLoginPage />;
+  }
+
+  if (path === '/choose-plan') {
+    return <ChoosePlanPage />;
+  }
+
+  if (path === '/payment/return') {
+    return <PaymentReturnPage />;
+  }
 
   if (path === '/about' || path === '/about-honhaar' || path === '/what-is-honhaar') {
     return <PolicyPage page="about" />;

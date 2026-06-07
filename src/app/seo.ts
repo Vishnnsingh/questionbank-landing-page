@@ -48,6 +48,24 @@ export const pageMeta = {
       'Get support for Honhaar app access, payments, refunds, question bank plans, and account issues.',
     path: '/support',
   },
+  signup: {
+    title: 'Sign Up | Honhaar',
+    description:
+      'Create your Honhaar student account for CBSE and Bihar Board Class 10 and 12 question bank, mock tests, and exam preparation.',
+    path: '/signup',
+  },
+  choosePlan: {
+    title: 'Choose Plan | Honhaar',
+    description:
+      'Choose Honhaar 2-day trial or 1-year Class 10 or Class 12 question bank plan with exclusive discount.',
+    path: '/choose-plan',
+  },
+  paymentLogin: {
+    title: 'Login for Payment | Honhaar',
+    description:
+      'Sign in to your Honhaar account with email and password to choose a subscription plan and pay.',
+    path: '/login',
+  },
   terms: {
     title: 'Terms & Conditions | Honhaar',
     description:

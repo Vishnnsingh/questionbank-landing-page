@@ -1,26 +1,189 @@
-import { BookOpen, Home, Info, LifeBuoy, Mail, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import logoImage from '../../images/logo.png';
 
-const navItems = [
-  { label: 'Home', href: '/', icon: Home },
-  { label: 'About', href: '/about', icon: Info },
-  { label: 'CBSE', href: '/cbse-question-bank', icon: BookOpen },
-  { label: 'Bihar Board', href: '/bihar-board-question-bank', icon: BookOpen },
-  { label: 'Class 10', href: '/class-10-question-bank', icon: BookOpen },
-  { label: 'Class 12', href: '/class-12-question-bank', icon: BookOpen },
-  { label: 'Contact Us', href: '/contact-us', icon: Mail },
-  { label: 'Support', href: '/support', icon: LifeBuoy },
+type NavLink = {
+  label: string;
+  href: string;
+};
+
+type NavItem = {
+  label: string;
+  href: string;
+};
+
+type NavDropdown = {
+  label: string;
+  items: NavLink[];
+};
+
+const primaryNavItems: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'About', href: '/about' },
 ];
 
-function NavLinks({ onNavigate, variant = 'drawer' }: { onNavigate?: () => void; variant?: 'drawer' | 'desktop' }) {
-  const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+const boardDropdown: NavDropdown = {
+  label: 'Board',
+  items: [
+    { label: 'CBSE', href: '/cbse-question-bank' },
+    { label: 'Bihar Board', href: '/bihar-board-question-bank' },
+  ],
+};
+
+const classDropdown: NavDropdown = {
+  label: 'Class',
+  items: [
+    { label: 'Class 10', href: '/class-10-question-bank' },
+    { label: 'Class 12', href: '/class-12-question-bank' },
+  ],
+};
+
+const trailingNavItems: NavItem[] = [
+  { label: 'Contact Us', href: '/contact-us' },
+  { label: 'Support', href: '/support' },
+];
+
+const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
+
+const headerActionClass =
+  'rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700';
+
+function normalizePath(path: string) {
+  return path.replace(/\/$/, '') || '/';
+}
+
+function isDropdownActive(dropdown: NavDropdown, currentPath: string) {
+  return dropdown.items.some(
+    (item) => normalizePath(item.href) === currentPath,
+  );
+}
+
+function NavDropdownMenu({
+  dropdown,
+  variant,
+  currentPath,
+  openKey,
+  onToggle,
+  onNavigate,
+}: {
+  dropdown: NavDropdown;
+  variant: 'drawer' | 'desktop';
+  currentPath: string;
+  openKey: string | null;
+  onToggle: (key: string) => void;
+  onNavigate?: () => void;
+}) {
+  const isOpen = openKey === dropdown.label;
+  const isActive = isDropdownActive(dropdown, currentPath);
+
+  if (variant === 'drawer') {
+    return (
+      <div className="space-y-1">
+        <button
+          type="button"
+          onClick={() => onToggle(dropdown.label)}
+          className={`flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+            isActive
+              ? 'bg-teal-50 text-teal-700'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+          }`}
+        >
+          {dropdown.label}
+        </button>
+        {isOpen ? (
+          <div className="ml-4 space-y-1 border-l border-slate-200 pl-3">
+            {dropdown.items.map((item) => {
+              const itemPath = normalizePath(item.href);
+              const itemActive = currentPath === itemPath;
+              return (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  onClick={onNavigate}
+                  className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                    itemActive
+                      ? 'bg-teal-50 text-teal-700'
+                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+                  }`}
+                >
+                  {item.label}
+                </a>
+              );
+            })}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className="group relative">
+      <div
+        className={`inline-flex cursor-default items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-all ${
+          isActive
+            ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-100'
+            : 'text-slate-600 group-hover:bg-white group-hover:text-slate-950 group-hover:shadow-sm'
+        }`}
+      >
+        <span>{dropdown.label}</span>
+      </div>
+      <div className="invisible absolute left-0 top-full z-50 min-w-[180px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg">
+          {dropdown.items.map((item) => {
+            const itemPath = normalizePath(item.href);
+            const itemActive = currentPath === itemPath;
+            return (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                className={`block px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  itemActive
+                    ? 'bg-teal-50 text-teal-700'
+                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'
+                }`}
+              >
+                {item.label}
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NavLinks({
+  onNavigate,
+  variant = 'drawer',
+}: {
+  onNavigate?: () => void;
+  variant?: 'drawer' | 'desktop';
+}) {
+  const currentPath = normalizePath(window.location.pathname);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const toggleDropdown = (key: string) => {
+    setOpenDropdown((prev) => (prev === key ? null : key));
+  };
+
+  const linkClass = (isActive: boolean) =>
+    variant === 'desktop'
+      ? `inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-all ${
+          isActive
+            ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-100'
+            : 'text-slate-600 hover:bg-white hover:text-slate-950 hover:shadow-sm'
+        }`
+      : `flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+          isActive
+            ? 'bg-teal-50 text-teal-700'
+            : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
+        }`;
 
   return (
     <nav className={variant === 'desktop' ? 'flex items-center gap-1' : 'space-y-2'}>
-      {navItems.map((item) => {
-        const Icon = item.icon;
-        const itemPath = item.href.replace(/\/$/, '') || '/';
+      {primaryNavItems.map((item) => {
+        const itemPath = normalizePath(item.href);
         const isActive = currentPath === itemPath;
 
         return (
@@ -28,22 +191,40 @@ function NavLinks({ onNavigate, variant = 'drawer' }: { onNavigate?: () => void;
             key={item.href}
             href={item.href}
             onClick={onNavigate}
-            className={
-              variant === 'desktop'
-                ? `inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-all ${
-                    isActive
-                      ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-100'
-                      : 'text-slate-600 hover:bg-white hover:text-slate-950 hover:shadow-sm'
-                  }`
-                : `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-teal-50 text-teal-700'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
-                  }`
-            }
+            className={linkClass(isActive)}
           >
-            <Icon className={variant === 'desktop' ? 'size-4' : 'size-5'} />
-            <span>{item.label}</span>
+            {item.label}
+          </a>
+        );
+      })}
+
+      {navDropdowns.map((dropdown) => (
+        <NavDropdownMenu
+          key={dropdown.label}
+          dropdown={dropdown}
+          variant={variant}
+          currentPath={currentPath}
+          openKey={variant === 'drawer' ? openDropdown : null}
+          onToggle={toggleDropdown}
+          onNavigate={() => {
+            setOpenDropdown(null);
+            onNavigate?.();
+          }}
+        />
+      ))}
+
+      {trailingNavItems.map((item) => {
+        const itemPath = normalizePath(item.href);
+        const isActive = currentPath === itemPath;
+
+        return (
+          <a
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            className={linkClass(isActive)}
+          >
+            {item.label}
           </a>
         );
       })}
@@ -72,12 +253,14 @@ export function SideNav() {
           <div className="hidden rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner lg:block">
             <NavLinks variant="desktop" />
           </div>
-          <a
-            href="/#pricing"
-            className="hidden rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 xl:inline-flex"
-          >
-            Get App
-          </a>
+          <div className="hidden items-center gap-2 xl:flex">
+            <a href="/login" className={headerActionClass}>
+              Payment
+            </a>
+            <a href="/#pricing" className={headerActionClass}>
+              Get App
+            </a>
+          </div>
           <button
             type="button"
             aria-label="Open navigation"
