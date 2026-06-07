@@ -6,18 +6,18 @@ export function Hero() {
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-teal-500 to-teal-600 text-white">
       <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
       
-      <div className="relative mx-auto max-w-7xl px-6 py-20 lg:px-8 lg:py-32">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+      <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-32">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-16 items-center">
           {/* Left Side - Content */}
           <motion.div 
-            className="space-y-8"
+            className="space-y-7 text-center lg:text-left"
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="space-y-4">
               <motion.h1 
-                className="text-5xl lg:text-6xl tracking-tight"
+                className="text-4xl sm:text-5xl lg:text-6xl tracking-tight"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -25,7 +25,7 @@ export function Hero() {
                 Bihar Board Smart Prep
               </motion.h1>
               <motion.p 
-                className="text-xl lg:text-2xl text-teal-50"
+                className="text-lg sm:text-xl lg:text-2xl text-teal-50"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
@@ -35,7 +35,7 @@ export function Hero() {
             </div>
             
             <motion.p 
-              className="text-lg text-white/90 max-w-xl"
+              className="mx-auto max-w-xl text-base sm:text-lg text-white/90 lg:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -46,7 +46,7 @@ export function Hero() {
             
             {/* Marketing Taglines */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl"
+              className="mx-auto grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:mx-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5 }}
@@ -59,7 +59,7 @@ export function Hero() {
               ].map((text, index) => (
                 <motion.div 
                   key={index}
-                  className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/20"
+                  className="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-3 border border-white/20 text-left"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
@@ -71,12 +71,12 @@ export function Hero() {
             </motion.div>
             
             <motion.div 
-              className="flex flex-wrap gap-4"
+              className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 sm:justify-center lg:justify-start"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1 }}
             >
-              <button className="inline-flex items-center gap-3 bg-white text-blue-600 px-6 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105">
+              <button className="inline-flex w-full items-center justify-center gap-3 bg-white text-blue-600 px-6 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-105 sm:w-auto">
                 <svg className="size-7" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zm10.89 10.893l2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198l2.807 1.626c.55.318.55 1.119 0 1.437l-2.807 1.626-2.302-2.302 2.302-2.387zm-3.199-3.198l2.302 2.302-8.635 8.635 10.937-6.333-2.302-2.302z"/>
                 </svg>
@@ -85,7 +85,7 @@ export function Hero() {
                   <div className="text-lg -mt-0.5">Google Play</div>
                 </div>
               </button>
-              <button className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl hover:bg-white/20 transition-all">
+              <button className="inline-flex w-full items-center justify-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-8 py-4 rounded-xl hover:bg-white/20 transition-all sm:w-auto">
                 <Play className="size-5" />
                 <span>View Demo</span>
               </button>
@@ -102,7 +102,7 @@ export function Hero() {
             <div className="relative">
               {/* Phone Frame */}
               <motion.div 
-                className="relative w-[300px] lg:w-[350px] bg-slate-900 rounded-[3rem] p-3 shadow-2xl ring-8 ring-white/10"
+                className="relative w-[min(76vw,300px)] bg-slate-900 rounded-[2rem] p-2 shadow-2xl ring-4 ring-white/10 sm:rounded-[3rem] sm:p-3 sm:ring-8 lg:w-[350px]"
                 animate={{ 
                   y: [0, -15, 0],
                 }}
@@ -112,14 +112,14 @@ export function Hero() {
                   ease: "easeInOut"
                 }}
               >
-                <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-[2.5rem] overflow-hidden">
+                <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-[1.6rem] overflow-hidden sm:rounded-[2.5rem]">
                   {/* Status Bar */}
                   <div className="px-6 py-2 text-xs text-white/60">
                     9:41
                   </div>
                   
                   {/* App Content */}
-                  <div className="px-6 py-12 space-y-6">
+                  <div className="px-5 py-9 space-y-5 sm:px-6 sm:py-12 sm:space-y-6">
                     {/* App Icon */}
                     <div className="flex justify-center">
                       <div className="bg-white rounded-3xl p-6 shadow-lg">
@@ -152,14 +152,14 @@ export function Hero() {
               </motion.div>
               
               {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-2xl px-4 py-3 shadow-xl">
+              <div className="absolute -top-3 -right-2 bg-white rounded-xl px-3 py-2 shadow-xl sm:-top-4 sm:-right-4 sm:rounded-2xl sm:px-4 sm:py-3">
                 <div className="text-xs text-slate-600">Live Students</div>
-                <div className="text-2xl text-blue-600">2,450+</div>
+                <div className="text-xl text-blue-600 sm:text-2xl">2,450+</div>
               </div>
               
-              <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl px-4 py-3 shadow-xl">
+              <div className="absolute -bottom-3 -left-2 bg-white rounded-xl px-3 py-2 shadow-xl sm:-bottom-4 sm:-left-4 sm:rounded-2xl sm:px-4 sm:py-3">
                 <div className="text-xs text-slate-600">Questions</div>
-                <div className="text-2xl text-teal-600">10,000+</div>
+                <div className="text-xl text-teal-600 sm:text-2xl">10,000+</div>
               </div>
             </div>
           </motion.div>

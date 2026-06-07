@@ -1,11 +1,11 @@
-import { Facebook, Twitter, Instagram, Youtube, Mail, MapPin, Phone } from 'lucide-react';
+import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from 'lucide-react';
+import { SUPPORT_EMAIL, SUPPORT_PHONE } from '../seo';
 
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-300">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-gradient-to-br from-blue-600 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center">
@@ -17,49 +17,47 @@ export function Footer() {
               <span className="text-xl text-white">Bihar Board Smart Prep</span>
             </div>
             <p className="text-sm text-slate-400 mb-6">
-              Your trusted companion for Bihar Board exam preparation with AI-powered insights.
+              Bihar Board Class 10 and Class 12 question bank app with AI-powered exam preparation insights.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
+              <a href="/" aria-label="Facebook" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
                 <Facebook className="size-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-400 transition-colors">
+              <a href="/" aria-label="Twitter" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-400 transition-colors">
                 <Twitter className="size-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
+              <a href="/" aria-label="Instagram" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
                 <Instagram className="size-5" />
               </a>
-              <a href="#" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors">
+              <a href="/" aria-label="Youtube" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors">
                 <Youtube className="size-5" />
               </a>
             </div>
           </div>
-          
-          {/* Quick Links */}
+
           <div>
             <h3 className="text-white mb-4">Quick Links</h3>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-teal-400 transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Features</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">How It Works</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Testimonials</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Blog</a></li>
+              <li><a href="/#pricing" className="hover:text-teal-400 transition-colors">Products & Pricing</a></li>
+              <li><a href="/about" className="hover:text-teal-400 transition-colors">About</a></li>
+              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Features</a></li>
+              <li><a href="/#how-it-works" className="hover:text-teal-400 transition-colors">How It Works</a></li>
+              <li><a href="/contact-us" className="hover:text-teal-400 transition-colors">Contact Us</a></li>
             </ul>
           </div>
-          
-          {/* Resources */}
+
           <div>
             <h3 className="text-white mb-4">Resources</h3>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Question Bank</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Mock Tests</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Study Material</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">Career Guidance</a></li>
-              <li><a href="#" className="hover:text-teal-400 transition-colors">FAQs</a></li>
+              <li><a href="/#pricing" className="hover:text-teal-400 transition-colors">Question Bank Plans</a></li>
+              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Mock Tests</a></li>
+              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Study Material</a></li>
+              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Career Guidance</a></li>
+              <li><a href="/support" className="hover:text-teal-400 transition-colors">Support</a></li>
+              <li><a href="/refunds-and-cancellations" className="hover:text-teal-400 transition-colors">Refund Policy</a></li>
             </ul>
           </div>
-          
-          {/* Contact */}
+
           <div>
             <h3 className="text-white mb-4">Contact</h3>
             <ul className="space-y-4 text-sm">
@@ -69,27 +67,26 @@ export function Footer() {
               </li>
               <li className="flex gap-3">
                 <Mail className="size-5 text-teal-400 flex-shrink-0" />
-                <a href="mailto:support@biharboardprep.com" className="hover:text-teal-400 transition-colors">
-                  support@biharboardprep.com
+                <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-teal-400 transition-colors">
+                  {SUPPORT_EMAIL}
                 </a>
               </li>
               <li className="flex gap-3">
                 <Phone className="size-5 text-teal-400 flex-shrink-0" />
-                <a href="tel:+911234567890" className="hover:text-teal-400 transition-colors">
-                  +91 123 456 7890
+                <a href={`tel:${SUPPORT_PHONE.replace(/\s/g, '')}`} className="hover:text-teal-400 transition-colors">
+                  {SUPPORT_PHONE}
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        
-        {/* Bottom Bar */}
+
         <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-          <p>© 2026 Bihar Board Smart Prep. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-teal-400 transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-teal-400 transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-teal-400 transition-colors">Cookie Policy</a>
+          <p>Copyright 2026 Bihar Board Smart Prep. All rights reserved.</p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
+            <a href="/privacy-policy" className="hover:text-teal-400 transition-colors">Privacy Policy</a>
+            <a href="/terms-and-conditions" className="hover:text-teal-400 transition-colors">Terms & Conditions</a>
+            <a href="/refunds-and-cancellations" className="hover:text-teal-400 transition-colors">Refunds & Cancellations</a>
           </div>
         </div>
       </div>

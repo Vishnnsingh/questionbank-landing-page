@@ -63,12 +63,12 @@ const features = [
 
 export function Features() {
   return (
-    <section className="relative py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 overflow-hidden">
+    <section id="features" className="relative py-14 sm:py-20 lg:py-32 bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50 overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-blue-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl"></div>
       
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-teal-600 text-white px-5 py-2.5 rounded-full text-sm mb-6 shadow-lg">
             <span className="relative flex h-2 w-2">
@@ -77,7 +77,7 @@ export function Features() {
             </span>
             <span>All-in-One Learning Platform</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl text-slate-900 mb-6 tracking-tight">
             Powerful Features for<br />
             <span className="bg-gradient-to-r from-blue-600 via-teal-600 to-purple-600 bg-clip-text text-transparent">
               Smart Preparation
@@ -137,10 +137,10 @@ export function Features() {
                   </div>
                 )}
 
-                <div className={`flex items-center ${index % 2 === 0 ? 'lg:justify-start' : 'lg:justify-end'}`}>
+                <div className={`flex w-full items-center ${index % 2 === 0 ? 'lg:justify-start' : 'lg:justify-end'}`}>
                   {/* Card */}
-                  <div className={`relative lg:w-[45%] ${index % 2 === 0 ? 'lg:pr-12' : 'lg:pl-12'}`}>
-                    <div className="group relative bg-white/80 backdrop-blur-sm border-2 border-slate-200/50 rounded-2xl p-6 transition-all duration-500 hover:border-transparent hover:shadow-2xl hover:scale-105">
+                  <div className={`relative w-full lg:w-[45%] ${index % 2 === 0 ? 'lg:pr-12' : 'lg:pl-12'}`}>
+                    <div className="group relative w-full bg-white/80 backdrop-blur-sm border-2 border-slate-200/50 rounded-2xl p-6 transition-all duration-500 hover:border-transparent hover:shadow-2xl sm:hover:scale-105">
                       {/* Icon with floating animation */}
                       <motion.div 
                         className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-xl mb-4 shadow-lg`}
@@ -175,21 +175,21 @@ export function Features() {
         </div>
 
         {/* Bottom Stats */}
-        <div className="mt-20 grid gap-8 sm:grid-cols-3 max-w-4xl mx-auto">
+        <div className="mt-14 grid gap-8 sm:mt-20 sm:grid-cols-3 max-w-4xl mx-auto">
           <div className="text-center group cursor-pointer">
-            <div className="text-5xl lg:text-6xl bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
+            <div className="text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
               10K+
             </div>
             <div className="text-base text-slate-600">Practice Questions</div>
           </div>
           <div className="text-center group cursor-pointer">
-            <div className="text-5xl lg:text-6xl bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
+            <div className="text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-teal-600 to-purple-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
               2.5K+
             </div>
             <div className="text-base text-slate-600">Active Students</div>
           </div>
           <div className="text-center group cursor-pointer">
-            <div className="text-5xl lg:text-6xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
+            <div className="text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
               95%
             </div>
             <div className="text-base text-slate-600">Success Rate</div>
@@ -222,7 +222,7 @@ export function Features() {
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1611131922192-9e1d9f483900?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwc3R1ZHlpbmclMjBtb2JpbGUlMjBwaG9uZSUyMG5vdGVzfGVufDF8fHx8MTc3MzI2MTU5OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                 alt="Student studying with mobile phone and notes"
-                className="w-full h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent"></div>
               <div className="absolute bottom-6 left-6 text-white">
@@ -242,7 +242,7 @@ export function Features() {
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1734099482272-10b1288971cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHN0dWRlbnQlMjBsZWFybmluZyUyMHNtYXJ0cGhvbmUlMjBib29rc3xlbnwxfHx8fDE3NzMyNjE1OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                 alt="Young student learning with smartphone and books"
-                className="w-full h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent"></div>
               <div className="absolute bottom-6 left-6 text-white">
@@ -262,7 +262,7 @@ export function Features() {
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1601128688653-7dc405e3ac4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwc3R1ZGVudCUyMHBob25lJTIwbm90ZWJvb2slMjBzdHVkeWluZ3xlbnwxfHx8fDE3NzMyNjE1OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                 alt="College student with phone and notebook studying"
-                className="w-full h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/20 to-transparent"></div>
               <div className="absolute bottom-6 left-6 text-white">
