@@ -254,8 +254,8 @@ export function SideNav() {
             <NavLinks variant="desktop" />
           </div>
           <div className="hidden items-center gap-2 xl:flex">
-            <a href="/login" className={headerActionClass}>
-              Payment
+            <a href="/signup" className={headerActionClass}>
+              Register
             </a>
             <a href="/#pricing" className={headerActionClass}>
               Get App
