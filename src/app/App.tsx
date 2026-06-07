@@ -8,12 +8,13 @@ import { DownloadCTA } from './components/DownloadCTA';
 import { Footer } from './components/Footer';
 import { PolicyPage } from './components/PolicyPage';
 import { SEO } from './components/SEO';
+import { SeoLandingPage } from './components/SeoLandingPage';
 import { SideNav } from './components/SideNav';
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
 
-  if (path === '/about') {
+  if (path === '/about' || path === '/about-honhaar' || path === '/what-is-honhaar') {
     return <PolicyPage page="about" />;
   }
 
@@ -35,6 +36,30 @@ export default function App() {
 
   if (path === '/privacy-policy') {
     return <PolicyPage page="privacy" />;
+  }
+
+  if (path === '/cbse-question-bank') {
+    return <SeoLandingPage page="cbseQuestionBank" />;
+  }
+
+  if (path === '/bihar-board-question-bank') {
+    return <SeoLandingPage page="biharBoardQuestionBank" />;
+  }
+
+  if (path === '/class-10-question-bank' || path === '/cbse-class-10-question-bank' || path === '/bihar-board-class-10-question-bank') {
+    return <SeoLandingPage page="class10QuestionBank" />;
+  }
+
+  if (path === '/class-12-question-bank' || path === '/cbse-class-12-question-bank' || path === '/bihar-board-class-12-question-bank') {
+    return <SeoLandingPage page="class12QuestionBank" />;
+  }
+
+  if (path === '/blog/bihar-board-class-12-previous-year-questions') {
+    return <SeoLandingPage page="blogBiharClass12Questions" />;
+  }
+
+  if (path === '/blog/cbse-class-10-most-repeated-questions') {
+    return <SeoLandingPage page="blogCbseClass10RepeatedQuestions" />;
   }
 
   return (

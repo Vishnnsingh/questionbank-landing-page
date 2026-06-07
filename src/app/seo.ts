@@ -1,22 +1,22 @@
-export const SITE_URL = 'https://biharboardsmartprep.com';
-export const SITE_NAME = 'Bihar Board Smart Prep';
+export const SITE_URL = 'https://honhaar.in';
+export const SITE_NAME = 'Honhaar';
 export const SUPPORT_EMAIL = 'support@honhaar.in';
 export const SUPPORT_PHONE = '8084048167';
 
 export const products = [
   {
-    name: 'Class 10th Bihar Board Question Bank',
+    name: 'Class 10 Question Bank',
     description:
-      'One-year access to 10 years question bank, AI exam prediction, mock tests, analytics, chapter-wise practice, repeated questions, and doubt support for Bihar Board Class 10 students.',
-    price: 199,
+      'One-year access to CBSE and Bihar Board Class 10 previous year questions, objective practice, mock tests, analytics, and chapter-wise preparation.',
+    price: 99,
     currency: 'INR',
     duration: 'One Year',
   },
   {
-    name: 'Class 12th Bihar Board Question Bank',
+    name: 'Class 12 Question Bank',
     description:
-      'One-year access to 10 years question bank, AI exam prediction, mock tests, analytics, chapter-wise practice, repeated questions, doubt support, career guidance, and college information for Bihar Board Class 12 students.',
-    price: 249,
+      'One-year access to CBSE and Bihar Board Class 12 previous year questions, stream-wise practice, mock tests, analytics, and board exam preparation.',
+    price: 99,
     currency: 'INR',
     duration: 'One Year',
   },
@@ -24,46 +24,82 @@ export const products = [
 
 export const pageMeta = {
   home: {
-    title: 'Bihar Board Smart Prep | Class 10 & 12 Question Bank App',
+    title: 'Honhaar - CBSE & Bihar Board Question Bank App | Class 10 & 12',
     description:
-      'Prepare for Bihar Board Class 10 and Class 12 exams with 10 years question bank, AI exam prediction, mock tests, analytics, and affordable INR pricing.',
+      'Honhaar par CBSE aur Bihar Board ke 10,000+ previous year questions practice karo. Class 10 aur 12 ke liye Objective, Subjective, Short aur Long Answer questions.',
     path: '/',
   },
   about: {
-    title: 'About Us | Bihar Board Smart Prep',
+    title: 'About Honhaar | India Board Exam Preparation App',
     description:
-      'Learn about Bihar Board Smart Prep, a focused exam preparation app for Bihar Board Class 10 and Class 12 students.',
+      'Honhaar ek Indian board exam preparation platform hai jo CBSE aur Bihar Board students ke liye 10,000+ previous year questions provide karta hai.',
     path: '/about',
   },
   contact: {
-    title: 'Contact Us | Bihar Board Smart Prep',
+    title: 'Contact Us | Honhaar',
     description:
-      'Contact Bihar Board Smart Prep for app support, payments, refunds, account help, and Bihar Board question bank assistance.',
+      'Contact Honhaar for app support, payments, refunds, account help, and CBSE or Bihar Board question bank assistance.',
     path: '/contact-us',
   },
   support: {
-    title: 'Support | Bihar Board Smart Prep',
+    title: 'Support | Honhaar',
     description:
-      'Get support for Bihar Board Smart Prep app access, payments, refunds, question bank plans, and account issues.',
+      'Get support for Honhaar app access, payments, refunds, question bank plans, and account issues.',
     path: '/support',
   },
   terms: {
-    title: 'Terms & Conditions | Bihar Board Smart Prep',
+    title: 'Terms & Conditions | Honhaar',
     description:
-      'Read the terms and conditions for using Bihar Board Smart Prep products, services, study material, mock tests, and subscriptions.',
+      'Read the terms and conditions for using Honhaar products, services, study material, mock tests, and subscriptions.',
     path: '/terms-and-conditions',
   },
   refunds: {
-    title: 'Refunds & Cancellations | Bihar Board Smart Prep',
+    title: 'Refunds & Cancellations | Honhaar',
     description:
-      'Read the refund and cancellation policy for Bihar Board Smart Prep Class 10 and Class 12 question bank plans priced in INR.',
+      'Read the refund and cancellation policy for Honhaar Class 10 and Class 12 question bank plans priced in INR.',
     path: '/refunds-and-cancellations',
   },
   privacy: {
-    title: 'Privacy Policy | Bihar Board Smart Prep',
+    title: 'Privacy Policy | Honhaar',
     description:
-      'Learn how Bihar Board Smart Prep handles student account data, support requests, payment records, and app usage information.',
+      'Learn how Honhaar handles student account data, support requests, payment records, and app usage information.',
     path: '/privacy-policy',
+  },
+  cbseQuestionBank: {
+    title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Honhaar',
+    description:
+      'CBSE question bank mein 5,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
+    path: '/cbse-question-bank',
+  },
+  biharBoardQuestionBank: {
+    title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Questions | Honhaar',
+    description:
+      'Bihar Board BSEB question bank mein 5,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
+    path: '/bihar-board-question-bank',
+  },
+  class10QuestionBank: {
+    title: 'Class 10 Question Bank 2025-26 | CBSE & Bihar Board | Honhaar',
+    description:
+      'Class 10 question bank mein CBSE aur Bihar Board ke 10,000+ previous year questions. Mathematics, Science, Social Science, Hindi, English practice.',
+    path: '/class-10-question-bank',
+  },
+  class12QuestionBank: {
+    title: 'Class 12 Question Bank 2025-26 | CBSE & Bihar Board | Honhaar',
+    description:
+      'Class 12 question bank mein CBSE aur Bihar Board ke previous year questions. Physics, Chemistry, Biology, Maths, Accountancy, Economics, History practice.',
+    path: '/class-12-question-bank',
+  },
+  blogBiharClass12Questions: {
+    title: 'Bihar Board Class 12 Previous Year Questions 2026 | Honhaar Blog',
+    description:
+      'Bihar Board Class 12 Inter previous year questions, BSEB exam pattern, important subjects, and 2026 preparation strategy.',
+    path: '/blog/bihar-board-class-12-previous-year-questions',
+  },
+  blogCbseClass10RepeatedQuestions: {
+    title: 'CBSE Class 10 Most Repeated Questions | Honhaar Blog',
+    description:
+      'CBSE Class 10 board exam ke most repeated questions, important chapters, and subject-wise board preparation guide.',
+    path: '/blog/cbse-class-10-most-repeated-questions',
   },
 };
 
@@ -140,26 +176,26 @@ export function buildHomeJsonLd() {
         mainEntity: [
           {
             '@type': 'Question',
-            name: 'What products does Bihar Board Smart Prep offer?',
+        name: 'What products does Honhaar offer?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Bihar Board Smart Prep offers Class 10th and Class 12th one-year question bank plans with mock tests, AI exam prediction, repeated question insights, analytics, and syllabus coverage.',
+              text: 'Honhaar offers Class 10 and Class 12 one-year question bank plans for CBSE and Bihar Board students with previous year questions, mock tests, repeated question insights, analytics, and syllabus coverage.',
             },
           },
           {
             '@type': 'Question',
-            name: 'What is the pricing of Bihar Board Smart Prep?',
+            name: 'What is the pricing of Honhaar?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'The Class 10th plan is priced at INR 199 for one year and the Class 12th plan is priced at INR 249 for one year.',
+              text: 'Honhaar question bank access is priced at INR 99 for one year.',
             },
           },
           {
             '@type': 'Question',
-            name: 'Is Bihar Board Smart Prep useful for Bihar Board Class 10 and Class 12 exams?',
+        name: 'Is Honhaar useful for CBSE and Bihar Board Class 10 and Class 12 exams?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Yes. The app is built for Bihar Board Class 10 and Class 12 exam preparation with previous year questions, chapter-wise practice, mock tests, and performance tracking.',
+              text: 'Yes. Honhaar is built for CBSE and Bihar Board Class 10 and Class 12 exam preparation with previous year questions, chapter-wise practice, mock tests, and performance tracking.',
             },
           },
         ],

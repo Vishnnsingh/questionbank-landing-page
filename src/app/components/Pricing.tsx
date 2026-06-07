@@ -66,7 +66,7 @@ export function Pricing() {
             </span>
           </h2>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Choose the perfect plan for your Bihar Board exam preparation
+            Choose the perfect plan for your CBSE or Bihar Board exam preparation
           </p>
         </div>
 
@@ -220,7 +220,7 @@ export function Pricing() {
 
         {/* Trust Indicators */}
         <div className="mt-12 text-center">
-          <p className="text-slate-600 mb-4">Trusted by 2,450+ Bihar Board Students</p>
+          <p className="text-slate-600 mb-4">Trusted by 2,450+ Board Exam Students</p>
           <div className="flex justify-center items-center gap-2">
             <div className="flex -space-x-2">
               {[...Array(5)].map((_, i) => (
