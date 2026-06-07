@@ -1,6 +1,8 @@
 import { BookOpen, TrendingUp, Award, Users, Brain, Globe, FileText, Briefcase } from 'lucide-react';
 import { motion } from 'motion/react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import imageOne from '../../images/im1.jpg';
+import imageTwo from '../../images/im2.jpg';
+import imageThree from '../../images/im3.jpg';
 
 const features = [
   {
@@ -178,7 +180,7 @@ export function Features() {
         <div className="mt-14 grid gap-8 sm:mt-20 sm:grid-cols-3 max-w-4xl mx-auto">
           <div className="text-center group cursor-pointer">
             <div className="text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent mb-3 group-hover:scale-110 transition-transform">
-              10K+
+              20K+
             </div>
             <div className="text-base text-slate-600">Practice Questions</div>
           </div>
@@ -219,8 +221,8 @@ export function Features() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.1 }}
             >
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1611131922192-9e1d9f483900?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwc3R1ZHlpbmclMjBtb2JpbGUlMjBwaG9uZSUyMG5vdGVzfGVufDF8fHx8MTc3MzI2MTU5OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              <img
+                src={imageOne}
                 alt="Student studying with mobile phone and notes"
                 className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />
@@ -239,8 +241,8 @@ export function Features() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1734099482272-10b1288971cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx5b3VuZyUyMHN0dWRlbnQlMjBsZWFybmluZyUyMHNtYXJ0cGhvbmUlMjBib29rc3xlbnwxfHx8fDE3NzMyNjE1OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              <img
+                src={imageTwo}
                 alt="Young student learning with smartphone and books"
                 className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />
@@ -259,8 +261,8 @@ export function Features() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1601128688653-7dc405e3ac4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwc3R1ZGVudCUyMHBob25lJTIwbm90ZWJvb2slMjBzdHVkeWluZ3xlbnwxfHx8fDE3NzMyNjE1OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+              <img
+                src={imageThree}
                 alt="College student with phone and notebook studying"
                 className="w-full h-[260px] sm:h-[340px] lg:h-[400px] object-cover group-hover:scale-110 transition-transform duration-500"
               />

@@ -88,7 +88,7 @@ export function Testimonials() {
           </div>
           <div className="text-center">
             <div className="text-3xl sm:text-4xl lg:text-5xl text-teal-600 mb-2">
-              10,000+
+              20,000+
             </div>
             <div className="text-slate-600">Questions Solved</div>
           </div>

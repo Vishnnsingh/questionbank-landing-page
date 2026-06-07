@@ -26,8 +26,8 @@ const seoPages: Record<
     eyebrow: 'CBSE Question Bank',
     title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions',
     intro:
-      'Honhaar par CBSE Class 10 aur Class 12 ke 5,000+ previous year questions practice karo. Objective, short answer, long answer, case-based questions, aur chapter-wise board exam practice ek jagah.',
-    highlights: ['5,000+ CBSE questions', 'Class 10 & 12', 'MCQ + subjective practice', 'INR pricing'],
+      'Honhaar par CBSE Class 10 aur Class 12 ke 20,000+ previous year questions practice karo. Objective, short answer, long answer, case-based questions, aur chapter-wise board exam practice ek jagah.',
+    highlights: ['20,000+ CBSE questions', 'Class 10 & 12', 'MCQ + subjective practice', 'INR pricing'],
     sections: [
       {
         title: 'CBSE Class 10 Question Bank',
@@ -67,8 +67,8 @@ const seoPages: Record<
     eyebrow: 'Bihar Board Question Bank',
     title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Previous Year Questions',
     intro:
-      'Bihar Board students ke liye Honhaar me 5,000+ BSEB previous year questions, Objective MCQ, short answer, long answer, aur subject-wise practice available hai.',
-    highlights: ['5,000+ BSEB questions', 'Matric + Inter', 'Objective questions focus', 'Hindi + English support'],
+      'Bihar Board students ke liye Honhaar me 20,000+ BSEB previous year questions, Objective MCQ, short answer, long answer, aur subject-wise practice available hai.',
+    highlights: ['20,000+ BSEB questions', 'Matric + Inter', 'Objective questions focus', 'Hindi + English support'],
     sections: [
       {
         title: 'Bihar Board Class 10 Matric',
@@ -108,7 +108,7 @@ const seoPages: Record<
     title: 'Class 10 Question Bank 2025-26 | CBSE & Bihar Board 10th Previous Year Questions',
     intro:
       'Class 10 ke liye Honhaar CBSE aur Bihar Board dono boards ke previous year questions, chapter-wise practice, MCQ, subjective answers, aur board exam strategy provide karta hai.',
-    highlights: ['Class 10 board exam', 'CBSE + Bihar Board', '10,000+ questions', 'Chapter-wise practice'],
+    highlights: ['Class 10 board exam', 'CBSE + Bihar Board', '20,000+ questions', 'Chapter-wise practice'],
     sections: [
       {
         title: 'Important Class 10 Subjects',
@@ -217,35 +217,45 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
   const content = seoPages[page];
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
       <SEO page={page} />
       <SideNav />
-      <div className="pt-16 lg:pl-64 lg:pt-0">
+      <div className="pt-20">
         <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
           <a href="/" className="mb-10 inline-flex items-center gap-2 text-sm text-blue-700 transition-colors hover:text-teal-700">
             <ArrowLeft className="size-4" />
             Back to home
           </a>
 
-          <section className="mb-10">
-            <p className="text-sm font-semibold uppercase tracking-wide text-teal-700">{content.eyebrow}</p>
-            <h1 className="mt-3 text-3xl tracking-tight text-slate-950 sm:text-5xl">{content.title}</h1>
-            <p className="mt-5 text-base leading-relaxed text-slate-600 sm:text-lg">{content.intro}</p>
+          <section className="relative mb-10 overflow-hidden rounded-2xl border border-white/70 bg-white/80 p-6 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-8 lg:p-10">
+            <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-teal-300/20 blur-3xl" />
+            <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-blue-300/20 blur-3xl" />
+            <div className="relative">
+              <p className="inline-flex rounded-full bg-teal-50 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-teal-700">{content.eyebrow}</p>
+              <h1 className="mt-4 max-w-4xl text-3xl tracking-tight text-slate-950 sm:text-5xl">{content.title}</h1>
+              <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">{content.intro}</p>
+            </div>
           </section>
 
           <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {content.highlights.map((highlight) => (
-              <div key={highlight} className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              <div key={highlight} className="flex items-center gap-2 rounded-xl border border-teal-100 bg-white p-4 text-sm font-medium text-slate-700 shadow-md shadow-slate-200/60">
                 <CheckCircle2 className="size-5 shrink-0 text-teal-600" />
                 {highlight}
               </div>
             ))}
           </div>
 
-          <div className="space-y-6">
+          <div className="grid gap-5 md:grid-cols-2">
             {content.sections.map((section) => (
-              <section key={section.title} className="rounded-lg border border-slate-200 bg-white p-5 sm:p-6">
-                <h2 className="text-2xl text-slate-950">{section.title}</h2>
+              <section key={section.title} className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:border-teal-300 hover:shadow-xl sm:p-6">
+                <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-400" />
+                <div className="mb-4 flex items-start gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-teal-500 text-white shadow-md">
+                    <CheckCircle2 className="size-5" />
+                  </div>
+                  <h2 className="text-2xl leading-tight text-slate-950">{section.title}</h2>
+                </div>
                 <div className="mt-4 space-y-3">
                   {section.body.map((paragraph) => (
                     <p key={paragraph} className="leading-relaxed text-slate-600">{paragraph}</p>

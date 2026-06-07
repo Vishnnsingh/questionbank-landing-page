@@ -1,5 +1,6 @@
 import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from 'lucide-react';
 import { SUPPORT_EMAIL, SUPPORT_PHONE } from '../seo';
+import logoImage from '../../images/logo.png';
 
 export function Footer() {
   return (
@@ -8,13 +9,10 @@ export function Footer() {
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-gradient-to-br from-blue-600 to-teal-600 w-12 h-12 rounded-xl flex items-center justify-center">
-                <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden">
+                <img src={logoImage} alt="Honhaar logo" className="h-[220%] w-[220%] max-w-none object-contain" />
               </div>
-              <span className="text-xl text-white">Honhaar</span>
+              <span className="text-2xl text-white">Honhaar</span>
             </div>
             <p className="text-sm text-slate-400 mb-6">
               CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.

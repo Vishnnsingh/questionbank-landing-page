@@ -1,6 +1,7 @@
 import { Check, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { products } from '../seo';
+import logoImage from '../../images/logo.png';
 
 const plans = [
   {
@@ -114,7 +115,7 @@ export function Pricing() {
               {/* Plan Header */}
               <div className="text-center mb-6">
                 <motion.div 
-                  className={`inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br ${plan.gradient} rounded-2xl mb-3 shadow-lg`}
+                  className="inline-flex h-24 w-24 items-center justify-center overflow-hidden mb-3"
                   animate={{ 
                     rotate: [0, 5, -5, 0],
                   }}
@@ -125,10 +126,7 @@ export function Pricing() {
                     ease: "easeInOut"
                   }}
                 >
-                  <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                  </svg>
+                  <img src={logoImage} alt="Honhaar plan logo" className="h-[220%] w-[220%] max-w-none object-contain" />
                 </motion.div>
                 <h3 className="text-2xl text-slate-900 mb-2">
                   <span itemProp="name">{plan.name}</span>

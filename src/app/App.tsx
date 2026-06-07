@@ -66,7 +66,7 @@ export default function App() {
     <div className="min-h-screen overflow-x-hidden bg-slate-50">
       <SEO page="home" />
       <SideNav />
-      <div className="pt-16 lg:pl-64 lg:pt-0">
+      <div className="pt-20">
         <Hero />
         <Features />
         <Screenshots />

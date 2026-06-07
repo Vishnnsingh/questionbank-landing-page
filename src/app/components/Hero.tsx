@@ -1,5 +1,6 @@
 import { Download, Play, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import studyImage from '../../images/im4.jpg';
 
 export function Hero() {
   return (
@@ -40,7 +41,7 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Practice 10,000+ previous year questions for Class 10 and Class 12 with
+              Practice 20,000+ previous year questions for Class 10 and Class 12 with
               smart question analysis, repeated question insights, mock tests, and analytics.
             </motion.p>
             
@@ -112,42 +113,8 @@ export function Hero() {
                   ease: "easeInOut"
                 }}
               >
-                <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-[1.6rem] overflow-hidden sm:rounded-[2.5rem]">
-                  {/* Status Bar */}
-                  <div className="px-6 py-2 text-xs text-white/60">
-                    9:41
-                  </div>
-                  
-                  {/* App Content */}
-                  <div className="px-5 py-9 space-y-5 sm:px-6 sm:py-12 sm:space-y-6">
-                    {/* App Icon */}
-                    <div className="flex justify-center">
-                      <div className="bg-white rounded-3xl p-6 shadow-lg">
-                        <svg className="w-16 h-16 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                        </svg>
-                      </div>
-                    </div>
-                    
-                    {/* App Title */}
-                    <div className="text-center space-y-2">
-                      <h3 className="text-2xl text-white">
-                        Honhaar<br />Smart Prep
-                      </h3>
-                      <p className="text-teal-100 text-sm">
-                        CBSE + Bihar Board Questions
-                      </p>
-                    </div>
-                    
-                    {/* Progress Dots */}
-                    <div className="flex justify-center gap-2 pt-8">
-                      <div className="w-2 h-2 rounded-full bg-white"></div>
-                      <div className="w-2 h-2 rounded-full bg-white/30"></div>
-                      <div className="w-2 h-2 rounded-full bg-white/30"></div>
-                    </div>
-                  </div>
+                <div className="relative rounded-[1.6rem] overflow-hidden sm:rounded-[2.5rem]">
+                  <img src={studyImage} alt="Student preparing with Honhaar app" className="h-[560px] w-full object-cover" />
                 </div>
               </motion.div>
               
@@ -159,7 +126,7 @@ export function Hero() {
               
               <div className="absolute -bottom-3 -left-2 bg-white rounded-xl px-3 py-2 shadow-xl sm:-bottom-4 sm:-left-4 sm:rounded-2xl sm:px-4 sm:py-3">
                 <div className="text-xs text-slate-600">Questions</div>
-                <div className="text-xl text-teal-600 sm:text-2xl">10,000+</div>
+                <div className="text-xl text-teal-600 sm:text-2xl">20,000+</div>
               </div>
             </div>
           </motion.div>

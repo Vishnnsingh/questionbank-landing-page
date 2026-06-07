@@ -1,4 +1,5 @@
 import { Play, CheckCircle2, Star, Users, Zap, TrendingUp } from 'lucide-react';
+import demoImage from '../../images/im4.jpg';
 
 const features = [
   {
@@ -62,8 +63,9 @@ export function Screenshots() {
             {/* Video Container */}
             <div className="relative w-[min(76vw,280px)] bg-slate-900 rounded-2xl p-2 shadow-2xl ring-4 ring-white/10 sm:p-3 sm:ring-8 lg:w-[320px]">
               <div className="relative bg-gradient-to-br from-teal-500 to-blue-600 rounded-2xl overflow-hidden aspect-[9/16]">
-                {/* Video Placeholder */}
-                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-teal-500/90 to-blue-600/90">
+                <img src={demoImage} alt="Honhaar app learning demo" className="absolute inset-0 h-full w-full object-cover" />
+                {/* Video Preview */}
+                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-teal-800/70 to-blue-800/70">
                   <div className="text-center space-y-4 px-4">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full shadow-xl hover:scale-110 transition-transform cursor-pointer group">
                       <Play className="size-8 text-teal-600 ml-1 group-hover:text-blue-600 transition-colors" fill="currentColor" />

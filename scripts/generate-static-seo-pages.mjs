@@ -4,20 +4,25 @@ import { dirname, join } from 'node:path';
 const siteUrl = 'https://honhaar.in';
 const outDir = 'public';
 const today = '2026-06-07';
+const totalQuestionCount = '20,000+';
+const class10Price = 'INR 199';
+const class12Price = 'INR 249';
+const pricingText = `Honhaar Class 10 question bank access ${class10Price} me available hai, aur Class 12 question bank access ${class12Price} me available hai.`;
+const pricingFact = `${class10Price} Class 10, ${class12Price} Class 12`;
 
 const boards = {
   cbse: {
     label: 'CBSE',
     full: 'Central Board of Secondary Education',
     slug: 'cbse',
-    questionCount: '5,000+',
+    questionCount: totalQuestionCount,
     focus: 'NCERT pattern, competency questions, case-based questions, MCQ, short answer, and long answer practice',
   },
   'bihar-board': {
     label: 'Bihar Board',
     full: 'Bihar School Examination Board',
     slug: 'bihar-board',
-    questionCount: '5,000+',
+    questionCount: totalQuestionCount,
     focus: 'BSEB objective questions, subjective answer writing, Hindi-medium support, and Matric/Inter exam pattern',
   },
 };
@@ -113,9 +118,40 @@ const sampleQuestions = {
 
 const mainPages = [
   {
+    path: '/about-honhaar',
+    title: 'About Honhaar Features | Board Exam Preparation App for CBSE & Bihar Board',
+    description: 'Honhaar features explained: 10 years question bank, AI exam prediction, repeated questions, mock tests, topic insights, tracking, syllabus coverage, and career assistant.',
+    h1: 'About Honhaar Features',
+    intro: 'Honhaar is a board exam preparation app for CBSE and Bihar Board Class 10 and Class 12 students. The app combines previous year questions, prediction insights, mock tests, syllabus coverage, and career guidance in one preparation system.',
+    sections: [
+      ['10 Years Question Bank', 'Honhaar 10 Years Question Bank students ko previous year board exam questions organized format me provide karta hai. Students class, board, subject, and chapter ke according questions practice kar sakte hain. Previous year questions real exam pattern samjhate hain, repeated chapter trends reveal karte hain, and answer writing style improve karte hain. Detailed solutions ke saath students sirf answer yaad nahi karte, balki concept and method bhi samajhte hain.'],
+      ['AI Exam Prediction', 'AI Exam Prediction past exam trends, question frequency, chapter importance, and repeated patterns ke basis par important topics highlight karta hai. Ye exact question guarantee nahi karta, but students ko smart revision priority deta hai. Limited time me preparation karne wale students ke liye ye feature high-value chapters identify karne me help karta hai.'],
+      ['Most Repeated Questions', 'Most Repeated Questions feature un questions and concepts ko highlight karta hai jo board exams me frequently appear hote hain. CBSE and Bihar Board dono me kuch chapters and formats repeat pattern follow karte hain. Repeated question practice se students speed, confidence, and answer accuracy improve karte hain.'],
+      ['Mock Tests', 'Mock Tests students ko real exam pattern ke according practice karwate hain. Exam me marks sirf knowledge se nahi, time management, pressure handling, and accuracy se bhi aate hain. Honhaar mock tests preparation level check karne, weak areas identify karne, and final exam confidence build karne ke liye useful hain.'],
+      ['Chapter & Topic Insights', 'Chapter & Topic Insights students ko batata hai ki kaunse topics more important hain. Science, Mathematics, Physics, Chemistry, Biology, Social Science, History, Economics, and other subjects me topic priority samajhna final revision ke liye very important hota hai. Insights preparation ko focused banate hain.'],
+      ['Performance Tracking', 'Performance Tracking students ko strong and weak subjects clearly dikhata hai. Practice history and mock test performance se students samajh pate hain ki improvement ho raha hai ya nahi. Isse study plan better banta hai and weak chapters par timely revision possible hota hai.'],
+      ['Complete Syllabus Coverage', 'Complete Syllabus Coverage ensure karta hai ki students sirf selected questions ya random notes par dependent na rahein. Honhaar board, class, subject, chapter, and question type ke according preparation organize karta hai so students complete syllabus confidently revise kar sakein.'],
+      ['Career Assistant', 'Career Assistant board exam ke baad students ko stream selection, college guidance, career options, and next academic steps ke baare me practical direction deta hai. Honhaar preparation ko long-term academic planning se connect karta hai.'],
+      ['Why Honhaar Features Work Together', 'Question bank practice material deta hai, AI prediction priority deta hai, repeated questions pattern dikhate hain, mock tests exam readiness build karte hain, topic insights focused revision karwate hain, tracking progress measure karta hai, syllabus coverage preparation complete rakhta hai, and career assistant next step plan karne me help karta hai.'],
+    ],
+  },
+  {
+    path: '/what-is-honhaar',
+    title: 'What is Honhaar? | CBSE & Bihar Board Question Bank App',
+    description: 'Honhaar is an Indian board exam preparation app for CBSE and Bihar Board students with question bank, mock tests, repeated questions, insights, and career guidance.',
+    h1: 'What is Honhaar?',
+    intro: 'Honhaar ek Indian board exam preparation platform hai jo CBSE aur Bihar Board students ke liye question bank, mock tests, repeated question insights, topic analysis, syllabus coverage, and career assistant provide karta hai.',
+    sections: [
+      ['Honhaar in Simple Words', 'Honhaar ek mobile-first exam preparation system hai jahan students Class 10 and Class 12 board exams ke liye previous year questions practice kar sakte hain. App ka focus useful question practice, important topic discovery, and measurable progress par hai.'],
+      ['Who Can Use Honhaar', 'CBSE and Bihar Board Class 10 and Class 12 students Honhaar use kar sakte hain. Science, Commerce, Arts, Mathematics, Social Science, Hindi, English and other subjects ke liye organized practice experience diya gaya hai.'],
+      ['Main Features', 'Honhaar includes 10 years question bank, AI exam prediction, most repeated questions, mock tests, chapter and topic insights, performance tracking, complete syllabus coverage, and career assistant.'],
+      ['Why Students Need It', 'Board exam preparation me students ko sabse zyada problem hoti hai: kya padhein, kaunsa chapter important hai, previous questions kahan milenge, and progress kaise track karein. Honhaar in problems ko one app experience me solve karta hai.'],
+    ],
+  },
+  {
     path: '/cbse-question-bank',
     title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Honhaar',
-    description: 'CBSE question bank mein 5,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
+    description: 'CBSE question bank mein 20,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
     h1: 'CBSE Question Bank 2025-26',
     intro: 'Honhaar par CBSE Class 10 aur Class 12 ke previous year questions chapter-wise practice karo. Objective, short answer, long answer, and case-based questions ek organized app experience me milte hain.',
     sections: [
@@ -127,7 +163,7 @@ const mainPages = [
   {
     path: '/bihar-board-question-bank',
     title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Previous Year Questions | Honhaar',
-    description: 'Bihar Board BSEB question bank mein 5,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
+    description: 'Bihar Board BSEB question bank mein 20,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
     h1: 'Bihar Board Question Bank 2025-26',
     intro: 'Bihar Board students ke liye Honhaar me Matric aur Inter ke previous year questions, objective MCQ, subjective answers, Hindi support, and chapter-wise practice available hai.',
     sections: [
@@ -244,7 +280,7 @@ function pageTemplate(page, extra = {}) {
           {
             '@type': 'Question',
             name: 'Honhaar ki pricing kya hai?',
-            acceptedAnswer: { '@type': 'Answer', text: 'Honhaar question bank access INR 99 me available hai.' },
+            acceptedAnswer: { '@type': 'Answer', text: pricingText },
           },
         ],
       },
@@ -267,7 +303,7 @@ function pageTemplate(page, extra = {}) {
   <meta property="og:url" content="${canonical}" />
   <script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
   <style>
-    *{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#0f172a;font-family:Inter,Arial,sans-serif;line-height:1.65}.shell{max-width:1040px;margin:auto;padding:32px 18px 56px}.top{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:32px}.brand{font-weight:800;color:#0f766e;text-decoration:none}.nav{display:flex;gap:12px;flex-wrap:wrap}.nav a,.links a{color:#0369a1;text-decoration:none;font-weight:600}.hero{padding:34px 0}.eyebrow{color:#0f766e;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}h1{font-size:clamp(32px,6vw,58px);line-height:1.05;margin:10px 0 18px}h2{font-size:24px;line-height:1.2;margin:0 0 12px}.intro{font-size:19px;color:#475569;max-width:850px}.grid{display:grid;gap:18px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:22px;box-shadow:0 10px 24px rgba(15,23,42,.04)}.facts{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:22px 0}.fact{background:#ecfeff;border:1px solid #99f6e4;border-radius:10px;padding:14px;font-weight:700;color:#115e59}.questions li{margin:10px 0}.cta{background:#0f766e;color:#fff;border-radius:10px;padding:24px;margin-top:24px}.cta a{color:#fff;font-weight:800}.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}@media(max-width:640px){.top{align-items:flex-start;flex-direction:column}.nav{font-size:14px}.shell{padding-top:20px}.panel{padding:18px}}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#f8fafc 0%,#ecfeff 48%,#eff6ff 100%);color:#0f172a;font-family:Inter,Arial,sans-serif;line-height:1.65}.shell{max-width:1120px;margin:auto;padding:32px 18px 64px}.top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:16px;align-items:center;margin:0 0 32px;padding:14px 0;background:rgba(248,250,252,.82);backdrop-filter:blur(14px)}.brand{display:inline-flex;align-items:center;gap:10px;font-weight:900;color:#0f766e;text-decoration:none}.brand:before{content:"";width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#0d9488);box-shadow:0 8px 18px rgba(13,148,136,.24)}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.links a{border-radius:10px;color:#0369a1;text-decoration:none;font-weight:700}.nav a{padding:9px 12px}.nav a:hover,.links a:hover{background:#e0f2fe;color:#0f766e}.hero{position:relative;overflow:hidden;margin-bottom:24px;padding:38px;border:1px solid rgba(255,255,255,.8);border-radius:22px;background:rgba(255,255,255,.82);box-shadow:0 22px 50px rgba(15,23,42,.08)}.hero:before{content:"";position:absolute;right:-40px;top:-50px;width:210px;height:210px;border-radius:999px;background:rgba(45,212,191,.2);filter:blur(24px)}.hero:after{content:"";position:absolute;left:-50px;bottom:-70px;width:190px;height:190px;border-radius:999px;background:rgba(59,130,246,.16);filter:blur(24px)}.hero>*{position:relative}.eyebrow{display:inline-flex;border-radius:999px;background:#ecfeff;color:#0f766e;padding:8px 14px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}h1{font-size:clamp(32px,6vw,58px);line-height:1.05;margin:16px 0 18px}h2{font-size:24px;line-height:1.2;margin:0}.intro{font-size:19px;color:#475569;max-width:850px}.grid{display:grid;gap:18px}.facts{grid-template-columns:repeat(auto-fit,minmax(190px,1fr));margin:22px 0 26px}.fact{background:#fff;border:1px solid #ccfbf1;border-radius:14px;padding:16px;font-weight:800;color:#115e59;box-shadow:0 12px 24px rgba(15,23,42,.06)}.panel{position:relative;overflow:hidden;background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;box-shadow:0 16px 34px rgba(15,23,42,.07);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}.panel:before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,#2563eb,#14b8a6,#22d3ee)}.panel:hover{transform:translateY(-3px);border-color:#5eead4;box-shadow:0 20px 46px rgba(15,23,42,.1)}.panel h2{display:flex;gap:12px;align-items:center;margin-bottom:14px}.panel h2:before{content:"✓";display:grid;place-items:center;flex:0 0 36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#0d9488);color:#fff;font-size:18px}.questions li{margin:10px 0;padding:10px 12px;border-radius:10px;background:#f8fafc}.cta{background:linear-gradient(135deg,#0f766e,#2563eb);color:#fff;border-radius:18px;padding:28px;margin-top:26px;box-shadow:0 18px 40px rgba(15,118,110,.22)}.cta a{color:#fff;font-weight:900}.links{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.links a{background:#fff;border:1px solid #dbeafe;padding:10px 12px}@media(min-width:760px){.shell>.panel{display:inline-block;width:calc(50% - 10px);vertical-align:top;margin:0 7px 18px}.shell>.panel:nth-of-type(odd){margin-left:0}}@media(max-width:640px){.top{align-items:flex-start;flex-direction:column}.nav{font-size:14px}.shell{padding-top:16px}.hero{padding:24px}.panel{padding:20px}}
   </style>
 </head>
 <body>
@@ -287,17 +323,17 @@ function pageTemplate(page, extra = {}) {
       <p class="intro">${escapeHtml(page.intro)}</p>
     </section>
     <section class="grid facts">
-      <div class="fact">10,000+ previous year questions</div>
+      <div class="fact">${totalQuestionCount} previous year questions</div>
       <div class="fact">CBSE + Bihar Board</div>
       <div class="fact">Class 10 + Class 12</div>
-      <div class="fact">INR 99 one-time access</div>
+      <div class="fact">${pricingFact}</div>
     </section>
     ${sections}
     ${questions ? `<section class="panel"><h2>Sample Questions Preview</h2><p>Google aur students dono ke liye Honhaar pages par useful question preview diya gaya hai. Full chapter-wise question bank app me available hai.</p><ol class="questions">${questions}</ol></section>` : ''}
     <section class="cta">
       <h2>Start Practice on Honhaar</h2>
       <p>Board exam preparation ko random notes se nahi, actual previous year question practice se strong banao. Honhaar par Class 10 aur Class 12 ke liye organized question bank available hai.</p>
-      <a href="/#pricing">View INR 99 plan</a>
+      <a href="/#pricing">View pricing plans</a>
     </section>
     <nav class="links">${links}</nav>
   </main>
@@ -354,10 +390,7 @@ for (const [boardKey] of Object.entries(boards)) {
   }
 }
 
-const aliases = [
-  ['/about-honhaar', '/about'],
-  ['/what-is-honhaar', '/about'],
-];
+const aliases = [];
 
 function ensureDir(path) {
   mkdirSync(dirname(path), { recursive: true });

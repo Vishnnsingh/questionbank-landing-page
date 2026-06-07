@@ -8,7 +8,7 @@ export const products = [
     name: 'Class 10 Question Bank',
     description:
       'One-year access to CBSE and Bihar Board Class 10 previous year questions, objective practice, mock tests, analytics, and chapter-wise preparation.',
-    price: 99,
+    price: 199,
     currency: 'INR',
     duration: 'One Year',
   },
@@ -16,7 +16,7 @@ export const products = [
     name: 'Class 12 Question Bank',
     description:
       'One-year access to CBSE and Bihar Board Class 12 previous year questions, stream-wise practice, mock tests, analytics, and board exam preparation.',
-    price: 99,
+    price: 249,
     currency: 'INR',
     duration: 'One Year',
   },
@@ -26,13 +26,13 @@ export const pageMeta = {
   home: {
     title: 'Honhaar - CBSE & Bihar Board Question Bank App | Class 10 & 12',
     description:
-      'Honhaar par CBSE aur Bihar Board ke 10,000+ previous year questions practice karo. Class 10 aur 12 ke liye Objective, Subjective, Short aur Long Answer questions.',
+      'Honhaar par CBSE aur Bihar Board ke 20,000+ previous year questions practice karo. Class 10 aur 12 ke liye Objective, Subjective, Short aur Long Answer questions.',
     path: '/',
   },
   about: {
     title: 'About Honhaar | India Board Exam Preparation App',
     description:
-      'Honhaar ek Indian board exam preparation platform hai jo CBSE aur Bihar Board students ke liye 10,000+ previous year questions provide karta hai.',
+      'Honhaar features explained: 10 years question bank, AI exam prediction, repeated questions, mock tests, topic insights, tracking, syllabus coverage, and career assistant.',
     path: '/about',
   },
   contact: {
@@ -68,19 +68,19 @@ export const pageMeta = {
   cbseQuestionBank: {
     title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Honhaar',
     description:
-      'CBSE question bank mein 5,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
+      'CBSE question bank mein 20,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
     path: '/cbse-question-bank',
   },
   biharBoardQuestionBank: {
     title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Questions | Honhaar',
     description:
-      'Bihar Board BSEB question bank mein 5,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
+      'Bihar Board BSEB question bank mein 20,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
     path: '/bihar-board-question-bank',
   },
   class10QuestionBank: {
     title: 'Class 10 Question Bank 2025-26 | CBSE & Bihar Board | Honhaar',
     description:
-      'Class 10 question bank mein CBSE aur Bihar Board ke 10,000+ previous year questions. Mathematics, Science, Social Science, Hindi, English practice.',
+      'Class 10 question bank mein CBSE aur Bihar Board ke 20,000+ previous year questions. Mathematics, Science, Social Science, Hindi, English practice.',
     path: '/class-10-question-bank',
   },
   class12QuestionBank: {
@@ -187,7 +187,7 @@ export function buildHomeJsonLd() {
             name: 'What is the pricing of Honhaar?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Honhaar question bank access is priced at INR 99 for one year.',
+              text: 'Honhaar Class 10 question bank access is priced at INR 199 for one year, and Class 12 question bank access is priced at INR 249 for one year.',
             },
           },
           {
