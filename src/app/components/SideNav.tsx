@@ -46,7 +46,7 @@ const trailingNavItems: NavItem[] = [
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
 const headerActionClass =
-  'rounded-full bg-slate-950 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700';
+  'rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -253,7 +253,7 @@ export function SideNav() {
           <div className="hidden rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner lg:block">
             <NavLinks variant="desktop" />
           </div>
-          <div className="hidden items-center gap-2 xl:flex">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <a href="/signup" className={headerActionClass}>
               Register
             </a>
@@ -298,6 +298,22 @@ export function SideNav() {
               </button>
             </div>
             <NavLinks onNavigate={() => setOpen(false)} />
+            <div className="mt-6 flex flex-col gap-2 border-t border-slate-100 pt-6">
+              <a
+                href="/signup"
+                onClick={() => setOpen(false)}
+                className={headerActionClass + ' text-center'}
+              >
+                Register
+              </a>
+              <a
+                href="/#pricing"
+                onClick={() => setOpen(false)}
+                className={headerActionClass + ' text-center'}
+              >
+                Get App
+              </a>
+            </div>
           </aside>
         </div>
       )}

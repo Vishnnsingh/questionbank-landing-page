@@ -23,10 +23,7 @@ export function PaymentReturnPage() {
       const orderId = params.get('order_id')?.trim();
 
       if (!orderId) {
-        if (!cancelled) {
-          setState('error');
-          setMessage('Payment reference was not found. Please try again from Choose Plan.');
-        }
+        window.location.href = '/choose-plan';
         return;
       }
 
@@ -53,12 +50,10 @@ export function PaymentReturnPage() {
           return;
         }
 
-        setState('error');
-        setMessage('Payment verification timed out. If amount was deducted, contact support.');
-      } catch (error) {
+        window.location.href = '/choose-plan';
+      } catch {
         if (!cancelled) {
-          setState('error');
-          setMessage(error instanceof Error ? error.message : 'Payment verification failed.');
+          window.location.href = '/choose-plan';
         }
       }
     }
@@ -106,23 +101,6 @@ export function PaymentReturnPage() {
                   >
                     Back to plans
                   </a>
-                ) : null}
-
-                {state === 'error' ? (
-                  <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    <a
-                      href="/choose-plan"
-                      className="inline-flex items-center justify-center rounded-xl border-2 border-[#00a897] bg-white px-6 py-3 text-sm font-semibold text-[#00a897] transition hover:bg-teal-50"
-                    >
-                      Try again
-                    </a>
-                    <a
-                      href="/support"
-                      className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
-                    >
-                      Contact support
-                    </a>
-                  </div>
                 ) : null}
               </div>
             </AuthCardBody>
