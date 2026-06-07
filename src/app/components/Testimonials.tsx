@@ -33,10 +33,10 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-20 lg:py-32 bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section id="testimonials" className="py-14 sm:py-20 lg:py-32 bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-4xl lg:text-5xl text-slate-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl text-slate-900 mb-4">
             What Students Say
           </h2>
           <p className="text-lg text-slate-600">
@@ -44,7 +44,7 @@ export function Testimonials() {
           </p>
         </div>
         
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
@@ -79,21 +79,21 @@ export function Testimonials() {
         </div>
         
         {/* Stats */}
-        <div className="mt-16 grid gap-8 sm:grid-cols-3 max-w-4xl mx-auto">
+        <div className="mt-12 grid gap-8 sm:mt-16 sm:grid-cols-3 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-4xl lg:text-5xl text-blue-600 mb-2">
+            <div className="text-3xl sm:text-4xl lg:text-5xl text-blue-600 mb-2">
               2,450+
             </div>
             <div className="text-slate-600">Active Students</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl lg:text-5xl text-teal-600 mb-2">
+            <div className="text-3xl sm:text-4xl lg:text-5xl text-teal-600 mb-2">
               10,000+
             </div>
             <div className="text-slate-600">Questions Solved</div>
           </div>
           <div className="text-center">
-            <div className="text-4xl lg:text-5xl text-purple-600 mb-2">
+            <div className="text-3xl sm:text-4xl lg:text-5xl text-purple-600 mb-2">
               92%
             </div>
             <div className="text-slate-600">Average Score</div>

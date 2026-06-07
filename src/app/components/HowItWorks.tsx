@@ -42,13 +42,13 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="relative py-20 lg:py-32 bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 overflow-hidden">
+    <section id="how-it-works" className="relative py-14 sm:py-20 lg:py-32 bg-gradient-to-br from-teal-50 via-cyan-50 to-blue-50 overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-br from-teal-400/20 to-cyan-400/20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
       
-      <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-20">
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-20">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal-600 to-blue-600 text-white px-5 py-2.5 rounded-full text-sm mb-6 shadow-lg">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
@@ -56,13 +56,13 @@ export function HowItWorks() {
             </span>
             <span>Simple & Easy Process</span>
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl text-slate-900 mb-6 tracking-tight">
+          <h2 className="text-3xl sm:text-5xl lg:text-6xl text-slate-900 mb-6 tracking-tight">
             How It
             <span className="bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 bg-clip-text text-transparent">
               {' '}Works
             </span>
           </h2>
-          <p className="text-xl text-slate-600 leading-relaxed">
+          <p className="text-base sm:text-xl text-slate-600 leading-relaxed">
             Get started in 6 simple steps
           </p>
         </div>
@@ -70,7 +70,7 @@ export function HowItWorks() {
         {/* Roadmap Layout */}
         <div className="relative max-w-6xl mx-auto">
           {/* Top Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 relative">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8 mb-8 relative">
             {/* Connection Line for Top Row */}
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-teal-300 via-cyan-300 to-blue-300 -translate-y-1/2 z-0"></div>
             
@@ -106,7 +106,7 @@ export function HowItWorks() {
                 </div>
                 
                 {/* Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 hover:-translate-y-2">
+                <div className="bg-white rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 hover:-translate-y-2 sm:p-8 sm:rounded-2xl">
                   {/* Icon */}
                   <div className="flex justify-center mb-6">
                     <div className="bg-gradient-to-br from-teal-100 to-blue-100 w-20 h-20 rounded-2xl flex items-center justify-center">
@@ -148,7 +148,7 @@ export function HowItWorks() {
           </div>
           
           {/* Bottom Row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative mt-16">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8 relative mt-12 sm:mt-16">
             {/* Connection Line for Bottom Row */}
             <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-blue-300 via-cyan-300 to-teal-300 -translate-y-1/2 z-0"></div>
             
@@ -184,7 +184,7 @@ export function HowItWorks() {
                 </div>
                 
                 {/* Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 hover:-translate-y-2">
+                <div className="bg-white rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 hover:-translate-y-2 sm:p-8 sm:rounded-2xl">
                   {/* Icon */}
                   <div className="flex justify-center mb-6">
                     <div className="bg-gradient-to-br from-blue-100 to-teal-100 w-20 h-20 rounded-2xl flex items-center justify-center">
@@ -210,7 +210,7 @@ export function HowItWorks() {
 
         {/* CTA Button */}
         <div className="text-center mt-16">
-          <button className="inline-flex items-center gap-3 bg-gradient-to-r from-teal-600 to-blue-600 text-white px-8 py-4 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-lg font-semibold">
+          <button className="inline-flex w-full items-center justify-center gap-3 bg-gradient-to-r from-teal-600 to-blue-600 text-white px-6 py-4 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all text-base font-semibold sm:w-auto sm:px-8 sm:text-lg">
             <Download className="size-6" />
             Download Now & Get Started
           </button>
