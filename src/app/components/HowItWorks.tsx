@@ -6,7 +6,7 @@ const steps = [
     number: '01',
     icon: Download,
     title: 'Download the App',
-    description: 'Get the Bihar Board Smart Prep app from Google Play Store for free',
+    description: 'Get the Honhaar app from Google Play Store for free',
   },
   {
     number: '02',

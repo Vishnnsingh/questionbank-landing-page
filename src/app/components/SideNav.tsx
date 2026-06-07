@@ -4,6 +4,10 @@ import { useState } from 'react';
 const navItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'About', href: '/about', icon: Info },
+  { label: 'CBSE', href: '/cbse-question-bank', icon: BookOpen },
+  { label: 'Bihar Board', href: '/bihar-board-question-bank', icon: BookOpen },
+  { label: 'Class 10', href: '/class-10-question-bank', icon: BookOpen },
+  { label: 'Class 12', href: '/class-12-question-bank', icon: BookOpen },
   { label: 'Contact Us', href: '/contact-us', icon: Mail },
   { label: 'Support', href: '/support', icon: LifeBuoy },
 ];
@@ -49,7 +53,7 @@ export function SideNav() {
             <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-teal-600 text-white">
               <BookOpen className="size-5" />
             </span>
-            <span className="text-base font-semibold">Bihar Board Smart Prep</span>
+            <span className="text-base font-semibold">Honhaar</span>
           </a>
           <button
             type="button"
@@ -67,7 +71,7 @@ export function SideNav() {
           <span className="flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-teal-600 text-white">
             <BookOpen className="size-6" />
           </span>
-          <span className="text-lg font-semibold leading-tight">Bihar Board Smart Prep</span>
+          <span className="text-lg font-semibold leading-tight">Honhaar</span>
         </a>
         <NavLinks />
       </aside>

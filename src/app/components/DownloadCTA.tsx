@@ -21,7 +21,7 @@ export function DownloadCTA() {
           </h2>
           
           <p className="text-base sm:text-xl text-teal-50 mb-8 sm:mb-10">
-            Download the app now and join thousands of successful Bihar Board students
+            Download the app now and join thousands of successful board exam students
           </p>
           
           <div className="flex flex-col gap-3 justify-center sm:flex-row sm:flex-wrap sm:gap-4">

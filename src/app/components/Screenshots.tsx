@@ -51,7 +51,7 @@ export function Screenshots() {
             </span>
           </h2>
           <p className="text-base sm:text-xl text-slate-600 leading-relaxed">
-            Watch how Bihar Board Smart Prep transforms your exam preparation
+            Watch how Honhaar transforms your exam preparation
           </p>
         </div>
         

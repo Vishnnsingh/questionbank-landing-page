@@ -77,7 +77,7 @@ export function SEO({ page }: { page: PageKey }) {
             name: meta.title,
             description: meta.description,
             url: canonical,
-            isPartOf: { '@id': 'https://biharboardsmartprep.com/#website' },
+            isPartOf: { '@id': 'https://honhaar.in/#website' },
           }
     );
   }, [page]);

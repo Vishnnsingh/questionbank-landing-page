@@ -22,7 +22,7 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Bihar Board Smart Prep
+                Honhaar
               </motion.h1>
               <motion.p 
                 className="text-lg sm:text-xl lg:text-2xl text-teal-50"
@@ -30,7 +30,7 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                10 Years Question Bank + AI Exam Prediction
+                CBSE & Bihar Board Question Bank App
               </motion.p>
             </div>
             
@@ -40,8 +40,8 @@ export function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Prepare smarter for Bihar Board exams with smart question analysis, 
-              repeated question insights, mock tests, and personalized learning tools.
+              Practice 10,000+ previous year questions for Class 10 and Class 12 with
+              smart question analysis, repeated question insights, mock tests, and analytics.
             </motion.p>
             
             {/* Marketing Taglines */}
@@ -134,10 +134,10 @@ export function Hero() {
                     {/* App Title */}
                     <div className="text-center space-y-2">
                       <h3 className="text-2xl text-white">
-                        Bihar Board<br />Smart Prep
+                        Honhaar<br />Smart Prep
                       </h3>
                       <p className="text-teal-100 text-sm">
-                        10 Years Question Bank + AI Prediction
+                        CBSE + Bihar Board Questions
                       </p>
                     </div>
                     

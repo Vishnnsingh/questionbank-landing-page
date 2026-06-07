@@ -14,8 +14,8 @@ const pageContent: Record<PolicyPageKey, { eyebrow: string; title: string; secti
       {
         title: 'Built for Bihar Board Students',
         body: [
-          'Bihar Board Smart Prep is a focused learning app for Class 10 and Class 12 students preparing for BSEB exams.',
-          'The platform combines previous year questions, mock tests, AI exam prediction, repeated question insights, chapter-wise practice, and performance tracking in one simple mobile experience.',
+          'Honhaar is a focused learning app for Class 10 and Class 12 students preparing for CBSE and Bihar Board exams.',
+          'The platform combines previous year questions, mock tests, repeated question insights, chapter-wise practice, and performance tracking in one simple mobile experience.',
         ],
       },
       {
@@ -34,7 +34,7 @@ const pageContent: Record<PolicyPageKey, { eyebrow: string; title: string; secti
       {
         title: 'Customer Support',
         body: [
-          'For app access, payments, account issues, study material, mock tests, or refund questions, contact the Bihar Board Smart Prep support team.',
+          'For app access, payments, account issues, study material, mock tests, or refund questions, contact the Honhaar support team.',
           `Email: ${SUPPORT_EMAIL}`,
           `Phone: ${SUPPORT_PHONE}`,
           'Location: Patna, Bihar, India',
@@ -76,7 +76,7 @@ const pageContent: Record<PolicyPageKey, { eyebrow: string; title: string; secti
       {
         title: 'Use of Service',
         body: [
-          'Bihar Board Smart Prep provides digital exam preparation products for Bihar Board students, including question banks, mock tests, AI exam prediction, analytics, and study guidance.',
+          'Honhaar provides digital exam preparation products for CBSE and Bihar Board students, including question banks, mock tests, analytics, and study guidance.',
           'Users must provide accurate account and payment information and must not misuse, copy, resell, scrape, or redistribute app content without written permission.',
         ],
       },

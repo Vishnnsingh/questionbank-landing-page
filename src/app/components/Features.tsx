@@ -84,7 +84,7 @@ export function Features() {
             </span>
           </h2>
           <p className="text-xl text-slate-600 leading-relaxed">
-            Everything you need to excel in your Bihar Board exams
+            Everything you need to excel in CBSE and Bihar Board exams
           </p>
         </div>
         
