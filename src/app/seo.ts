@@ -2,6 +2,7 @@ export const SITE_URL = 'https://honhaar.in';
 export const SITE_NAME = 'Honhaar';
 export const SUPPORT_EMAIL = 'support@honhaar.in';
 export const SUPPORT_PHONE = '8084048167';
+export const PRODUCT_IMAGE_URL = `${SITE_URL}/images/og-homepage.jpg`;
 
 export const products = [
   {
@@ -160,14 +161,20 @@ export function buildHomeJsonLd() {
         '@type': 'Product',
         name: product.name,
         description: product.description,
-        brand: { '@id': `${SITE_URL}/#organization` },
+        image: PRODUCT_IMAGE_URL,
+        brand: {
+          '@type': 'Brand',
+          name: SITE_NAME,
+        },
         category: 'Bihar Board exam preparation app',
         areaServed: 'IN',
         offers: {
           '@type': 'Offer',
+          name: product.name,
           price: product.price,
           priceCurrency: product.currency,
           availability: 'https://schema.org/InStock',
+          itemCondition: 'https://schema.org/NewCondition',
           url: absoluteUrl('/#pricing'),
         },
       })),

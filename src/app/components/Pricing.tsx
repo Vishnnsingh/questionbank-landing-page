@@ -1,6 +1,6 @@
 import { Check, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { products } from '../seo';
+import { PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
 import logoImage from '../../images/logo.png';
 
 const plans = [
@@ -92,6 +92,10 @@ export function Pricing() {
                   : 'border-slate-200/50 hover:border-blue-300 hover:shadow-xl'
               }`}
             >
+              <meta itemProp="image" content={PRODUCT_IMAGE_URL} />
+              <span itemProp="brand" itemScope itemType="https://schema.org/Brand" className="sr-only">
+                <meta itemProp="name" content={SITE_NAME} />
+              </span>
               {/* Popular Badge */}
               {plan.popular && (
                 <motion.div 
@@ -141,6 +145,9 @@ export function Pricing() {
                   >
                     <meta itemProp="priceCurrency" content="INR" />
                     <meta itemProp="price" content={String(plan.price)} />
+                    <meta itemProp="availability" content="https://schema.org/InStock" />
+                    <meta itemProp="itemCondition" content="https://schema.org/NewCondition" />
+                    <meta itemProp="url" content="https://honhaar.in/#pricing" />
                     INR {plan.price}
                   </span>
                   <span className="text-slate-500">/ {plan.duration}</span>
