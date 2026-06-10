@@ -21,9 +21,12 @@ export function PaymentReturnPage() {
     async function verify() {
       const params = new URLSearchParams(window.location.search);
       const orderId = params.get('order_id')?.trim();
+      const subscriptionId = params.get('subscription_id')?.trim();
 
-      if (!orderId) {
-        window.location.href = '/choose-plan';
+      if (!orderId && !subscriptionId) {
+        if (!cancelled) {
+          window.location.href = '/choose-plan';
+        }
         return;
       }
 
@@ -35,7 +38,7 @@ export function PaymentReturnPage() {
         }
 
         for (let attempt = 0; attempt < 8; attempt += 1) {
-          const result = await verifyWebPayment(accessToken, orderId);
+          const result = await verifyWebPayment(accessToken, { orderId, subscriptionId });
           if (cancelled) return;
 
           if (result.pending) {
@@ -50,10 +53,20 @@ export function PaymentReturnPage() {
           return;
         }
 
-        window.location.href = '/choose-plan';
-      } catch {
-        if (!cancelled) {
+        setState('error');
+        setMessage('Payment verification timed out. Please try again from Choose Plan.');
+        setTimeout(() => {
           window.location.href = '/choose-plan';
+        }, 2500);
+      } catch (err) {
+        if (!cancelled) {
+          setState('error');
+          setMessage(
+            err instanceof Error ? err.message : 'Payment verification failed.',
+          );
+          setTimeout(() => {
+            window.location.href = '/choose-plan';
+          }, 2500);
         }
       }
     }
@@ -67,8 +80,6 @@ export function PaymentReturnPage() {
   const icon =
     state === 'success' ? (
       <CheckCircle2 className="size-14 text-emerald-600" />
-    ) : state === 'error' ? (
-      <XCircle className="size-14 text-red-500" />
     ) : (
       <Loader2 className="size-14 animate-spin text-[#00a897]" />
     );
@@ -100,6 +111,15 @@ export function PaymentReturnPage() {
                     className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
                   >
                     Back to plans
+                  </a>
+                ) : null}
+
+                {state === 'error' ? (
+                  <a
+                    href="/choose-plan"
+                    className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
+                  >
+                    Back to Choose Plan
                   </a>
                 ) : null}
               </div>

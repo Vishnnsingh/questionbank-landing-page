@@ -46,7 +46,7 @@ const trailingNavItems: NavItem[] = [
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
 const headerActionClass =
-  'rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
+  'shrink-0 rounded-full bg-slate-950 px-2 py-1 text-[10px] font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -253,7 +253,7 @@ export function SideNav() {
           <div className="hidden rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner lg:block">
             <NavLinks variant="desktop" />
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="hidden shrink-0 items-center gap-1.5 sm:gap-2 lg:flex">
             <a href="/signup" className={headerActionClass}>
               Register
             </a>
@@ -280,8 +280,8 @@ export function SideNav() {
             className="absolute inset-0 bg-slate-950/50"
             onClick={() => setOpen(false)}
           />
-          <aside className="relative h-full w-[min(86vw,320px)] bg-white px-4 py-5 shadow-2xl">
-            <div className="mb-8 flex items-center justify-between">
+          <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between">
               <a href="/" className="flex items-center gap-3 text-slate-950">
                 <span className="flex h-14 w-14 items-center justify-center overflow-hidden">
                   <img src={logoImage} alt="Honhaar logo" className="h-[220%] w-[220%] max-w-none object-contain" />
@@ -297,8 +297,10 @@ export function SideNav() {
                 <X className="size-5" />
               </button>
             </div>
-            <NavLinks onNavigate={() => setOpen(false)} />
-            <div className="mt-6 flex flex-col gap-2 border-t border-slate-100 pt-6">
+            <div className="flex-1">
+              <NavLinks onNavigate={() => setOpen(false)} />
+            </div>
+            <div className="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
               <a
                 href="/signup"
                 onClick={() => setOpen(false)}

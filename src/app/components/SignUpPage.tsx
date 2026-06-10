@@ -154,7 +154,7 @@ export function SignUpPage() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
+    <div className="relative min-h-screen overflow-y-auto bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
       <AuthPageBackground />
       <SEO page="signup" />
       <SideNav />

@@ -1,7 +1,7 @@
 import { Check, Loader2, LogOut, Sparkles, Zap } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { createWebCheckout } from '../api/subscription-api';
+import { createWebCheckout, fetchSubscriptionMe, type SubscriptionMeResult } from '../api/subscription-api';
 import { ensureValidAccessToken, hasPaymentAuthSession, performPaymentLogout } from '../lib/auth-session';
 import { openCashfreeCheckout } from '../lib/cashfree-checkout';
 import { formatInr, planCatalogForClass, type PlanType } from '../lib/plan-catalog';
@@ -11,6 +11,7 @@ import {
   AuthCardBody,
   AuthPageBackground,
 } from './auth-ui';
+import { ActivePlanBadge, ChoosePlanSubscriptionPanel } from './ChoosePlanSubscriptionPanel';
 import { Footer } from './Footer';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
@@ -30,6 +31,23 @@ export function ChoosePlanPage() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [payingPlan, setPayingPlan] = useState<PlanType | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
+  const [subscriptionData, setSubscriptionData] = useState<SubscriptionMeResult | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+
+  const loadSubscription = async () => {
+    if (!hasPaymentAuthSession()) return;
+    setSubscriptionLoading(true);
+    try {
+      const accessToken = await ensureValidAccessToken();
+      if (!accessToken) return;
+      const data = await fetchSubscriptionMe(accessToken);
+      setSubscriptionData(data);
+    } catch {
+      // Non-blocking — plan cards still work.
+    } finally {
+      setSubscriptionLoading(false);
+    }
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -46,6 +64,7 @@ export function ChoosePlanPage() {
           await ensureValidAccessToken();
           if (cancelled) return;
           setPaymentUser(readPaymentUserContext());
+          await loadSubscription();
         } catch {
           if (!cancelled) {
             window.location.href = '/login';
@@ -68,6 +87,15 @@ export function ChoosePlanPage() {
   const catalog = useMemo(
     () => (paymentUser ? planCatalogForClass(paymentUser.class) : null),
     [paymentUser],
+  );
+
+  const isTrialActive = Boolean(
+    subscriptionData?.entitlements?.fullAccess &&
+      subscriptionData?.entitlements?.tier === 'trial_2day',
+  );
+  const isYearlyActive = Boolean(
+    subscriptionData?.entitlements?.fullAccess &&
+      subscriptionData?.entitlements?.tier === 'yearly',
   );
 
   if (!sessionReady || !paymentUser || !catalog) {
@@ -100,10 +128,7 @@ export function ChoosePlanPage() {
       }
 
       const checkout = await createWebCheckout(accessToken, planType);
-      await openCashfreeCheckout(
-        checkout.payment_session_id,
-        checkout.cashfree_mode === 'production' ? 'production' : 'sandbox',
-      );
+      await openCashfreeCheckout(checkout);
     } catch (error) {
       setPayError(error instanceof Error ? error.message : 'Could not start payment.');
       setPayingPlan(null);
@@ -157,6 +182,14 @@ export function ChoosePlanPage() {
             </p>
           ) : null}
 
+          {hasPaymentAuthSession() ? (
+            <ChoosePlanSubscriptionPanel
+              data={subscriptionData}
+              loading={subscriptionLoading}
+              onRefresh={loadSubscription}
+            />
+          ) : null}
+
           <div className="mt-6 flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#00a897] px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white shadow-sm">
               <Sparkles className="size-3.5" />
@@ -176,11 +209,16 @@ export function ChoosePlanPage() {
           <div className="mt-6 grid gap-5 lg:grid-cols-2">
             <article
               className={`rounded-2xl border bg-white p-6 shadow-sm transition ${
-                selectedPlan === 'trial_2day'
+                isTrialActive || selectedPlan === 'trial_2day'
                   ? 'border-[#00a897] ring-2 ring-[#00a897]/15 shadow-md'
                   : 'border-slate-200/90 hover:border-teal-200'
               }`}
             >
+              {isTrialActive ? (
+                <div className="mb-3">
+                  <ActivePlanBadge planType="trial_2day" />
+                </div>
+              ) : null}
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#00a897]">
                 2-day full trial
               </p>
@@ -216,11 +254,16 @@ export function ChoosePlanPage() {
 
             <article
               className={`relative rounded-2xl border bg-gradient-to-br from-white to-teal-50/40 p-6 shadow-sm transition ${
-                selectedPlan === 'yearly'
+                isYearlyActive || selectedPlan === 'yearly'
                   ? 'border-[#00a897] ring-2 ring-[#00a897]/15 shadow-md'
                   : 'border-slate-200/90 hover:border-teal-200'
               }`}
             >
+              {isYearlyActive ? (
+                <div className="absolute -top-3 right-4">
+                  <ActivePlanBadge planType="yearly" />
+                </div>
+              ) : null}
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-[#00a897] to-teal-600 px-4 py-1 text-xs font-bold text-white shadow-md">
                   <Zap className="size-3.5 fill-current" />
@@ -271,10 +314,6 @@ export function ChoosePlanPage() {
               </button>
             </article>
           </div>
-
-          <p className="mt-6 text-center text-xs leading-relaxed text-slate-500">
-            Auto-payment stays active after trial or yearly plan. Yearly renews when 1 year ends.
-          </p>
             </AuthCardBody>
           </AuthCard>
         </div>

@@ -1,3 +1,5 @@
+import type { WebCheckoutResult } from '../api/subscription-api';
+
 type CashfreeMode = 'sandbox' | 'production';
 
 const CASHFREE_SDK_URL = 'https://sdk.cashfree.com/js/v3/cashfree.js';
@@ -59,10 +61,20 @@ function loadCashfreeSdk(): Promise<CashfreeFactory> {
   return sdkPromise;
 }
 
-export async function openCashfreeCheckout(
-  paymentSessionId: string,
-  mode: CashfreeMode = 'sandbox',
-): Promise<void> {
+export async function openCashfreeCheckout(checkout: WebCheckoutResult): Promise<void> {
+  const mode: CashfreeMode =
+    checkout.cashfree_mode === 'production' ? 'production' : 'sandbox';
+
+  if (checkout.auth_link) {
+    window.location.href = checkout.auth_link;
+    return;
+  }
+
+  const paymentSessionId = String(checkout.payment_session_id || '').trim();
+  if (!paymentSessionId) {
+    throw new Error('Invalid Cashfree checkout session.');
+  }
+
   const Cashfree = await loadCashfreeSdk();
   const cashfree = Cashfree({ mode });
   await cashfree.checkout({
