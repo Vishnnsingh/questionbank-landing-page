@@ -29,10 +29,10 @@ export function AuthShell({
   maxWidth?: string;
 }) {
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
       <AuthPageBackground />
       <SideNav />
-      <div className="relative pt-24 pb-12 sm:pt-28 sm:pb-16">
+      <div className="relative pb-12 sm:pb-16">
         <main className={`mx-auto ${maxWidth} px-4 sm:px-6 lg:px-8`}>{children}</main>
         <Footer />
       </div>

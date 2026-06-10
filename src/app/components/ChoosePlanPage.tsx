@@ -141,7 +141,7 @@ export function ChoosePlanPage() {
       <SEO page="choosePlan" />
       <SideNav />
 
-      <main className="relative px-4 pb-10 pt-24 sm:px-6 sm:pb-12 sm:pt-28 lg:px-10">
+      <main className="relative px-4 pb-10 sm:px-6 sm:pb-12 lg:px-10">
         <div className="mx-auto mb-10 w-full max-w-4xl sm:mb-12">
           <AuthCard>
             <AuthCardBody>

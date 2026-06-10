@@ -1,5 +1,6 @@
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import logoImage from '../../images/logo.png';
 
 type NavLink = {
@@ -46,9 +47,9 @@ const trailingNavItems: NavItem[] = [
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
 const headerActionClass =
-  'shrink-0 rounded-full bg-slate-950 px-2 py-1 text-[10px] font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
+  'inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
-const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+const logoImageClass = 'block h-full w-full max-h-full max-w-full object-contain object-center';
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -119,17 +120,17 @@ function NavDropdownMenu({
   }
 
   return (
-    <div className="group relative">
+    <div className="group relative shrink-0">
       <div
-        className={`inline-flex cursor-default items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold transition-all ${
+        className={`inline-flex max-h-9 cursor-default items-center rounded-full px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
           isActive
-            ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-100'
-            : 'text-slate-600 group-hover:bg-white group-hover:text-slate-950 group-hover:shadow-sm'
+            ? 'bg-white text-teal-700 ring-1 ring-teal-100'
+            : 'text-slate-600 group-hover:bg-white group-hover:text-slate-950'
         }`}
       >
         <span>{dropdown.label}</span>
       </div>
-      <div className="invisible absolute left-0 top-full z-50 min-w-[180px] pt-1 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100">
+      <div className="pointer-events-none invisible absolute left-0 top-[calc(100%+0.125rem)] z-[120] min-w-[180px] opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100">
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg">
           {dropdown.items.map((item) => {
             const itemPath = normalizePath(item.href);
@@ -171,10 +172,10 @@ function NavLinks({
 
   const linkClass = (isActive: boolean) =>
     variant === 'desktop'
-      ? `inline-flex items-center rounded-full px-3 py-2 text-sm font-semibold transition-all ${
+      ? `inline-flex max-h-9 items-center rounded-full px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
           isActive
-            ? 'bg-white text-teal-700 shadow-sm ring-1 ring-teal-100'
-            : 'text-slate-600 hover:bg-white hover:text-slate-950 hover:shadow-sm'
+            ? 'bg-white text-teal-700 ring-1 ring-teal-100'
+            : 'text-slate-600 hover:bg-white hover:text-slate-950'
         }`
       : `flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
           isActive
@@ -183,7 +184,7 @@ function NavLinks({
         }`;
 
   return (
-    <nav className={variant === 'desktop' ? 'flex items-center gap-1' : 'space-y-2'}>
+    <nav className={variant === 'desktop' ? 'flex max-h-10 items-center gap-0.5 xl:gap-1' : 'space-y-2'}>
       {primaryNavItems.map((item) => {
         const itemPath = normalizePath(item.href);
         const isActive = currentPath === itemPath;
@@ -237,25 +238,27 @@ function NavLinks({
 export function SideNav() {
   const [open, setOpen] = useState(false);
 
-  return (
-    <>
-      <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/90 px-4 py-2 shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <a href="/" className="flex min-w-0 items-center gap-2.5 text-slate-950">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden sm:h-[52px] sm:w-[52px]">
-              <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
+  const headerBar = (
+    <header className="site-header fixed inset-x-0 top-0 z-[100] overflow-visible border-b border-slate-200 bg-white">
+      <div className="site-header-inner mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3">
+        <a href="/" className="flex min-w-0 shrink-0 items-center gap-2 text-slate-950">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+            <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
+          </span>
+          <span className="min-w-0 truncate">
+            <span className="block text-base font-extrabold leading-none sm:text-lg">Honhaar</span>
+            <span className="mt-1 hidden text-[10px] font-bold uppercase leading-none tracking-[0.08em] text-teal-700 md:block">
+              Question Bank
             </span>
-            <span className="leading-tight">
-              <span className="block text-xl font-extrabold tracking-normal">Honhaar</span>
-              <span className="hidden text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700 sm:block">
-                Question Bank
-              </span>
-            </span>
-          </a>
-          <div className="hidden rounded-full border border-slate-200 bg-slate-50/90 p-1 shadow-inner lg:block">
+          </span>
+        </a>
+        <div className="hidden min-w-0 shrink-0 overflow-visible lg:block">
+          <div className="rounded-full border border-slate-200 bg-slate-50/90 p-0.5">
             <NavLinks variant="desktop" />
           </div>
-          <div className="hidden shrink-0 items-center gap-1.5 sm:gap-2 lg:flex">
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden items-center gap-2 lg:flex">
             <a href="/signup" className={headerActionClass}>
               Register
             </a>
@@ -267,65 +270,75 @@ export function SideNav() {
             type="button"
             aria-label="Open navigation"
             onClick={() => setOpen(true)}
-            className="inline-flex size-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden"
+            className="inline-flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 lg:hidden"
           >
             <Menu className="size-5" />
           </button>
         </div>
-      </header>
+      </div>
+    </header>
+  );
 
-      {open && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
+  const mobileDrawer = open ? (
+    <div className="fixed inset-0 z-[110] lg:hidden">
+      <button
+        type="button"
+        aria-label="Close navigation overlay"
+        className="absolute inset-0 bg-slate-950/50"
+        onClick={() => setOpen(false)}
+      />
+      <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
+        <div className="mb-6 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2.5 text-slate-950">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden">
+              <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
+            </span>
+            <span className="leading-tight">
+              <span className="block text-lg font-extrabold">Honhaar</span>
+              <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700">
+                Question Bank
+              </span>
+            </span>
+          </a>
           <button
             type="button"
-            aria-label="Close navigation overlay"
-            className="absolute inset-0 bg-slate-950/50"
+            aria-label="Close navigation"
             onClick={() => setOpen(false)}
-          />
-          <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <a href="/" className="flex items-center gap-2.5 text-slate-950">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
-                  <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
-                </span>
-                <span className="leading-tight">
-                  <span className="block text-xl font-extrabold">Honhaar</span>
-                  <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700">
-                    Question Bank
-                  </span>
-                </span>
-              </a>
-              <button
-                type="button"
-                aria-label="Close navigation"
-                onClick={() => setOpen(false)}
-                className="inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="flex-1">
-              <NavLinks onNavigate={() => setOpen(false)} />
-            </div>
-            <div className="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
-              <a
-                href="/signup"
-                onClick={() => setOpen(false)}
-                className={headerActionClass + ' text-center'}
-              >
-                Register
-              </a>
-              <a
-                href="/#pricing"
-                onClick={() => setOpen(false)}
-                className={headerActionClass + ' text-center'}
-              >
-                Get App
-              </a>
-            </div>
-          </aside>
+            className="inline-flex size-10 items-center justify-center rounded-lg border border-slate-200 text-slate-700"
+          >
+            <X className="size-5" />
+          </button>
         </div>
-      )}
+        <div className="flex-1">
+          <NavLinks onNavigate={() => setOpen(false)} />
+        </div>
+        <div className="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
+          <a
+            href="/signup"
+            onClick={() => setOpen(false)}
+            className={headerActionClass + ' text-center'}
+          >
+            Register
+          </a>
+          <a
+            href="/#pricing"
+            onClick={() => setOpen(false)}
+            className={headerActionClass + ' text-center'}
+          >
+            Get App
+          </a>
+        </div>
+      </aside>
+    </div>
+  ) : null;
+
+  return (
+    <>
+      {typeof document !== 'undefined' ? createPortal(headerBar, document.body) : headerBar}
+      <div aria-hidden="true" className="site-header-spacer" />
+      {typeof document !== 'undefined' && mobileDrawer
+        ? createPortal(mobileDrawer, document.body)
+        : mobileDrawer}
     </>
   );
 }

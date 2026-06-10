@@ -83,10 +83,10 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50">
+    <>
       <SEO page="home" />
-      <SideNav />
-      <div className="pt-20">
+      <div className="min-h-screen bg-slate-50">
+        <SideNav />
         <Hero />
         <Features />
         <Screenshots />
@@ -96,6 +96,6 @@ export default function App() {
         <DownloadCTA />
         <Footer />
       </div>
-    </div>
+    </>
   );
 }

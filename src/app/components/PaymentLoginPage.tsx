@@ -74,12 +74,12 @@ export function PaymentLoginPage() {
   };
 
   return (
-    <div className="relative flex h-screen flex-col overflow-hidden bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
+    <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
       <AuthPageBackground />
       <SEO page="paymentLogin" />
       <SideNav />
 
-      <main className="relative min-h-0 flex-1 px-4 pb-6 pt-24 sm:px-6 sm:pt-28 lg:px-10">
+      <main className="relative min-h-0 flex-1 px-4 pb-6 sm:px-6 lg:px-10">
         <div className="mx-auto w-full max-w-7xl">
           <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_24px_60px_-16px_rgba(15,23,42,0.14)]">
             <div className="h-1.5 bg-gradient-to-r from-[#00a897] via-teal-500 to-blue-500" />

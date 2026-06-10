@@ -90,7 +90,7 @@ export function PaymentReturnPage() {
       <SEO page="choosePlan" />
       <SideNav />
 
-      <main className="relative flex min-h-[calc(100vh-5rem)] items-center justify-center px-4 py-24">
+      <main className="relative flex min-h-[70vh] items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg">
           <AuthCard>
             <AuthCardBody>

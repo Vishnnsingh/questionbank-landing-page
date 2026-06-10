@@ -212,11 +212,10 @@ export function PolicyPage({ page }: { page: PolicyPageKey }) {
   const isAbout = page === 'about';
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
       <SEO page={page} />
       <SideNav />
-      <div className="pt-20">
-        <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-20">
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-20">
           <a href="/" className="inline-flex items-center gap-2 text-sm text-blue-700 hover:text-teal-700 transition-colors mb-10">
             <ArrowLeft className="size-4" />
             Back to home
@@ -278,7 +277,6 @@ export function PolicyPage({ page }: { page: PolicyPageKey }) {
           </div>
         </main>
         <Footer />
-      </div>
     </div>
   );
 }

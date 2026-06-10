@@ -2,106 +2,107 @@
 @import './tailwind.css';
 @import './theme.css';
 
+:root {
+  --site-header-height: 4rem;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --site-header-height: 4.25rem;
+  }
+}
+
+html {
+  scroll-padding-top: var(--site-header-height);
+}
+
 html,
 body {
-  overflow-x: hidden;
+  margin: 0;
+  overflow-x: clip;
 }
 
 body {
   min-width: 320px;
 }
 
-.hero-phone-carousel {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  padding-inline: calc((100% - min(68vw, 235px)) / 2);
+.site-header {
+  height: var(--site-header-height);
 }
 
-.hero-phone-carousel::before,
-.hero-phone-carousel::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  width: 44px;
+.site-header-inner {
   height: 100%;
-  pointer-events: none;
 }
 
-.hero-phone-carousel::before {
-  left: 0;
-  background: linear-gradient(90deg, rgba(15, 118, 110, 0.65), transparent);
+.site-header-spacer {
+  height: var(--site-header-height);
+  flex-shrink: 0;
 }
 
-.hero-phone-carousel::after {
-  right: 0;
-  background: linear-gradient(270deg, rgba(15, 118, 110, 0.65), transparent);
-}
-
-.hero-phone-track {
+.hero-phone-showcase {
   display: flex;
-  width: max-content;
-  gap: 18px;
-  animation: hero-phone-slide 42s linear infinite;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
 }
 
-.hero-phone-carousel:hover .hero-phone-track {
-  animation-play-state: paused;
-}
-
-.hero-phone-frame {
-  flex: 0 0 auto;
-  width: min(68vw, 235px);
-  height: min(132vw, 510px);
-  min-height: 410px;
-  max-height: 510px;
-  overflow: hidden;
-  border: 7px solid #0f172a;
-  border-radius: 26px;
+.hero-phone-device {
+  width: min(72vw, 265px);
+  padding: 11px;
+  border-radius: 34px;
   background: #0f172a;
-  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.3);
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.35);
 }
 
-@keyframes hero-phone-slide {
-  from {
-    transform: translateX(0);
-  }
+.hero-phone-screen {
+  overflow: hidden;
+  aspect-ratio: 9 / 19;
+  border-radius: 26px;
+  background: #020617;
+}
 
-  to {
-    transform: translateX(calc(-50% - 9px));
-  }
+.hero-phone-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.hero-phone-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.35);
+  transition: width 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+}
+
+.hero-phone-dot-active {
+  width: 1.5rem;
+  background: #fff;
 }
 
 @media (min-width: 640px) {
-  .hero-phone-carousel {
-    padding-inline: 0;
+  .hero-phone-device {
+    width: 265px;
+    padding: 12px;
+    border-radius: 38px;
   }
 
-  .hero-phone-track {
-    gap: 18px;
-  }
-
-  .hero-phone-frame {
-    width: 245px;
-    height: 530px;
-    border-width: 10px;
-    border-radius: 34px;
-  }
-
-  @keyframes hero-phone-slide {
-    from {
-      transform: translateX(0);
-    }
-
-    to {
-      transform: translateX(calc(-50% - 9px));
-    }
+  .hero-phone-screen {
+    border-radius: 30px;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .hero-phone-track {
-    animation-duration: 80s;
+@media (min-width: 1024px) {
+  .hero-phone-device {
+    width: 285px;
+    padding: 13px;
+    border-radius: 40px;
+  }
+
+  .hero-phone-screen {
+    border-radius: 32px;
   }
 }
