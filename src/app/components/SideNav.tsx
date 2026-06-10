@@ -48,6 +48,8 @@ const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 const headerActionClass =
   'shrink-0 rounded-full bg-slate-950 px-2 py-1 text-[10px] font-semibold text-white shadow-lg shadow-slate-950/10 transition-all hover:-translate-y-0.5 hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
+const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
 }
@@ -239,14 +241,14 @@ export function SideNav() {
     <>
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-slate-200/80 bg-white/90 px-4 py-2 shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <a href="/" className="flex min-w-0 items-center gap-3 text-slate-950">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden">
-              <img src={logoImage} alt="Honhaar logo" className="h-[220%] w-[220%] max-w-none object-contain" />
+          <a href="/" className="flex min-w-0 items-center gap-2.5 text-slate-950">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden sm:h-[52px] sm:w-[52px]">
+              <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
             </span>
             <span className="leading-tight">
-              <span className="block text-lg font-bold tracking-normal">Honhaar</span>
-              <span className="hidden text-xs font-semibold uppercase tracking-[0.12em] text-teal-700 sm:block">
-                Smart Prep
+              <span className="block text-xl font-extrabold tracking-normal">Honhaar</span>
+              <span className="hidden text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700 sm:block">
+                Question Bank
               </span>
             </span>
           </a>
@@ -282,11 +284,16 @@ export function SideNav() {
           />
           <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
             <div className="mb-6 flex items-center justify-between">
-              <a href="/" className="flex items-center gap-3 text-slate-950">
-                <span className="flex h-14 w-14 items-center justify-center overflow-hidden">
-                  <img src={logoImage} alt="Honhaar logo" className="h-[220%] w-[220%] max-w-none object-contain" />
+              <a href="/" className="flex items-center gap-2.5 text-slate-950">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
+                  <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
                 </span>
-                <span className="text-lg font-semibold">Smart Prep</span>
+                <span className="leading-tight">
+                  <span className="block text-xl font-extrabold">Honhaar</span>
+                  <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700">
+                    Question Bank
+                  </span>
+                </span>
               </a>
               <button
                 type="button"

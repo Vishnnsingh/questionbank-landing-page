@@ -2,17 +2,24 @@ import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from 'luci
 import { SUPPORT_EMAIL, SUPPORT_PHONE } from '../seo';
 import logoImage from '../../images/logo.png';
 
+const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-300">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden">
-                <img src={logoImage} alt="Honhaar logo" className="h-[220%] w-[220%] max-w-none object-contain" />
+            <div className="flex items-center gap-2.5 mb-6">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden">
+                <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
               </div>
-              <span className="text-2xl text-white">Honhaar</span>
+              <span className="leading-tight">
+                <span className="block text-2xl font-extrabold text-white">Honhaar</span>
+                <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-300">
+                  Question Bank
+                </span>
+              </span>
             </div>
             <p className="text-sm text-slate-400 mb-6">
               CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.

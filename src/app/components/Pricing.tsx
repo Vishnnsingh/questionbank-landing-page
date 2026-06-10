@@ -3,6 +3,8 @@ import { motion } from 'motion/react';
 import { PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
 import logoImage from '../../images/logo.png';
 
+const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+
 const plans = [
   {
     name: 'Class 10th',
@@ -119,7 +121,7 @@ export function Pricing() {
               {/* Plan Header */}
               <div className="text-center mb-6">
                 <motion.div 
-                  className="inline-flex h-24 w-24 items-center justify-center overflow-hidden mb-3"
+                  className="inline-flex h-20 w-20 items-center justify-center overflow-hidden mb-3"
                   animate={{ 
                     rotate: [0, 5, -5, 0],
                   }}
@@ -130,7 +132,7 @@ export function Pricing() {
                     ease: "easeInOut"
                   }}
                 >
-                  <img src={logoImage} alt="Honhaar plan logo" className="h-[220%] w-[220%] max-w-none object-contain" />
+                  <img src={logoImage} alt="Honhaar plan logo" className={logoImageClass} />
                 </motion.div>
                 <h3 className="text-2xl text-slate-900 mb-2">
                   <span itemProp="name">{plan.name}</span>
