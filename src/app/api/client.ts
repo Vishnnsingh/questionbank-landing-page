@@ -1,6 +1,6 @@
 import axios, { type AxiosError } from 'axios';
 
-export const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001').replace(
+export const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'https://api.honhaar.in').replace(
   /\/+$/,
   '',
 );
