@@ -10,3 +10,98 @@ body {
 body {
   min-width: 320px;
 }
+
+.hero-phone-carousel {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding-inline: calc((100% - min(68vw, 235px)) / 2);
+}
+
+.hero-phone-carousel::before,
+.hero-phone-carousel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 44px;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hero-phone-carousel::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(15, 118, 110, 0.65), transparent);
+}
+
+.hero-phone-carousel::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(15, 118, 110, 0.65), transparent);
+}
+
+.hero-phone-track {
+  display: flex;
+  width: max-content;
+  gap: 18px;
+  animation: hero-phone-slide 42s linear infinite;
+}
+
+.hero-phone-carousel:hover .hero-phone-track {
+  animation-play-state: paused;
+}
+
+.hero-phone-frame {
+  flex: 0 0 auto;
+  width: min(68vw, 235px);
+  height: min(132vw, 510px);
+  min-height: 410px;
+  max-height: 510px;
+  overflow: hidden;
+  border: 7px solid #0f172a;
+  border-radius: 26px;
+  background: #0f172a;
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.3);
+}
+
+@keyframes hero-phone-slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 9px));
+  }
+}
+
+@media (min-width: 640px) {
+  .hero-phone-carousel {
+    padding-inline: 0;
+  }
+
+  .hero-phone-track {
+    gap: 18px;
+  }
+
+  .hero-phone-frame {
+    width: 245px;
+    height: 530px;
+    border-width: 10px;
+    border-radius: 34px;
+  }
+
+  @keyframes hero-phone-slide {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(calc(-50% - 9px));
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-phone-track {
+    animation-duration: 80s;
+  }
+}
