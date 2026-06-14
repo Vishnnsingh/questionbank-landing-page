@@ -1,6 +1,13 @@
-export const SITE_URL = 'https://honhaar.in';
+import {
+  SCHEMA_IN_STOCK,
+  SCHEMA_NEW_CONDITION,
+  SCHEMA_ORG_URL,
+  SITE_URL,
+  SUPPORT_EMAIL,
+} from './config/env';
+
+export { SITE_URL, SUPPORT_EMAIL };
 export const SITE_NAME = 'Honhaar';
-export const SUPPORT_EMAIL = 'support@honhaar.in';
 export const SUPPORT_PHONE = '8084048167';
 export const PRODUCT_IMAGE_URL = `${SITE_URL}/images/og-homepage.jpg`;
 
@@ -128,7 +135,7 @@ export function absoluteUrl(path: string) {
 
 export function buildHomeJsonLd() {
   return {
-    '@context': 'https://schema.org',
+    '@context': SCHEMA_ORG_URL,
     '@graph': [
       {
         '@type': 'Organization',
@@ -170,7 +177,7 @@ export function buildHomeJsonLd() {
           name: product.name,
           price: product.price,
           priceCurrency: product.currency,
-          availability: 'https://schema.org/InStock',
+          availability: SCHEMA_IN_STOCK,
           category: 'Education',
         })),
         publisher: { '@id': `${SITE_URL}/#organization` },
@@ -191,8 +198,8 @@ export function buildHomeJsonLd() {
           name: product.name,
           price: product.price,
           priceCurrency: product.currency,
-          availability: 'https://schema.org/InStock',
-          itemCondition: 'https://schema.org/NewCondition',
+          availability: SCHEMA_IN_STOCK,
+          itemCondition: SCHEMA_NEW_CONDITION,
           url: absoluteUrl('/#pricing'),
         },
       })),

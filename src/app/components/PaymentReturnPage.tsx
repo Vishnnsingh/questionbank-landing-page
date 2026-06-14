@@ -1,19 +1,21 @@
-import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { verifyWebPayment } from '../api/subscription-api';
 import { ensureValidAccessToken } from '../lib/auth-session';
+import { resolveVerifyFeedback } from '../lib/payment-gateway-status';
+import { formatPaymentUserMessage } from '../lib/payment-messages';
 import { AuthCard, AuthCardBody, AuthPageBackground } from './auth-ui';
+import { PaymentFeedback, type PaymentFeedbackPhase } from './PaymentFeedback';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-type VerifyState = 'loading' | 'pending' | 'success' | 'error';
-
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const REDIRECT_DELAY_MS = 2200;
 
 export function PaymentReturnPage() {
-  const [state, setState] = useState<VerifyState>('loading');
-  const [message, setMessage] = useState('Verifying your payment…');
+  const [phase, setPhase] = useState<PaymentFeedbackPhase>('waiting');
+  const [message, setMessage] = useState('Verifying your payment. Please do not close this page…');
+  const [gatewayStatus, setGatewayStatus] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -41,32 +43,37 @@ export function PaymentReturnPage() {
           const result = await verifyWebPayment(accessToken, { orderId, subscriptionId });
           if (cancelled) return;
 
-          if (result.pending) {
-            setState('pending');
-            setMessage(result.message || 'Payment is still processing. Please wait…');
+          const feedback = resolveVerifyFeedback(result);
+          setGatewayStatus(feedback.gatewayStatus);
+          setMessage(feedback.message);
+
+          if (feedback.state === 'pending') {
+            setPhase('waiting');
             await sleep(2000);
             continue;
           }
 
-          setState('success');
-          setMessage('Payment successful! Your subscription is now active.');
+          setPhase(
+            feedback.state === 'success' || feedback.state === 'failed'
+              ? feedback.state
+              : 'waiting',
+          );
           return;
         }
 
-        setState('error');
-        setMessage('Payment verification timed out. Please try again from Choose Plan.');
-        setTimeout(() => {
-          window.location.href = '/choose-plan';
-        }, 2500);
+        setPhase('failed');
+        setGatewayStatus('TIMEOUT');
+        setMessage('Payment verification timed out. Please check Choose Plan or try again.');
       } catch (err) {
         if (!cancelled) {
-          setState('error');
+          setPhase('failed');
+          setGatewayStatus('');
           setMessage(
-            err instanceof Error ? err.message : 'Payment verification failed.',
+            formatPaymentUserMessage(
+              err,
+              'Payment verification failed. Please try again from Choose Plan.',
+            ),
           );
-          setTimeout(() => {
-            window.location.href = '/choose-plan';
-          }, 2500);
         }
       }
     }
@@ -77,12 +84,15 @@ export function PaymentReturnPage() {
     };
   }, []);
 
-  const icon =
-    state === 'success' ? (
-      <CheckCircle2 className="size-14 text-emerald-600" />
-    ) : (
-      <Loader2 className="size-14 animate-spin text-[#00a897]" />
-    );
+  useEffect(() => {
+    if (phase !== 'success' && phase !== 'failed') return;
+
+    const timer = window.setTimeout(() => {
+      window.location.href = '/choose-plan';
+    }, REDIRECT_DELAY_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [phase]);
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
@@ -94,35 +104,17 @@ export function PaymentReturnPage() {
         <div className="w-full max-w-lg">
           <AuthCard>
             <AuthCardBody>
-              <div className="flex flex-col items-center py-6 text-center">
-                {icon}
-                <h1 className="mt-6 text-2xl font-bold text-slate-950">
-                  {state === 'success'
-                    ? 'Payment complete'
-                    : state === 'error'
-                      ? 'Payment issue'
-                      : 'Processing payment'}
-                </h1>
-                <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-600">{message}</p>
-
-                {state === 'success' ? (
-                  <a
-                    href="/choose-plan"
-                    className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
-                  >
-                    Back to plans
-                  </a>
-                ) : null}
-
-                {state === 'error' ? (
-                  <a
-                    href="/choose-plan"
-                    className="mt-8 inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-teal-700"
-                  >
-                    Back to Choose Plan
-                  </a>
-                ) : null}
-              </div>
+              <PaymentFeedback
+                phase={phase}
+                message={message}
+                gatewayStatus={gatewayStatus}
+                showElapsed={phase === 'waiting'}
+                action={
+                  phase === 'success' || phase === 'failed' ? (
+                    <p className="text-sm text-slate-500">Redirecting to plans…</p>
+                  ) : null
+                }
+              />
             </AuthCardBody>
           </AuthCard>
         </div>

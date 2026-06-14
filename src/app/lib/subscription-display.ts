@@ -1,5 +1,6 @@
 import { formatInr } from './plan-catalog';
 import type { PaymentHistoryItem, SubscriptionEntitlements, SubscriptionInfo } from '../api/subscription-api';
+import { paymentStateFromRow, paymentStatusLabel as gatewayPaymentLabel } from './payment-gateway-status';
 
 export function activePlanTitle(
   entitlements?: SubscriptionEntitlements | null,
@@ -30,19 +31,28 @@ export function paymentPlanLabel(planType: string) {
   return planType;
 }
 
-export function paymentStatusColor(status: string) {
-  const key = String(status || '').toLowerCase();
-  if (key === 'paid') return 'text-emerald-700 bg-emerald-50 border-emerald-200';
-  if (key === 'failed' || key === 'cancelled') return 'text-red-700 bg-red-50 border-red-200';
-  return 'text-slate-600 bg-slate-50 border-slate-200';
+export function paymentStatusColor(item: PaymentHistoryItem | string) {
+  const state =
+    typeof item === 'string'
+      ? item.toLowerCase() === 'paid'
+        ? 'success'
+        : item.toLowerCase() === 'failed' || item.toLowerCase() === 'cancelled'
+          ? 'failed'
+          : 'pending'
+      : paymentStateFromRow(item);
+  if (state === 'success') return 'text-emerald-700 bg-emerald-50 border-emerald-200';
+  if (state === 'failed') return 'text-red-700 bg-red-50 border-red-200';
+  return 'text-amber-700 bg-amber-50 border-amber-200';
 }
 
 export function formatPaymentRow(item: PaymentHistoryItem) {
+  const gatewayStatus = item.gateway_status ? String(item.gateway_status).toUpperCase() : '';
   return {
     plan: paymentPlanLabel(item.plan_type),
     amount: formatInr(Number(item.amount_inr || 0)),
     date: item.created_at ? String(item.created_at).slice(0, 10) : '—',
-    status: item.status_label || item.status,
+    status: gatewayPaymentLabel(item),
+    gatewayStatus,
     gateway: item.gateway || (item.payment_provider === 'cashfree' ? 'Cashfree' : 'Razorpay'),
     txn: item.transaction_id || '—',
   };

@@ -1,4 +1,5 @@
 import { logoutUser, refreshAccessToken } from '../api/auth-api';
+import { clearSessionTenant } from './tenant-rbac';
 import {
   clearPaymentSession,
   readPaymentUserContext,
@@ -44,6 +45,7 @@ export async function performPaymentLogout(): Promise<void> {
   const accessToken = user?.accessToken;
 
   clearPaymentSession();
+  clearSessionTenant();
 
   if (accessToken) {
     try {

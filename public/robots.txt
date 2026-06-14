@@ -19,4 +19,4 @@ Allow: /
 User-agent: ClaudeBot
 Allow: /
 
-Sitemap: https://honhaar.in/sitemap.xml
+Sitemap: http://localhost:5173/sitemap.xml

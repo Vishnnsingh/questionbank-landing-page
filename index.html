@@ -15,11 +15,11 @@
     <meta name="author" content="Honhaar" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="theme-color" content="#0f766e" />
-    <link rel="canonical" href="https://honhaar.in/" />
+    <link rel="canonical" href="%VITE_SITE_URL%/" />
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
-    <link rel="preconnect" href="https://images.unsplash.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="%VITE_UNSPLASH_PRECONNECT_URL%" />
+    <link rel="preconnect" href="%VITE_GOOGLE_FONTS_PRECONNECT_URL%" crossorigin />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Honhaar" />
@@ -28,8 +28,8 @@
       property="og:description"
       content="Class 10 & 12 ke liye 20,000+ CBSE aur Bihar Board previous year questions. Objective, Subjective, Short aur Long Answer questions ke saath complete board preparation."
     />
-    <meta property="og:url" content="https://honhaar.in/" />
-    <meta property="og:image" content="https://honhaar.in/images/og-homepage.jpg" />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/images/og-homepage.jpg" />
     <meta property="og:locale" content="en_IN" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -39,27 +39,27 @@
       name="twitter:description"
       content="Class 10 & 12 ke liye 20,000+ CBSE aur Bihar Board previous year questions with complete board preparation."
     />
-    <meta name="twitter:image" content="https://honhaar.in/images/twitter-card.jpg" />
+    <meta name="twitter:image" content="%VITE_SITE_URL%/images/twitter-card.jpg" />
 
     <script type="application/ld+json">
       {
-        "@context": "https://schema.org",
+        "@context": "%VITE_SCHEMA_ORG_URL%",
         "@graph": [
           {
             "@type": "WebSite",
-            "@id": "https://honhaar.in/#website",
-            "url": "https://honhaar.in/",
+            "@id": "%VITE_SITE_URL%/#website",
+            "url": "%VITE_SITE_URL%/",
             "name": "Honhaar",
             "description": "India ka leading CBSE aur Bihar Board exam preparation platform",
             "inLanguage": ["en-IN", "hi-IN"],
-            "publisher": { "@id": "https://honhaar.in/#organization" }
+            "publisher": { "@id": "%VITE_SITE_URL%/#organization" }
           },
           {
             "@type": "Organization",
-            "@id": "https://honhaar.in/#organization",
+            "@id": "%VITE_SITE_URL%/#organization",
             "name": "Honhaar",
-            "url": "https://honhaar.in/",
-            "email": "support@honhaar.in",
+            "url": "%VITE_SITE_URL%/",
+            "email": "%VITE_SUPPORT_EMAIL%",
             "telephone": "8084048167",
             "address": {
               "@type": "PostalAddress",
@@ -71,26 +71,26 @@
           },
           {
             "@type": "MobileApplication",
-            "@id": "https://honhaar.in/#app",
+            "@id": "%VITE_SITE_URL%/#app",
             "name": "Honhaar - Board Exam Preparation",
             "operatingSystem": "Android",
             "applicationCategory": "EducationalApplication",
             "description": "Honhaar ek Indian board exam preparation platform hai jo CBSE aur Bihar Board students ke liye 20,000+ previous year questions provide karta hai.",
-            "url": "https://honhaar.in/",
+            "url": "%VITE_SITE_URL%/",
             "offers": [
               {
                 "@type": "Offer",
                 "name": "Class 10 Question Bank",
                 "price": "199",
                 "priceCurrency": "INR",
-                "availability": "https://schema.org/InStock"
+                "availability": "%VITE_SCHEMA_ORG_URL%/InStock"
               },
               {
                 "@type": "Offer",
                 "name": "Class 12 Question Bank",
                 "price": "249",
                 "priceCurrency": "INR",
-                "availability": "https://schema.org/InStock"
+                "availability": "%VITE_SCHEMA_ORG_URL%/InStock"
               }
             ]
           }

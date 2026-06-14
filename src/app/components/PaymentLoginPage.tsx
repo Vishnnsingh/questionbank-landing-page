@@ -7,6 +7,7 @@ import {
   readPendingLoginEmail,
   savePaymentUserContext,
 } from '../lib/signup-context';
+import { DEFAULT_TENANT_ID, setSessionTenantId } from '../lib/tenant-rbac';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
   AuthAlert,
@@ -63,6 +64,7 @@ export function PaymentLoginPage() {
         refreshToken: login.refreshToken,
         expiresAt: Date.now() + (login.expiresIn ?? 3600) * 1000,
       });
+      setSessionTenantId(DEFAULT_TENANT_ID);
 
       clearPendingLoginEmail();
       window.location.href = '/choose-plan';
@@ -79,8 +81,8 @@ export function PaymentLoginPage() {
       <SEO page="paymentLogin" />
       <SideNav />
 
-      <main className="relative min-h-0 flex-1 px-4 pb-6 sm:px-6 lg:px-10">
-        <div className="mx-auto w-full max-w-7xl">
+      <main className="relative flex flex-1 flex-col px-4 py-8 sm:px-6 sm:py-10 lg:px-10">
+        <div className="mx-auto my-auto w-full max-w-7xl">
           <div className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_24px_60px_-16px_rgba(15,23,42,0.14)]">
             <div className="h-1.5 bg-gradient-to-r from-[#00a897] via-teal-500 to-blue-500" />
 

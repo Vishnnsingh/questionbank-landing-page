@@ -1,9 +1,8 @@
 import axios, { type AxiosError } from 'axios';
+import { API_BASE } from '../config/env';
+import { DEFAULT_TENANT_ID, getSessionTenantId } from '../lib/tenant-rbac';
 
-export const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'https://api.honhaar.in').replace(
-  /\/+$/,
-  '',
-);
+export { API_BASE };
 
 export type ApiPayload<T = unknown> = {
   success?: boolean;
@@ -19,6 +18,18 @@ export const apiClient = axios.create({
   withCredentials: true,
 });
 
+apiClient.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
+  const token =
+    typeof config.headers.Authorization === 'string'
+      ? config.headers.Authorization.replace(/^Bearer\s+/i, '').trim()
+      : '';
+  if (token) {
+    config.headers['X-Tenant-Id'] = getSessionTenantId() || DEFAULT_TENANT_ID;
+  }
+  return config;
+});
+
 export function getApiErrorMessage(error: unknown, fallback: string) {
   if (axios.isAxiosError(error)) {
     const payload = error.response?.data as ApiPayload | undefined;
@@ -32,6 +43,7 @@ export function getApiErrorMessage(error: unknown, fallback: string) {
 export function authHeaders(accessToken: string) {
   return {
     Authorization: `Bearer ${accessToken}`,
+    'X-Tenant-Id': getSessionTenantId() || DEFAULT_TENANT_ID,
   };
 }
 

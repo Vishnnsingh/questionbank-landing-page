@@ -30,8 +30,8 @@ export function ChoosePlanSubscriptionPanel({
   const isActive = Boolean(entitlements?.fullAccess);
 
   return (
-    <section className="mt-6 rounded-2xl border border-teal-100 bg-gradient-to-br from-white to-teal-50/30 p-5 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-teal-100/80 pb-4">
+    <section className="mt-8 w-full rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
@@ -123,11 +123,14 @@ export function ChoosePlanSubscriptionPanel({
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold text-slate-900">{row.plan}</p>
                       <p className="text-xs text-slate-500">{row.date} · {row.gateway}</p>
-                      <p className="truncate text-xs text-slate-400">Txn: {row.txn}</p>
+                      {row.gatewayStatus ? (
+                        <p className="text-xs text-slate-500">Gateway: {row.gatewayStatus}</p>
+                      ) : null}
+                      <p className="truncate text-xs text-slate-400">Payment id: {row.txn}</p>
                     </div>
                     <p className="text-sm font-bold text-slate-900">{row.amount}</p>
                     <span
-                      className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold ${paymentStatusColor(item.status)}`}
+                      className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-semibold ${paymentStatusColor(item)}`}
                     >
                       {row.status}
                     </span>

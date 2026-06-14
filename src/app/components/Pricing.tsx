@@ -1,6 +1,11 @@
 import { Check, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
-import { PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
+import {
+  SCHEMA_IN_STOCK,
+  SCHEMA_NEW_CONDITION,
+  SCHEMA_ORG_URL,
+} from '../config/env';
+import { absoluteUrl, PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
 import logoImage from '../../images/logo.png';
 
 const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
@@ -79,7 +84,7 @@ export function Pricing() {
             <motion.div
               key={plan.serviceName}
               itemScope
-              itemType="https://schema.org/Product"
+              itemType={`${SCHEMA_ORG_URL}/Product`}
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -95,7 +100,7 @@ export function Pricing() {
               }`}
             >
               <meta itemProp="image" content={PRODUCT_IMAGE_URL} />
-              <span itemProp="brand" itemScope itemType="https://schema.org/Brand" className="sr-only">
+              <span itemProp="brand" itemScope itemType={`${SCHEMA_ORG_URL}/Brand`} className="sr-only">
                 <meta itemProp="name" content={SITE_NAME} />
               </span>
               {/* Popular Badge */}
@@ -143,13 +148,13 @@ export function Pricing() {
                     className="text-4xl lg:text-5xl bg-gradient-to-r from-blue-600 to-teal-600 bg-clip-text text-transparent"
                     itemProp="offers"
                     itemScope
-                    itemType="https://schema.org/Offer"
+                    itemType={`${SCHEMA_ORG_URL}/Offer`}
                   >
                     <meta itemProp="priceCurrency" content="INR" />
                     <meta itemProp="price" content={String(plan.price)} />
-                    <meta itemProp="availability" content="https://schema.org/InStock" />
-                    <meta itemProp="itemCondition" content="https://schema.org/NewCondition" />
-                    <meta itemProp="url" content="https://honhaar.in/#pricing" />
+                    <meta itemProp="availability" content={SCHEMA_IN_STOCK} />
+                    <meta itemProp="itemCondition" content={SCHEMA_NEW_CONDITION} />
+                    <meta itemProp="url" content={absoluteUrl('/#pricing')} />
                     INR {plan.price}
                   </span>
                   <span className="text-slate-500">/ {plan.duration}</span>

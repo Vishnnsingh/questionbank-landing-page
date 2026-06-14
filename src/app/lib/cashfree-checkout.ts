@@ -1,8 +1,7 @@
 import type { WebCheckoutResult } from '../api/subscription-api';
+import { CASHFREE_SDK_URL } from '../config/env';
 
 type CashfreeMode = 'sandbox' | 'production';
-
-const CASHFREE_SDK_URL = 'https://sdk.cashfree.com/js/v3/cashfree.js';
 
 type CashfreeInstance = {
   checkout: (options: {

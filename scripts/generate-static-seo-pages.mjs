@@ -1,7 +1,10 @@
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { getEnv, loadEnv } from './load-env.mjs';
 
-const siteUrl = 'https://honhaar.in';
+const env = loadEnv();
+const siteUrl = getEnv('VITE_SITE_URL', env).replace(/\/+$/, '');
+const schemaOrgUrl = getEnv('VITE_SCHEMA_ORG_URL', env).replace(/\/+$/, '');
 const outDir = 'public';
 const today = '2026-06-07';
 const totalQuestionCount = '20,000+';
@@ -253,7 +256,7 @@ function pageTemplate(page, extra = {}) {
   ]).map(([href, label]) => `<a href="${href}">${escapeHtml(label)}</a>`).join('');
 
   const jsonLd = {
-    '@context': 'https://schema.org',
+    '@context': schemaOrgUrl,
     '@graph': [
       {
         '@type': 'WebPage',

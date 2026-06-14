@@ -4,6 +4,7 @@ import {
   getApiErrorMessage,
   type ApiPayload,
 } from './client';
+import type { PlanCatalog } from '../lib/plan-catalog';
 
 export type WebCheckoutResult = {
   checkout_mode: 'cashfree_web' | 'cashfree_subscription';
@@ -48,6 +49,8 @@ export type PaymentHistoryItem = {
   amount_inr: number;
   status: string;
   status_label: string;
+  payment_state?: 'success' | 'failed' | 'pending';
+  gateway_status?: string;
   payment_provider?: string;
   gateway?: string;
   transaction_id?: string | null;
@@ -57,17 +60,44 @@ export type PaymentHistoryItem = {
 export type SubscriptionMeResult = {
   entitlements: SubscriptionEntitlements;
   subscription: SubscriptionInfo | null;
+  catalog?: PlanCatalog;
   payments: PaymentHistoryItem[];
 };
 
 export type WebVerifyResult = {
   pending?: boolean;
+  payment_state?: 'success' | 'failed' | 'pending';
+  gateway_status?: string;
   order_status?: string;
   subscription_status?: string;
   message?: string;
   entitlements?: SubscriptionEntitlements;
   subscription?: SubscriptionInfo;
+  payments?: PaymentHistoryItem[];
 };
+
+export type PublicPlansCatalogResult = {
+  class: '10' | '12';
+  settings?: Record<string, unknown>;
+  catalog: PlanCatalog;
+};
+
+export async function fetchPublicPlansCatalog(classValue: string): Promise<PublicPlansCatalogResult> {
+  try {
+    const cls = String(classValue || '').replace(/\D/g, '') === '12' ? '12' : '10';
+    const { data } = await apiClient.get<ApiPayload<PublicPlansCatalogResult>>(
+      '/api/v1/user-app/subscriptions/plans-catalog',
+      { params: { class: cls } },
+    );
+    const payload = data?.data;
+    if (!payload?.catalog) {
+      throw new Error('Invalid plan catalog response.');
+    }
+    return payload;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load plan catalog.'));
+  }
+}
 
 export async function fetchSubscriptionMe(accessToken: string): Promise<SubscriptionMeResult> {
   try {
@@ -82,6 +112,7 @@ export async function fetchSubscriptionMe(accessToken: string): Promise<Subscrip
     return {
       entitlements: payload.entitlements,
       subscription: payload.subscription ?? null,
+      catalog: payload.catalog ?? undefined,
       payments: Array.isArray(payload.payments) ? payload.payments : [],
     };
   } catch (error) {
@@ -106,6 +137,7 @@ export async function updateAutoRenew(
     return {
       entitlements: payload.entitlements,
       subscription: payload.subscription ?? null,
+      catalog: payload.catalog ?? undefined,
       payments: Array.isArray(payload.payments) ? payload.payments : [],
     };
   } catch (error) {

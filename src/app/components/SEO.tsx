@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { absoluteUrl, buildHomeJsonLd, pageMeta } from '../seo';
+import { SCHEMA_ORG_URL } from '../config/env';
+import { absoluteUrl, buildHomeJsonLd, pageMeta, SITE_URL } from '../seo';
 
 type PageKey = keyof typeof pageMeta;
 
@@ -72,12 +73,12 @@ export function SEO({ page }: { page: PageKey }) {
       page === 'home'
         ? buildHomeJsonLd()
         : {
-            '@context': 'https://schema.org',
+            '@context': SCHEMA_ORG_URL,
             '@type': 'WebPage',
             name: meta.title,
             description: meta.description,
             url: canonical,
-            isPartOf: { '@id': 'https://honhaar.in/#website' },
+            isPartOf: { '@id': `${SITE_URL}/#website` },
           }
     );
   }, [page]);

@@ -10,6 +10,7 @@ import { PolicyPage } from './components/PolicyPage';
 import { SEO } from './components/SEO';
 import { SeoLandingPage } from './components/SeoLandingPage';
 import { ChoosePlanPage } from './components/ChoosePlanPage';
+import { ShareApplicationPage } from './components/ShareApplicationPage';
 import { PaymentLoginPage } from './components/PaymentLoginPage';
 import { PaymentReturnPage } from './components/PaymentReturnPage';
 import { SignUpPage } from './components/SignUpPage';
@@ -28,6 +29,10 @@ export default function App() {
 
   if (path === '/choose-plan') {
     return <ChoosePlanPage />;
+  }
+
+  if (path === '/share-application') {
+    return <ShareApplicationPage />;
   }
 
   if (path === '/payment/return') {

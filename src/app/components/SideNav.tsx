@@ -1,7 +1,9 @@
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Loader2, LogOut, Menu, UserCircle, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import logoImage from '../../images/logo.png';
+import { hasPaymentAuthSession, performPaymentLogout } from '../lib/auth-session';
+import { readPaymentUserContext } from '../lib/signup-context';
 
 type NavLink = {
   label: string;
@@ -49,7 +51,7 @@ const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 const headerActionClass =
   'inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
-const logoImageClass = 'block h-full w-full max-h-full max-w-full object-contain object-center';
+const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -235,14 +237,128 @@ function NavLinks({
   );
 }
 
+function HeaderProfileMenu({ onNavigate }: { onNavigate?: () => void }) {
+  const [open, setOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const user = readPaymentUserContext();
+  const firstName = user?.fullName?.split(' ')[0] || 'Account';
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    return () => document.removeEventListener('mousedown', handlePointerDown);
+  }, [open]);
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    onNavigate?.();
+    await performPaymentLogout();
+  };
+
+  return (
+    <div ref={menuRef} className="relative">
+      <button
+        type="button"
+        aria-label="Open profile menu"
+        aria-expanded={open}
+        onClick={() => setOpen((prev) => !prev)}
+        className="inline-flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800 sm:size-10"
+      >
+        <UserCircle className="size-5 sm:size-[1.35rem]" />
+      </button>
+
+      {open ? (
+        <div className="absolute right-0 top-[calc(100%+0.5rem)] z-[130] min-w-[200px] overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg">
+          <div className="border-b border-slate-100 px-4 py-3">
+            <p className="text-sm font-bold text-slate-950">{firstName}</p>
+            {user?.email ? (
+              <p className="mt-0.5 truncate text-xs text-slate-500">{user.email}</p>
+            ) : null}
+          </div>
+          <button
+            type="button"
+            disabled={loggingOut}
+            onClick={() => void handleLogout()}
+            className="flex w-full items-center gap-2 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-70"
+          >
+            {loggingOut ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <LogOut className="size-4" />
+            )}
+            Logout
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function HeaderActions({
+  loggedIn,
+  onNavigate,
+  className = '',
+  stacked = false,
+  showProfile = false,
+}: {
+  loggedIn: boolean;
+  onNavigate?: () => void;
+  className?: string;
+  stacked?: boolean;
+  showProfile?: boolean;
+}) {
+  const actionClass = stacked
+    ? `${headerActionClass} w-full text-center`
+    : headerActionClass;
+
+  if (loggedIn) {
+    return (
+      <div className={`flex items-center gap-2 ${stacked ? 'flex-col' : ''} ${className}`}>
+        <a href="/share-application" onClick={onNavigate} className={actionClass}>
+          Share Application
+        </a>
+        <a href="/choose-plan" onClick={onNavigate} className={actionClass}>
+          Choose Plan
+        </a>
+        {showProfile ? <HeaderProfileMenu onNavigate={onNavigate} /> : null}
+      </div>
+    );
+  }
+
+  return (
+    <div className={`flex items-center gap-2 ${stacked ? 'flex-col' : ''} ${className}`}>
+      <a href="/signup" onClick={onNavigate} className={actionClass}>
+        Register
+      </a>
+      <a href="/#pricing" onClick={onNavigate} className={actionClass}>
+        Get App
+      </a>
+    </div>
+  );
+}
+
 export function SideNav() {
   const [open, setOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(hasPaymentAuthSession());
+  }, []);
 
   const headerBar = (
     <header className="site-header fixed inset-x-0 top-0 z-[100] overflow-visible border-b border-slate-200 bg-white">
       <div className="site-header-inner mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3">
         <a href="/" className="flex min-w-0 shrink-0 items-center gap-2 text-slate-950">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white">
+          <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white sm:h-14 sm:w-14">
             <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
           </span>
           <span className="min-w-0 truncate">
@@ -258,14 +374,12 @@ export function SideNav() {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden items-center gap-2 lg:flex">
-            <a href="/signup" className={headerActionClass}>
-              Register
-            </a>
-            <a href="/#pricing" className={headerActionClass}>
-              Get App
-            </a>
-          </div>
+          <HeaderActions loggedIn={loggedIn} showProfile className="hidden lg:flex" />
+          {loggedIn ? (
+            <div className="lg:hidden">
+              <HeaderProfileMenu />
+            </div>
+          ) : null}
           <button
             type="button"
             aria-label="Open navigation"
@@ -290,7 +404,7 @@ export function SideNav() {
       <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
         <div className="mb-6 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5 text-slate-950">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden">
               <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
             </span>
             <span className="leading-tight">
@@ -313,20 +427,21 @@ export function SideNav() {
           <NavLinks onNavigate={() => setOpen(false)} />
         </div>
         <div className="mt-auto flex flex-col gap-2 border-t border-slate-100 pt-6">
-          <a
-            href="/signup"
-            onClick={() => setOpen(false)}
-            className={headerActionClass + ' text-center'}
-          >
-            Register
-          </a>
-          <a
-            href="/#pricing"
-            onClick={() => setOpen(false)}
-            className={headerActionClass + ' text-center'}
-          >
-            Get App
-          </a>
+          <HeaderActions
+            loggedIn={loggedIn}
+            onNavigate={() => setOpen(false)}
+            stacked
+            className="gap-2"
+          />
+          {loggedIn ? (
+            <button
+              type="button"
+              onClick={() => void performPaymentLogout()}
+              className={`${headerActionClass} w-full text-center`}
+            >
+              Logout
+            </button>
+          ) : null}
         </div>
       </aside>
     </div>
