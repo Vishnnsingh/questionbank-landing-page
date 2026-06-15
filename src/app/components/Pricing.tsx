@@ -8,7 +8,7 @@ import {
 import { absoluteUrl, PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
 import logoImage from '../../images/logo.png';
 
-const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+const logoImageClass = 'h-full w-full object-contain';
 
 const plans = [
   {

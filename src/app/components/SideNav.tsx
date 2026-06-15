@@ -51,7 +51,7 @@ const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 const headerActionClass =
   'inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
 
-const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+const logoImageClass = 'h-full w-full object-contain';
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';

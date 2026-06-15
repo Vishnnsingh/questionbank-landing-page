@@ -2,7 +2,7 @@ import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from 'luci
 import { SUPPORT_EMAIL, SUPPORT_PHONE } from '../seo';
 import logoImage from '../../images/logo.png';
 
-const logoImageClass = 'h-[190%] w-[190%] max-w-none object-contain object-[center_46%]';
+const logoImageClass = 'h-full w-full object-contain';
 
 export function Footer() {
   return (
