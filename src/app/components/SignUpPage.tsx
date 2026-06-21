@@ -333,7 +333,7 @@ export function SignUpPage() {
                         id="password"
                         value={password}
                         onChange={setPassword}
-                        placeholder="Exactly 8 characters"
+                        placeholder="8–16 characters"
                         autoComplete="new-password"
                         compact
                       />

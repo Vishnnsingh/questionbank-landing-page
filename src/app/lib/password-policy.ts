@@ -1,11 +1,11 @@
 export const PASSWORD_MIN_LENGTH = 8;
-export const PASSWORD_MAX_LENGTH = 8;
+export const PASSWORD_MAX_LENGTH = 16;
 
 export const STRONG_PASSWORD_MESSAGE =
-  'Password must be exactly 8 characters and include uppercase, lowercase, a number, and a special character';
+  'Password must be 8–16 characters and include uppercase, lowercase, a number, and a special character';
 
 const STRONG_PASSWORD_PATTERN =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,16}$/;
 
 export type PasswordStrength = 'weak' | 'medium' | 'strong';
 
@@ -19,7 +19,7 @@ export type PasswordChecks = {
 
 export function isStrongPassword(password: string): boolean {
   const pwd = String(password || '').trim();
-  if (pwd.length !== PASSWORD_MIN_LENGTH) return false;
+  if (pwd.length < PASSWORD_MIN_LENGTH || pwd.length > PASSWORD_MAX_LENGTH) return false;
   return STRONG_PASSWORD_PATTERN.test(pwd);
 }
 
@@ -30,7 +30,7 @@ export function assessPasswordStrength(password: string): {
 } {
   const pwd = String(password || '');
   const checks: PasswordChecks = {
-    length: pwd.length === PASSWORD_MIN_LENGTH,
+    length: pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= PASSWORD_MAX_LENGTH,
     lower: /[a-z]/.test(pwd),
     upper: /[A-Z]/.test(pwd),
     digit: /\d/.test(pwd),
@@ -50,7 +50,7 @@ export function assessPasswordStrength(password: string): {
 }
 
 export const PASSWORD_RULES = [
-  'Exactly 8 characters',
+  '8 to 16 characters',
   'One uppercase letter (A–Z)',
   'One lowercase letter (a–z)',
   'One number (0–9)',
@@ -59,5 +59,5 @@ export const PASSWORD_RULES = [
 
 export function isValidLoginPassword(password: string): boolean {
   const pwd = String(password || '').trim();
-  return pwd.length === PASSWORD_MIN_LENGTH;
+  return pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= PASSWORD_MAX_LENGTH;
 }
