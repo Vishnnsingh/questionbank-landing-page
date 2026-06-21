@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
+import { PASSWORD_MAX_LENGTH } from '../lib/password-policy';
 import { authInputClass } from './auth-ui';
 
 type PasswordInputProps = {
@@ -10,6 +11,7 @@ type PasswordInputProps = {
   placeholder?: string;
   autoComplete?: string;
   compact?: boolean;
+  maxLength?: number;
 };
 
 export function PasswordInput({
@@ -19,6 +21,7 @@ export function PasswordInput({
   placeholder,
   autoComplete,
   compact = false,
+  maxLength = PASSWORD_MAX_LENGTH,
 }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
 
@@ -32,6 +35,7 @@ export function PasswordInput({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         autoComplete={autoComplete}
+        maxLength={maxLength}
       />
       <button
         type="button"

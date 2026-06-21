@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
 import { fetchSignupBoards, registerUser } from '../api/auth-api';
+import { isStrongPassword, STRONG_PASSWORD_MESSAGE } from '../lib/password-policy';
 import { savePendingLoginEmail } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
@@ -12,6 +13,7 @@ import {
   authInputClass,
 } from './auth-ui';
 import { PasswordInput } from './PasswordInput';
+import { PasswordStrengthHint } from './PasswordStrengthHint';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
@@ -119,8 +121,8 @@ export function SignUpPage() {
       setError('Please enter valid state and city.');
       return;
     }
-    if (trimmedPassword.length < 8) {
-      setError('Password must be at least 8 characters.');
+    if (!isStrongPassword(trimmedPassword)) {
+      setError(STRONG_PASSWORD_MESSAGE);
       return;
     }
     if (trimmedPassword !== trimmedConfirmPassword) {
@@ -324,17 +326,18 @@ export function SignUpPage() {
                     </div>
 
                     <div>
-                      <label className={labelClass} htmlFor="password">
+                      <label className={`${labelClass} flex items-center gap-1.5`} htmlFor="password">
                         Password
                       </label>
                       <PasswordInput
                         id="password"
                         value={password}
                         onChange={setPassword}
-                        placeholder="Min 8 characters"
+                        placeholder="Exactly 8 characters"
                         autoComplete="new-password"
                         compact
                       />
+                      <PasswordStrengthHint password={password} />
                     </div>
 
                     <div>

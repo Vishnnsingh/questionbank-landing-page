@@ -2,6 +2,7 @@ import { CheckCircle2, LogIn, ShieldCheck, Sparkles } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 import { fetchAuthMe, loginUser } from '../api/auth-api';
+import { isValidLoginPassword } from '../lib/password-policy';
 import {
   clearPendingLoginEmail,
   readPendingLoginEmail,
@@ -48,6 +49,10 @@ export function PaymentLoginPage() {
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setError('Please enter a valid email address.');
+      return;
+    }
+    if (!isValidLoginPassword(trimmedPassword)) {
+      setError('Password must be exactly 8 characters.');
       return;
     }
 
