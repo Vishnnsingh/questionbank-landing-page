@@ -7,6 +7,21 @@ export function paymentStateFromRow(row?: PaymentHistoryItem | null): PaymentUiS
   if (row.payment_state === 'success' || row.payment_state === 'failed' || row.payment_state === 'pending') {
     return row.payment_state;
   }
+  const gateway = String(row.gateway_status || '').trim().toUpperCase();
+  if (
+    gateway === 'FAILED' ||
+    gateway === 'CANCELLED' ||
+    gateway === 'CANCELED' ||
+    gateway === 'EXPIRED' ||
+    gateway === 'REFUND' ||
+    gateway === 'REFUNDED' ||
+    gateway === 'USER_DROPPED'
+  ) {
+    return 'failed';
+  }
+  if (gateway === 'PAID' || gateway === 'SUCCESS' || gateway === 'CAPTURED') {
+    return 'success';
+  }
   const status = String(row.status || '').toLowerCase();
   if (status === 'paid') return 'success';
   if (status === 'failed' || status === 'cancelled') return 'failed';
@@ -58,18 +73,12 @@ export function resolveVerifyFeedback(result: WebVerifyResult) {
     };
   }
 
-  if (result.entitlements?.fullAccess) {
-    const gw = result.gateway_status || 'PAID';
-    return {
-      state: 'success' as const,
-      gatewayStatus: gw,
-      message: gatewayStatusMessage(gw, 'success'),
-    };
-  }
-
+  // Do not treat existing fullAccess as this checkout succeeding —
+  // that caused Failed/Refunded Cashfree payments to show as Success.
+  const gw = result.gateway_status || result.order_status || result.subscription_status || '';
   return {
     state: 'pending' as const,
-    gatewayStatus: '',
-    message: 'Verifying payment…',
+    gatewayStatus: gw,
+    message: result.message || gatewayStatusMessage(gw, 'pending'),
   };
 }
