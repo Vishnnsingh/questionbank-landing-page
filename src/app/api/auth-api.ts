@@ -5,6 +5,22 @@ import {
   type ApiPayload,
 } from './client';
 
+/** API may return string[] or { name: string }[] for geo lists. */
+function asNameList(items: unknown): string[] {
+  if (!Array.isArray(items)) return [];
+  return items
+    .map((item) => {
+      if (typeof item === 'string' || typeof item === 'number') {
+        return String(item).trim();
+      }
+      if (item && typeof item === 'object' && 'name' in item) {
+        return String((item as { name?: unknown }).name ?? '').trim();
+      }
+      return '';
+    })
+    .filter(Boolean);
+}
+
 export type RegisterPayload = {
   full_name: string;
   mobile_number: string;
@@ -73,14 +89,14 @@ export async function fetchSignupStreams(classValue: string): Promise<string[]> 
 
 export async function fetchSignupStates(): Promise<string[]> {
   try {
-    const { data } = await apiClient.get<ApiPayload<{ states: string[] }>>(
+    const { data } = await apiClient.get<ApiPayload<{ states: unknown[] }>>(
       '/api/v1/user-app/states',
     );
-    const states = data?.data?.states;
-    if (!Array.isArray(states)) {
+    const states = asNameList(data?.data?.states);
+    if (!states.length) {
       throw new Error('Invalid states response.');
     }
-    return states.map((s) => String(s).trim()).filter(Boolean);
+    return states;
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not load states.'));
   }
@@ -88,13 +104,11 @@ export async function fetchSignupStates(): Promise<string[]> {
 
 export async function fetchSignupDistricts(state: string): Promise<string[]> {
   try {
-    const { data } = await apiClient.get<ApiPayload<{ districts: string[] }>>(
+    const { data } = await apiClient.get<ApiPayload<{ districts: unknown[] }>>(
       '/api/v1/user-app/districts',
       { params: { state } },
     );
-    const districts = data?.data?.districts;
-    if (!Array.isArray(districts)) return [];
-    return districts.map((d) => String(d).trim()).filter(Boolean);
+    return asNameList(data?.data?.districts);
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not load districts.'));
   }
