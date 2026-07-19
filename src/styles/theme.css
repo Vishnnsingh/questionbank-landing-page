@@ -79,6 +79,8 @@
 }
 
 @theme inline {
+  --font-sans: var(--font-calendas);
+  --font-serif: var(--font-calendas);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -125,7 +127,8 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-family: var(--font-calendas);
   }
 
   /**

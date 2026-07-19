@@ -35,23 +35,30 @@ function trialHint(trial: {
     );
   }
   const trialPay = formatInr(trial.displayAmount ?? 2);
-  if (trial.autoRenew && trial.renewsTo === 'yearly') {
-    return `Full access for 2 days · ${trialPay} now · Yearly auto-pay after trial ends`;
-  }
-  return `Full access for 2 days · ${trialPay} · One-time payment · No auto-pay`;
+  // Auto-payment temporarily disabled
+  // if (trial.autoRenew && trial.renewsTo === 'yearly') {
+  //   return `Full access for 2 days · ${trialPay} now · Yearly auto-pay after trial ends`;
+  // }
+  return `Full access for 2 days · ${trialPay} · One-time payment`;
 }
 
 function yearlyHint(autoRenew: boolean) {
   const base = 'Pay via UPI — GPay, PhonePe, Paytm';
-  if (!autoRenew) return base;
-  return `${base} · Auto-payment on — renews every year`;
+  // Auto-payment temporarily disabled
+  // if (!autoRenew) return base;
+  // return `${base} · Auto-payment on — renews every year`;
+  void autoRenew;
+  return base;
 }
 
 export function isTrialPlanAvailable(catalog: PlanCatalog) {
   return catalog.trial.available !== false;
 }
 
-export function catalogAutoPayFooterNote(catalog: PlanCatalog) {
+export function catalogAutoPayFooterNote(_catalog: PlanCatalog) {
+  // Auto-payment temporarily disabled
+  return null;
+  /*
   const parts: string[] = [];
   if (catalog.trial.autoRenew && catalog.trial.renewsTo === 'yearly') {
     parts.push(
@@ -63,6 +70,7 @@ export function catalogAutoPayFooterNote(catalog: PlanCatalog) {
   }
   if (!parts.length) return null;
   return `${parts.join('. ')}.`;
+  */
 }
 
 function discountPercent(mrp: number, price: number) {
@@ -83,7 +91,9 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
     const trial = {
       label: '2-Day Full Trial',
       displayAmount: 2,
-      autoRenew: true,
+      // Auto-payment temporarily disabled
+      autoRenew: false,
+      // autoRenew: true,
       renewsTo: 'yearly' as const,
       available: true,
       lockedReason: null,
@@ -99,8 +109,9 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
         displayAmount,
         mrpDisplay,
         discountPercent: discountPercent(mrpDisplay, displayAmount),
-        autoRenew: true,
-        hint: yearlyHint(true),
+        autoRenew: false,
+        // autoRenew: true,
+        hint: yearlyHint(false),
       },
     };
   }
@@ -110,7 +121,8 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
   const trial = {
     label: '2-Day Full Trial',
     displayAmount: 2,
-    autoRenew: true,
+    autoRenew: false,
+    // autoRenew: true,
     renewsTo: 'yearly' as const,
     available: true,
     lockedReason: null,
@@ -126,8 +138,9 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
       displayAmount,
       mrpDisplay,
       discountPercent: discountPercent(mrpDisplay, displayAmount),
-      autoRenew: true,
-      hint: yearlyHint(true),
+      autoRenew: false,
+      // autoRenew: true,
+      hint: yearlyHint(false),
     },
   };
 }

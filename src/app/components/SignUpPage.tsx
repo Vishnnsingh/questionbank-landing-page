@@ -1,9 +1,9 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
-import { fetchSignupBoards, registerUser } from '../api/auth-api';
+import { registerUser } from '../api/auth-api';
 import { isStrongPassword, STRONG_PASSWORD_MESSAGE } from '../lib/password-policy';
-import { savePendingLoginEmail } from '../lib/signup-context';
+import { savePendingOnboardCredentials } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
   AuthAlert,
@@ -16,18 +16,6 @@ import { PasswordInput } from './PasswordInput';
 import { PasswordStrengthHint } from './PasswordStrengthHint';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
-
-const CLASS_OPTIONS = [
-  { label: 'Class 10', value: '10' },
-  { label: 'Class 12', value: '12' },
-];
-
-const STREAM_OPTIONS = [
-  { label: 'Science', value: 'science' },
-  { label: 'Arts', value: 'arts' },
-  { label: 'Commerce', value: 'commerce' },
-  { label: 'Vocational', value: 'vocational' },
-];
 
 const labelClass = 'mb-1 block text-xs font-semibold text-slate-800';
 const signupInputClass = `${authInputClass} py-2.5`;
@@ -43,37 +31,10 @@ export function SignUpPage() {
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
   const [email, setEmail] = useState('');
-  const [selectedClass, setSelectedClass] = useState('');
-  const [selectedStream, setSelectedStream] = useState('');
-  const [selectedBoard, setSelectedBoard] = useState('');
-  const [boardOptions, setBoardOptions] = useState<string[]>([]);
-  const [stateName, setStateName] = useState('');
-  const [city, setCity] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
-
-  const isSeniorClass = selectedClass === '12';
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchSignupBoards()
-      .then((boards) => {
-        if (cancelled || !boards.length) return;
-        setBoardOptions(boards);
-        setSelectedBoard((prev) => prev || boards[0] || '');
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setBoardOptions(['CBSE', 'BBSE']);
-          setSelectedBoard((prev) => prev || 'CBSE');
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -84,8 +45,6 @@ export function SignUpPage() {
     const trimmedName = fullName.trim();
     const trimmedMobile = mobileNumber.trim();
     const normalizedEmail = email.trim().toLowerCase();
-    const trimmedState = stateName.trim();
-    const trimmedCity = city.trim();
     const trimmedPassword = password.trim();
     const trimmedConfirmPassword = confirmPassword.trim();
 
@@ -105,22 +64,6 @@ export function SignUpPage() {
       setError('Please enter a valid email address.');
       return;
     }
-    if (!selectedClass) {
-      setError('Please select your class.');
-      return;
-    }
-    if (isSeniorClass && !selectedStream) {
-      setError('Please select a stream for Class 12.');
-      return;
-    }
-    if (!selectedBoard.trim()) {
-      setError('Please select your board.');
-      return;
-    }
-    if (trimmedState.length < 2 || trimmedCity.length < 2) {
-      setError('Please enter valid state and city.');
-      return;
-    }
     if (!isStrongPassword(trimmedPassword)) {
       setError(STRONG_PASSWORD_MESSAGE);
       return;
@@ -136,18 +79,16 @@ export function SignUpPage() {
         full_name: trimmedName,
         mobile_number: trimmedMobile,
         email: normalizedEmail,
-        class: selectedClass,
-        board: selectedBoard.trim(),
-        stream: isSeniorClass ? selectedStream : '',
-        state: trimmedState,
-        city: trimmedCity,
         password: trimmedPassword,
         confirm_password: trimmedConfirmPassword,
         role: 'student',
       });
 
-      savePendingLoginEmail(normalizedEmail);
-      window.location.href = '/login';
+      savePendingOnboardCredentials({
+        email: normalizedEmail,
+        password: trimmedPassword,
+      });
+      window.location.href = '/onboarding';
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
@@ -171,21 +112,21 @@ export function SignUpPage() {
                 <div className="mb-4 border-b border-slate-100 pb-4">
                   <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-teal-800">
                     <Sparkles className="size-3.5 text-[#00a897]" />
-                    Sign up
+                    Step 1 of 2
                   </div>
                   <h1 className="mt-3 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
                     Create account
                   </h1>
                   <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    Register once and continue on the Honhaar app on Play Store.
+                    Enter your details. Next you will complete class, board and location.
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    <div className="sm:col-span-2 xl:col-span-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
                       <label className={labelClass} htmlFor="full_name">
                         Full name
                       </label>
@@ -236,96 +177,6 @@ export function SignUpPage() {
                     </div>
 
                     <div>
-                      <label className={labelClass} htmlFor="class">
-                        Class
-                      </label>
-                      <select
-                        id="class"
-                        className={signupInputClass}
-                        value={selectedClass}
-                        onChange={(e) => {
-                          setSelectedClass(e.target.value);
-                          if (e.target.value !== '12') setSelectedStream('');
-                        }}
-                      >
-                        <option value="">Select</option>
-                        {CLASS_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className={labelClass} htmlFor="board">
-                        Board
-                      </label>
-                      <select
-                        id="board"
-                        className={signupInputClass}
-                        value={selectedBoard}
-                        onChange={(e) => setSelectedBoard(e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        {boardOptions.map((board) => (
-                          <option key={board} value={board}>
-                            {board}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {isSeniorClass ? (
-                      <div>
-                        <label className={labelClass} htmlFor="stream">
-                          Stream
-                        </label>
-                        <select
-                          id="stream"
-                          className={signupInputClass}
-                          value={selectedStream}
-                          onChange={(e) => setSelectedStream(e.target.value)}
-                        >
-                          <option value="">Select</option>
-                          {STREAM_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    ) : null}
-
-                    <div>
-                      <label className={labelClass} htmlFor="state">
-                        State
-                      </label>
-                      <input
-                        id="state"
-                        className={signupInputClass}
-                        value={stateName}
-                        onChange={(e) => setStateName(e.target.value)}
-                        placeholder="Bihar"
-                        autoComplete="address-level1"
-                      />
-                    </div>
-
-                    <div>
-                      <label className={labelClass} htmlFor="city">
-                        City
-                      </label>
-                      <input
-                        id="city"
-                        className={signupInputClass}
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Patna"
-                        autoComplete="address-level2"
-                      />
-                    </div>
-
-                    <div>
                       <label className={`${labelClass} flex items-center gap-1.5`} htmlFor="password">
                         Password
                       </label>
@@ -356,7 +207,7 @@ export function SignUpPage() {
                   </div>
 
                   <AuthPrimaryButton loading={isSaving} loadingText="Creating account…">
-                    Create account
+                    Continue
                   </AuthPrimaryButton>
 
                   <AuthFooterLink

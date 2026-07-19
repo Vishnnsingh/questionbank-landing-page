@@ -9,14 +9,22 @@ export type RegisterPayload = {
   full_name: string;
   mobile_number: string;
   email: string;
-  class: string;
-  board: string;
-  stream?: string;
-  state: string;
-  city: string;
   password: string;
   confirm_password: string;
   role?: 'student' | 'teacher';
+  referral_code?: string;
+};
+
+export type OnboardPayload = {
+  email: string;
+  password: string;
+  gender: 'male' | 'female' | 'other';
+  class: string;
+  stream?: string;
+  board: string;
+  state: string;
+  district: string;
+  city: string;
 };
 
 export async function fetchSignupBoards(): Promise<string[]> {
@@ -34,12 +42,79 @@ export async function fetchSignupBoards(): Promise<string[]> {
   }
 }
 
+export async function fetchSignupClasses(): Promise<string[]> {
+  try {
+    const { data } = await apiClient.get<ApiPayload<{ classes: string[] }>>(
+      '/api/v1/user-app/classes',
+    );
+    const classes = data?.data?.classes;
+    if (!Array.isArray(classes)) {
+      throw new Error('Invalid classes response.');
+    }
+    return classes.map((c) => String(c).trim()).filter(Boolean);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load classes.'));
+  }
+}
+
+export async function fetchSignupStreams(classValue: string): Promise<string[]> {
+  try {
+    const { data } = await apiClient.get<ApiPayload<{ streams: string[] }>>(
+      '/api/v1/user-app/streams',
+      { params: { class: classValue } },
+    );
+    const streams = data?.data?.streams;
+    if (!Array.isArray(streams)) return [];
+    return streams.map((s) => String(s).trim().toLowerCase()).filter(Boolean);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load streams.'));
+  }
+}
+
+export async function fetchSignupStates(): Promise<string[]> {
+  try {
+    const { data } = await apiClient.get<ApiPayload<{ states: string[] }>>(
+      '/api/v1/user-app/states',
+    );
+    const states = data?.data?.states;
+    if (!Array.isArray(states)) {
+      throw new Error('Invalid states response.');
+    }
+    return states.map((s) => String(s).trim()).filter(Boolean);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load states.'));
+  }
+}
+
+export async function fetchSignupDistricts(state: string): Promise<string[]> {
+  try {
+    const { data } = await apiClient.get<ApiPayload<{ districts: string[] }>>(
+      '/api/v1/user-app/districts',
+      { params: { state } },
+    );
+    const districts = data?.data?.districts;
+    if (!Array.isArray(districts)) return [];
+    return districts.map((d) => String(d).trim()).filter(Boolean);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load districts.'));
+  }
+}
+
 export async function registerUser(payload: RegisterPayload) {
   try {
     const { data } = await apiClient.post<ApiPayload>('/api/v1/auth/register', payload);
     return data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Registration failed.'));
+  }
+}
+
+export async function completeUserOnboarding(payload: OnboardPayload) {
+  try {
+    const { data } = await apiClient.post<ApiPayload>('/api/v1/auth/onboard', payload);
+    return data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Onboarding failed.'));
   }
 }
 

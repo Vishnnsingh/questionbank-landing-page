@@ -7,7 +7,7 @@ import {
 } from './config/env';
 
 export { SITE_URL, SUPPORT_EMAIL };
-export const SITE_NAME = 'Honhaar';
+export const SITE_NAME = 'Prepmagic';
 export const SUPPORT_PHONE = '8084048167';
 export const PRODUCT_IMAGE_URL = `${SITE_URL}/images/og-homepage.jpg`;
 
@@ -32,97 +32,97 @@ export const products = [
 
 export const pageMeta = {
   home: {
-    title: 'Honhaar - CBSE & Bihar Board Question Bank App | Class 10 & 12',
+    title: 'Prepmagic - CBSE & Bihar Board Question Bank App | Class 10 & 12',
     description:
-      'Honhaar par CBSE aur Bihar Board ke 20,000+ previous year questions practice karo. Class 10 aur 12 ke liye Objective, Subjective, Short aur Long Answer questions.',
+      'Prepmagic par CBSE aur Bihar Board ke 20,000+ previous year questions practice karo. Class 10 aur 12 ke liye Objective, Subjective, Short aur Long Answer questions.',
     path: '/',
   },
   about: {
-    title: 'About Honhaar | India Board Exam Preparation App',
+    title: 'About Prepmagic | India Board Exam Preparation App',
     description:
-      'Honhaar features explained: 10 years question bank, AI exam prediction, repeated questions, mock tests, topic insights, tracking, syllabus coverage, and career assistant.',
+      'Prepmagic features explained: 10 years question bank, AI exam prediction, repeated questions, mock tests, topic insights, tracking, syllabus coverage, and career assistant.',
     path: '/about',
   },
   contact: {
-    title: 'Contact Us | Honhaar',
+    title: 'Contact Us | Prepmagic',
     description:
-      'Contact Honhaar for app support, payments, refunds, account help, and CBSE or Bihar Board question bank assistance.',
+      'Contact Prepmagic for app support, payments, refunds, account help, and CBSE or Bihar Board question bank assistance.',
     path: '/contact-us',
   },
-  support: {
-    title: 'Support | Honhaar',
-    description:
-      'Get support for Honhaar app access, payments, refunds, question bank plans, and account issues.',
-    path: '/support',
-  },
   signup: {
-    title: 'Sign Up | Honhaar',
+    title: 'Sign Up | Prepmagic',
     description:
-      'Create your Honhaar student account for CBSE and Bihar Board Class 10 and 12 question bank, mock tests, and exam preparation.',
+      'Create your Prepmagic student account for CBSE and Bihar Board Class 10 and 12 question bank, mock tests, and exam preparation.',
     path: '/signup',
   },
-  choosePlan: {
-    title: 'Choose Plan | Honhaar',
+  onboarding: {
+    title: 'Onboarding | Prepmagic',
     description:
-      'Choose Honhaar 2-day trial or 1-year Class 10 or Class 12 question bank plan with exclusive discount.',
+      'Complete your Prepmagic profile with class, board, gender and location after creating your account.',
+    path: '/onboarding',
+  },
+  choosePlan: {
+    title: 'Choose Plan | Prepmagic',
+    description:
+      'Choose Prepmagic 2-day trial or 1-year Class 10 or Class 12 question bank plan with exclusive discount.',
     path: '/choose-plan',
   },
   paymentLogin: {
-    title: 'Login for Payment | Honhaar',
+    title: 'Login for Payment | Prepmagic',
     description:
-      'Sign in to your Honhaar account with email and password to choose a subscription plan and pay.',
+      'Sign in to your Prepmagic account with email and password to choose a subscription plan and pay.',
     path: '/login',
   },
   terms: {
-    title: 'Terms & Conditions | Honhaar',
+    title: 'Terms & Conditions | Prepmagic',
     description:
-      'Read the terms and conditions for using Honhaar products, services, study material, mock tests, and subscriptions.',
+      'Read the terms and conditions for using Prepmagic products, services, study material, mock tests, and subscriptions.',
     path: '/terms-and-conditions',
   },
   refunds: {
-    title: 'Refunds & Cancellations | Honhaar',
+    title: 'Refunds & Cancellations | Prepmagic',
     description:
-      'Read the refund and cancellation policy for Honhaar Class 10 and Class 12 question bank plans priced in INR.',
+      'Read the refund and cancellation policy for Prepmagic Class 10 and Class 12 question bank plans priced in INR.',
     path: '/refunds-and-cancellations',
   },
   privacy: {
-    title: 'Privacy Policy | Honhaar',
+    title: 'Privacy Policy | Prepmagic',
     description:
-      'Learn how Honhaar handles student account data, support requests, payment records, and app usage information.',
+      'Learn how Prepmagic handles student account data, support requests, payment records, and app usage information.',
     path: '/privacy-policy',
   },
   cbseQuestionBank: {
-    title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Honhaar',
+    title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Prepmagic',
     description:
-      'CBSE question bank mein 20,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Honhaar question practice.',
+      'CBSE question bank mein 20,000+ previous year questions, MCQ, subjective, short aur long answer questions. Class 10 aur 12 ke liye Prepmagic question practice.',
     path: '/cbse-question-bank',
   },
   biharBoardQuestionBank: {
-    title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Questions | Honhaar',
+    title: 'Bihar Board Question Bank 2025-26 | BSEB Class 10 & 12 Questions | Prepmagic',
     description:
       'Bihar Board BSEB question bank mein 20,000+ previous year questions. Class 10 aur 12 ke Objective, Subjective, Short aur Long Answer questions.',
     path: '/bihar-board-question-bank',
   },
   class10QuestionBank: {
-    title: 'Class 10 Question Bank 2025-26 | CBSE & Bihar Board | Honhaar',
+    title: 'Class 10 Question Bank 2025-26 | CBSE & Bihar Board | Prepmagic',
     description:
       'Class 10 question bank mein CBSE aur Bihar Board ke 20,000+ previous year questions. Mathematics, Science, Social Science, Hindi, English practice.',
     path: '/class-10-question-bank',
   },
   class12QuestionBank: {
-    title: 'Class 12 Question Bank 2025-26 | CBSE & Bihar Board | Honhaar',
+    title: 'Class 12 Question Bank 2025-26 | CBSE & Bihar Board | Prepmagic',
     description:
       'Class 12 question bank mein CBSE aur Bihar Board ke previous year questions. Physics, Chemistry, Biology, Maths, Accountancy, Economics, History practice.',
     path: '/class-12-question-bank',
   },
   blogBiharClass12Questions: {
-    title: 'Bihar Board Class 12 Previous Year Questions 2026 | Honhaar Blog',
+    title: 'Bihar Board Class 12 Previous Year Questions 2026 | Prepmagic Blog',
     description:
       'Bihar Board Class 12 Inter previous year questions, BSEB exam pattern, important subjects, and 2026 preparation strategy.',
     path: '/blog/bihar-board-class-12-previous-year-questions',
   },
   blogCbseClass10RepeatedQuestions: {
-    title: 'CBSE Class 10 Most Repeated Questions | Honhaar Blog',
+    title: 'CBSE Class 10 Most Repeated Questions | Prepmagic Blog',
     description:
       'CBSE Class 10 board exam ke most repeated questions, important chapters, and subject-wise board preparation guide.',
     path: '/blog/cbse-class-10-most-repeated-questions',
@@ -208,26 +208,26 @@ export function buildHomeJsonLd() {
         mainEntity: [
           {
             '@type': 'Question',
-        name: 'What products does Honhaar offer?',
+        name: 'What products does Prepmagic offer?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Honhaar offers Class 10 and Class 12 one-year question bank plans for CBSE and Bihar Board students with previous year questions, mock tests, repeated question insights, analytics, and syllabus coverage.',
+              text: 'Prepmagic offers Class 10 and Class 12 one-year question bank plans for CBSE and Bihar Board students with previous year questions, mock tests, repeated question insights, analytics, and syllabus coverage.',
             },
           },
           {
             '@type': 'Question',
-            name: 'What is the pricing of Honhaar?',
+            name: 'What is the pricing of Prepmagic?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Honhaar Class 10 question bank access is priced at INR 199 for one year, and Class 12 question bank access is priced at INR 249 for one year.',
+              text: 'Prepmagic Class 10 question bank access is priced at INR 199 for one year, and Class 12 question bank access is priced at INR 249 for one year.',
             },
           },
           {
             '@type': 'Question',
-        name: 'Is Honhaar useful for CBSE and Bihar Board Class 10 and Class 12 exams?',
+        name: 'Is Prepmagic useful for CBSE and Bihar Board Class 10 and Class 12 exams?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Yes. Honhaar is built for CBSE and Bihar Board Class 10 and Class 12 exam preparation with previous year questions, chapter-wise practice, mock tests, and performance tracking.',
+              text: 'Yes. Prepmagic is built for CBSE and Bihar Board Class 10 and Class 12 exam preparation with previous year questions, chapter-wise practice, mock tests, and performance tracking.',
             },
           },
         ],

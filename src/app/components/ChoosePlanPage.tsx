@@ -11,7 +11,7 @@ import { ensureValidAccessToken, hasPaymentAuthSession } from '../lib/auth-sessi
 import { openCashfreeCheckout } from '../lib/cashfree-checkout';
 import { formatPaymentUserMessage } from '../lib/payment-messages';
 import {
-  catalogAutoPayFooterNote,
+  // catalogAutoPayFooterNote,
   formatInr,
   isTrialPlanAvailable,
   mergePlanCatalog,
@@ -115,10 +115,11 @@ export function ChoosePlanPage() {
     return mergePlanCatalog(local, subscriptionData?.catalog ?? null);
   }, [paymentUser, subscriptionData?.catalog, publicCatalog]);
   const trialAvailable = catalog ? isTrialPlanAvailable(catalog) : true;
-  const autoPayFooterNote = useMemo(
-    () => (catalog ? catalogAutoPayFooterNote(catalog) : null),
-    [catalog],
-  );
+  // Auto-payment temporarily disabled
+  // const autoPayFooterNote = useMemo(
+  //   () => (catalog ? catalogAutoPayFooterNote(catalog) : null),
+  //   [catalog],
+  // );
 
   const isTrialActive = Boolean(
     subscriptionData?.entitlements?.fullAccess &&
@@ -191,8 +192,12 @@ export function ChoosePlanPage() {
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
               {trialAvailable
-                ? `${formatInr(catalog.trial.displayAmount)} trial for 2 days — yearly auto-pay after trial, or subscribe yearly now for Class ${catalog.class}.`
-                : `Subscribe yearly for Class ${catalog.class}. Auto-payment renews your plan every year.`}
+                ? `${formatInr(catalog.trial.displayAmount)} trial for 2 days, or subscribe yearly now for Class ${catalog.class}.`
+                : `Subscribe yearly for Class ${catalog.class}. One-time payment for full access.`}
+              {/* Auto-payment copy (temporarily disabled):
+                trial: yearly auto-pay after trial
+                yearly: Auto-payment renews your plan every year
+              */}
             </p>
           </header>
 
@@ -258,9 +263,11 @@ export function ChoosePlanPage() {
                 </div>
               )}
               <p className="mt-3 text-sm leading-relaxed text-slate-600">{catalog.trial.hint}</p>
+              {/* Auto-payment temporarily disabled
               <p className="mt-2 inline-flex rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-900">
                 Yearly auto-pay after trial ends
               </p>
+              */}
               <ul className="mt-5 space-y-2.5">
                 {planFeatures.slice(0, 3).map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5 text-sm text-slate-600">
@@ -325,11 +332,13 @@ export function ChoosePlanPage() {
                 ) : null}
               </div>
               <p className="mt-3 text-sm leading-relaxed text-slate-600">{catalog.yearly.hint}</p>
+              {/* Auto-payment temporarily disabled
               {catalog.yearly.autoRenew ? (
                 <p className="mt-2 inline-flex rounded-full border border-teal-200 bg-teal-50 px-2.5 py-1 text-xs font-semibold text-teal-800">
                   Auto-payment on after yearly payment
                 </p>
               ) : null}
+              */}
               <ul className="mt-5 space-y-2.5">
                 {planFeatures.map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5 text-sm text-slate-600">
@@ -356,11 +365,13 @@ export function ChoosePlanPage() {
             </article>
           </div>
 
+          {/* Auto-payment temporarily disabled
           {autoPayFooterNote ? (
             <p className="mt-6 text-center text-xs leading-relaxed text-slate-500 sm:text-left">
               {autoPayFooterNote}
             </p>
           ) : null}
+          */}
         </div>
       </main>
 

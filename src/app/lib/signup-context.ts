@@ -1,8 +1,8 @@
 import type { PlanType } from './plan-catalog';
 
-const PAYMENT_USER_KEY = 'honhaar_payment_user';
-const PLAN_KEY = 'honhaar_selected_plan';
-const PENDING_LOGIN_EMAIL_KEY = 'honhaar_pending_login_email';
+const PAYMENT_USER_KEY = 'Prepmagic_payment_user';
+const PLAN_KEY = 'Prepmagic_selected_plan';
+const PENDING_LOGIN_EMAIL_KEY = 'Prepmagic_pending_login_email';
 
 export type PaymentUserContext = {
   class: '10' | '12';
@@ -97,3 +97,40 @@ export function readPendingLoginEmail(): string {
 export function clearPendingLoginEmail() {
   sessionStorage.removeItem(PENDING_LOGIN_EMAIL_KEY);
 }
+
+const PENDING_ONBOARD_KEY = 'Prepmagic_pending_onboard';
+
+export type PendingOnboardCredentials = {
+  email: string;
+  password: string;
+};
+
+export function savePendingOnboardCredentials(creds: PendingOnboardCredentials) {
+  sessionStorage.setItem(
+    PENDING_ONBOARD_KEY,
+    JSON.stringify({
+      email: creds.email.trim().toLowerCase(),
+      password: creds.password,
+    }),
+  );
+}
+
+export function readPendingOnboardCredentials(): PendingOnboardCredentials | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_ONBOARD_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PendingOnboardCredentials;
+    if (!parsed?.email || !parsed?.password) return null;
+    return {
+      email: String(parsed.email).trim().toLowerCase(),
+      password: String(parsed.password),
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingOnboardCredentials() {
+  sessionStorage.removeItem(PENDING_ONBOARD_KEY);
+}
+

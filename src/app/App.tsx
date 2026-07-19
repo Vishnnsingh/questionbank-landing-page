@@ -14,13 +14,21 @@ import { ShareApplicationPage } from './components/ShareApplicationPage';
 import { PaymentLoginPage } from './components/PaymentLoginPage';
 import { PaymentReturnPage } from './components/PaymentReturnPage';
 import { SignUpPage } from './components/SignUpPage';
+import { OnboardingPage } from './components/OnboardingPage';
+import { AboutPage } from './components/AboutPage';
 import { SideNav } from './components/SideNav';
+import { SmoothScroll } from './components/SmoothScroll';
+import { ScrollSection } from './components/scroll-fx';
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
 
   if (path === '/signup' || path === '/register') {
     return <SignUpPage />;
+  }
+
+  if (path === '/onboarding') {
+    return <OnboardingPage />;
   }
 
   if (path === '/login') {
@@ -39,16 +47,18 @@ export default function App() {
     return <PaymentReturnPage />;
   }
 
-  if (path === '/about' || path === '/about-honhaar' || path === '/what-is-honhaar') {
-    return <PolicyPage page="about" />;
+  if (
+    path === '/about' ||
+    path === '/about-Prepmagic' ||
+    path === '/what-is-Prepmagic' ||
+    path === '/about-honhaar' ||
+    path === '/what-is-honhaar'
+  ) {
+    return <AboutPage />;
   }
 
   if (path === '/contact-us') {
     return <PolicyPage page="contact" />;
-  }
-
-  if (path === '/support') {
-    return <PolicyPage page="support" />;
   }
 
   if (path === '/terms-and-conditions') {
@@ -71,11 +81,19 @@ export default function App() {
     return <SeoLandingPage page="biharBoardQuestionBank" />;
   }
 
-  if (path === '/class-10-question-bank' || path === '/cbse-class-10-question-bank' || path === '/bihar-board-class-10-question-bank') {
+  if (
+    path === '/class-10-question-bank' ||
+    path === '/cbse-class-10-question-bank' ||
+    path === '/bihar-board-class-10-question-bank'
+  ) {
     return <SeoLandingPage page="class10QuestionBank" />;
   }
 
-  if (path === '/class-12-question-bank' || path === '/cbse-class-12-question-bank' || path === '/bihar-board-class-12-question-bank') {
+  if (
+    path === '/class-12-question-bank' ||
+    path === '/cbse-class-12-question-bank' ||
+    path === '/bihar-board-class-12-question-bank'
+  ) {
     return <SeoLandingPage page="class12QuestionBank" />;
   }
 
@@ -90,17 +108,35 @@ export default function App() {
   return (
     <>
       <SEO page="home" />
-      <div className="min-h-screen bg-slate-50">
-        <SideNav />
-        <Hero />
-        <Features />
-        <Screenshots />
-        <HowItWorks />
-        <Pricing />
-        <Testimonials />
-        <DownloadCTA />
-        <Footer />
-      </div>
+      <SmoothScroll>
+        <div className="min-h-screen bg-slate-50">
+          <SideNav />
+          <ScrollSection intense>
+            <Hero />
+          </ScrollSection>
+          <ScrollSection>
+            <Features />
+          </ScrollSection>
+          <ScrollSection>
+            <Screenshots />
+          </ScrollSection>
+          <ScrollSection>
+            <HowItWorks />
+          </ScrollSection>
+          <ScrollSection>
+            <Pricing />
+          </ScrollSection>
+          <ScrollSection>
+            <Testimonials />
+          </ScrollSection>
+          <ScrollSection intense>
+            <DownloadCTA />
+          </ScrollSection>
+          <ScrollSection>
+            <Footer />
+          </ScrollSection>
+        </div>
+      </SmoothScroll>
     </>
   );
 }

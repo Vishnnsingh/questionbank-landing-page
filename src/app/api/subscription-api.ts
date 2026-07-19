@@ -124,6 +124,11 @@ export async function updateAutoRenew(
   accessToken: string,
   autoRenew: boolean,
 ): Promise<SubscriptionMeResult> {
+  // Auto-payment temporarily disabled
+  void accessToken;
+  void autoRenew;
+  throw new Error('Auto-payment is temporarily unavailable.');
+  /*
   try {
     const { data } = await apiClient.patch<ApiPayload<SubscriptionMeResult>>(
       '/api/v1/user-app/subscriptions/auto-renew',
@@ -143,6 +148,7 @@ export async function updateAutoRenew(
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not update auto-pay.'));
   }
+  */
 }
 
 export async function createWebCheckout(

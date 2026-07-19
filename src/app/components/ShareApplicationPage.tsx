@@ -30,7 +30,7 @@ const STEPS = [
   {
     icon: Share2,
     title: 'Share your link',
-    body: 'Send your personal Honhaar link to friends via WhatsApp or social media.',
+    body: 'Send your personal Prepmagic link to friends via WhatsApp or social media.',
   },
   {
     icon: UserPlus,
@@ -52,7 +52,7 @@ const STEPS = [
 async function shareOnWeb(message: string, url: string) {
   if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
     await navigator.share({
-      title: 'Honhaar',
+      title: 'Prepmagic',
       text: message,
       url: url || undefined,
     });
@@ -176,7 +176,7 @@ export function ShareApplicationPage() {
               Welcome, {firstName}
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
-              Refer friends to Honhaar. When they install and subscribe to the yearly plan, you
+              Refer friends to Prepmagic. When they install and subscribe to the yearly plan, you
               progress toward your reward.
             </p>
           </header>
@@ -228,10 +228,10 @@ export function ShareApplicationPage() {
                     <Gift className="size-6 text-[#00a897]" />
                   </div>
                   <h2 className="mt-4 text-xl font-bold text-slate-950 sm:text-2xl">
-                    {data?.share_headline || 'Share Honhaar & win rewards'}
+                    {data?.share_headline || 'Share Prepmagic & win rewards'}
                   </h2>
                   <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                    Refer {required} users who install Honhaar and purchase the yearly plan to
+                    Refer {required} users who install Prepmagic and purchase the yearly plan to
                     unlock:
                   </p>
                   <p className="mt-3 text-lg font-bold text-[#00a897]">

@@ -6,8 +6,8 @@ import {
   SCHEMA_ORG_URL,
 } from '../config/env';
 import { absoluteUrl, PRODUCT_IMAGE_URL, SITE_NAME, products } from '../seo';
-import logoImage from '../../images/logo.png';
 
+const logoImage = '/iconb.png';
 const logoImageClass = 'h-full w-full object-contain';
 
 const plans = [
@@ -126,7 +126,7 @@ export function Pricing() {
               {/* Plan Header */}
               <div className="text-center mb-6">
                 <motion.div 
-                  className="inline-flex h-20 w-20 items-center justify-center overflow-hidden mb-3"
+                  className="inline-flex h-28 w-28 items-center justify-center overflow-hidden mb-3 sm:h-32 sm:w-32"
                   animate={{ 
                     rotate: [0, 5, -5, 0],
                   }}
@@ -180,71 +180,121 @@ export function Pricing() {
               <button className={`w-full bg-gradient-to-r ${plan.gradient} text-white py-3.5 rounded-xl hover:shadow-xl transition-all hover:scale-105 font-semibold text-base`}>
                 Get Started Now
               </button>
-
-              {/* Money Back Guarantee */}
-              <div className="mt-4 text-center">
-                <p className="text-xs text-slate-500">
-                  Secure Payment. 7-Day Money Back Guarantee.
-                </p>
-              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom Info */}
-        <div className="mt-16 text-center">
-          <div className="mx-auto flex max-w-sm flex-col items-stretch gap-4 bg-white/80 backdrop-blur-sm rounded-xl px-4 py-4 text-left shadow-lg border border-slate-200/50 sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-6 lg:gap-8 lg:px-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Check className="size-5 text-green-600" />
+        {/* Trust strip — modern classic */}
+        <motion.div
+          className="mx-auto mt-14 max-w-4xl sm:mt-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+        >
+          <div className="relative overflow-hidden rounded-2xl border border-white/80 bg-white/90 px-5 py-5 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.35)] backdrop-blur-sm sm:px-8 sm:py-6">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-500" />
+            <ul className="grid gap-4 sm:grid-cols-3 sm:gap-0 sm:divide-x sm:divide-slate-200">
+              {[
+                { label: 'No Hidden Charges', tone: 'text-emerald-600 bg-emerald-50' },
+                { label: 'Regular Updates', tone: 'text-blue-600 bg-blue-50' },
+                { label: 'One-Time Payment', tone: 'text-teal-700 bg-teal-50' },
+              ].map((item) => (
+                <li key={item.label} className="flex items-center justify-center gap-3 sm:px-4">
+                  <span className={`inline-flex size-9 shrink-0 items-center justify-center rounded-full ${item.tone}`}>
+                    <Check className="size-4" strokeWidth={2.5} />
+                  </span>
+                  <span className="text-sm font-medium tracking-wide text-slate-800">{item.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
+
+        {/* Products and Services */}
+        <motion.div
+          className="relative mx-auto mt-12 max-w-5xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_28px_70px_-40px_rgba(15,23,42,0.4)]"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="absolute -right-16 -top-16 size-56 rounded-full bg-teal-300/15 blur-3xl" />
+          <div className="absolute -bottom-20 -left-10 size-48 rounded-full bg-blue-300/15 blur-3xl" />
+
+          <div className="relative border-b border-slate-100 px-5 py-6 sm:px-8 sm:py-7">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <span className="flex h-12 w-auto max-w-[180px] items-center sm:h-14 sm:max-w-[220px]">
+                  <img src="/Logo.png" alt="Honhaar" className="h-full w-full object-contain object-left" />
+                </span>
+                <div className="hidden h-10 w-px bg-slate-200 sm:block" />
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-teal-700">Official offerings</p>
+                  <h3 className="text-2xl tracking-tight text-slate-950 sm:text-3xl">Products and Services</h3>
+                </div>
               </div>
-              <span className="text-sm text-slate-700">No Hidden Charges</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <Check className="size-5 text-blue-600" />
-              </div>
-              <span className="text-sm text-slate-700">Regular Updates</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
-                <Check className="size-5 text-teal-600" />
-              </div>
-              <span className="text-sm text-slate-700">One-Time Payment</span>
+              <p className="max-w-xs text-sm leading-relaxed text-slate-500 sm:text-right">
+                Transparent INR pricing for Class 10 and Class 12 board preparation.
+              </p>
             </div>
           </div>
-        </div>
 
-        <div className="mt-12 max-w-4xl mx-auto rounded-lg bg-white/80 border border-slate-200 p-4 sm:p-6">
-          <h3 className="text-2xl text-slate-900 mb-4">Products and Services</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            {products.map((product) => (
-              <div key={product.name} className="rounded-lg border border-slate-200 p-4 bg-white">
-                <h4 className="text-lg text-slate-900">{product.name}</h4>
-                <p className="mt-2 text-sm text-slate-600">{product.description}</p>
-                <p className="mt-3 text-sm font-semibold text-teal-700">
-                  Price: INR {product.price} for {product.duration}
-                </p>
-              </div>
+          <div className="relative grid gap-5 p-5 sm:p-7 md:grid-cols-2">
+            {products.map((product, index) => (
+              <article
+                key={product.name}
+                className="group relative overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-br from-slate-50 via-white to-teal-50/40 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-lg sm:p-6"
+              >
+                <div
+                  className={`absolute inset-y-0 left-0 w-1 bg-gradient-to-b ${
+                    index === 0 ? 'from-blue-600 to-teal-500' : 'from-teal-600 to-cyan-500'
+                  }`}
+                />
+                <div className="pl-3">
+                  <div className="mb-3 flex items-start justify-between gap-3">
+                    <h4 className="text-lg font-semibold tracking-tight text-slate-950 sm:text-xl">{product.name}</h4>
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white ${
+                        index === 0 ? 'bg-blue-600' : 'bg-teal-600'
+                      }`}
+                    >
+                      {index === 0 ? 'Class 10' : 'Class 12'}
+                    </span>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-600">{product.description}</p>
+                </div>
+              </article>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Trust Indicators */}
-        <div className="mt-12 text-center">
-          <p className="text-slate-600 mb-4">Trusted by 2,450+ Board Exam Students</p>
-          <div className="flex justify-center items-center gap-2">
-            <div className="flex -space-x-2">
-              {[...Array(5)].map((_, i) => (
+        <motion.div
+          className="mt-12 text-center sm:mt-14"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.45 }}
+        >
+          <p className="mb-5 text-sm font-medium tracking-wide text-slate-600 sm:text-base">
+            Trusted by <span className="font-semibold text-slate-900">2,450+</span> Board Exam Students
+          </p>
+          <div className="inline-flex items-center gap-4 rounded-full border border-white/80 bg-white/90 px-4 py-2.5 shadow-lg shadow-slate-200/60 backdrop-blur-sm sm:gap-5 sm:px-5">
+            <div className="flex -space-x-2.5">
+              {['A', 'R', 'S', 'P', 'M'].map((initial, i) => (
                 <div
-                  key={i}
-                  className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-teal-400 border-2 border-white"
-                ></div>
+                  key={initial}
+                  className="flex size-10 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-blue-500 to-teal-500 text-xs font-bold text-white shadow-sm"
+                  style={{ zIndex: 5 - i }}
+                >
+                  {initial}
+                </div>
               ))}
             </div>
-            <span className="text-sm text-slate-600 ml-2">Join them today!</span>
+            <span className="pr-1 text-sm font-semibold text-teal-800">Join them today!</span>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

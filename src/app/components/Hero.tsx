@@ -1,17 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
-import useEmblaCarousel from 'embla-carousel-react';
 import { ArrowRight, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useCallback, useEffect, useState } from 'react';
 import homeImage from '../../images/home.jpg';
 import mockImage from '../../images/moc.jpg';
 import resultsImage from '../../images/results.jpg';
 import testImage from '../../images/test.jpg';
+import { ParallaxLayer, ParallaxY } from './scroll-fx';
 
 const carouselScreens = [
-  { src: homeImage, alt: 'Honhaar home dashboard with daily streak and subjects' },
-  { src: mockImage, alt: 'Honhaar global mock tests screen' },
-  { src: testImage, alt: 'Honhaar test question screen' },
-  { src: resultsImage, alt: 'Honhaar mock test results screen' },
+  { src: homeImage, alt: 'Prepmagic home dashboard with daily streak and subjects' },
+  { src: mockImage, alt: 'Prepmagic global mock tests screen' },
+  { src: testImage, alt: 'Prepmagic test question screen' },
+  { src: resultsImage, alt: 'Prepmagic mock test results screen' },
 ];
 
 function HeroPhoneCarousel() {
@@ -88,7 +89,11 @@ function HeroPhoneCarousel() {
 export function Hero() {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-teal-500 to-teal-600 text-white">
-      <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
+      <ParallaxLayer speed={0.18} className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]" />
+        <div className="absolute -left-24 top-10 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute -right-16 bottom-0 h-80 w-80 rounded-full bg-cyan-200/20 blur-3xl" />
+      </ParallaxLayer>
 
       <div className="relative mx-auto w-full max-w-7xl px-4 pt-8 pb-8 sm:px-6 sm:pt-10 sm:pb-12 lg:px-8 lg:pt-12 lg:pb-16">
         <div className="grid min-w-0 items-center gap-8 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
@@ -105,7 +110,7 @@ export function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
-                Honhaar
+                Prepmagic
               </motion.h1>
               <motion.p
                 className="text-base text-teal-50 sm:text-xl lg:text-2xl"
@@ -165,7 +170,8 @@ export function Hero() {
 
               <a
                 href="/signup"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-black sm:w-auto sm:min-w-[220px] sm:text-base"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 sm:w-auto sm:min-w-[220px] sm:text-base"
+                style={{ backgroundColor: '#0A121D' }}
               >
                 Register Now
                 <ArrowRight className="size-5 shrink-0" />
@@ -192,12 +198,13 @@ export function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            <div className="w-full min-w-0 max-w-[640px]">
+            <ParallaxY from={36} to={-36} className="w-full min-w-0 max-w-[640px]">
               <HeroPhoneCarousel />
-            </div>
+            </ParallaxY>
           </motion.div>
         </div>
       </div>
     </section>
   );
 }
+

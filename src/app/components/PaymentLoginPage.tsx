@@ -7,6 +7,7 @@ import {
   clearPendingLoginEmail,
   readPendingLoginEmail,
   savePaymentUserContext,
+  savePendingOnboardCredentials,
 } from '../lib/signup-context';
 import { DEFAULT_TENANT_ID, setSessionTenantId } from '../lib/tenant-rbac';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
@@ -74,7 +75,16 @@ export function PaymentLoginPage() {
       clearPendingLoginEmail();
       window.location.href = '/choose-plan';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
+      const message = err instanceof Error ? err.message : 'Login failed. Please try again.';
+      if (/onboarding/i.test(message)) {
+        savePendingOnboardCredentials({
+          email: normalizedEmail,
+          password: trimmedPassword,
+        });
+        window.location.href = '/onboarding';
+        return;
+      }
+      setError(message);
     } finally {
       setIsSaving(false);
     }
@@ -113,7 +123,7 @@ export function PaymentLoginPage() {
                     <AuthAlert variant="success">
                       <span className="flex items-start gap-2">
                         <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-[#00a897]" />
-                        Account created. Sign in to continue.
+                        Account ready. Sign in to choose a plan.
                       </span>
                     </AuthAlert>
                   ) : null}

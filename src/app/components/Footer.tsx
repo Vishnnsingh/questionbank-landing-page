@@ -1,99 +1,85 @@
 import { Facebook, Instagram, Mail, MapPin, Phone, Twitter, Youtube } from 'lucide-react';
 import { SUPPORT_EMAIL, SUPPORT_PHONE } from '../seo';
-import logoImage from '../../images/logo.png';
-
-const logoImageClass = 'h-full w-full object-contain';
 
 export function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-300">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2.5 mb-6">
-              <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden">
-                <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
-              </div>
-              <span className="leading-tight">
-                <span className="block text-2xl font-extrabold text-white">Honhaar</span>
-                <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-300">
-                  Question Bank
-                </span>
-              </span>
-            </div>
-            <p className="text-sm text-slate-400 mb-6">
-              CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.
-            </p>
-            <div className="flex gap-3">
-              <a href="/" aria-label="Facebook" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
-                <Facebook className="size-5" />
-              </a>
-              <a href="/" aria-label="Twitter" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-400 transition-colors">
-                <Twitter className="size-5" />
-              </a>
-              <a href="/" aria-label="Instagram" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
-                <Instagram className="size-5" />
-              </a>
-              <a href="/" aria-label="Youtube" className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-red-600 transition-colors">
-                <Youtube className="size-5" />
-              </a>
-            </div>
+      <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
+        <a href="/" className="inline-flex items-center justify-center">
+          <span className="flex h-12 w-auto max-w-[220px] items-center sm:h-14 sm:max-w-[260px]">
+            <img src="/Logo.png" alt="Prepmagic" className="h-full w-full object-contain" />
+          </span>
+        </a>
+
+        <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-400">
+          CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.
+        </p>
+
+        <div className="mt-8 flex w-full max-w-4xl flex-col items-center justify-between gap-6 sm:flex-row sm:items-center sm:gap-8">
+          <div className="flex justify-center gap-3 sm:justify-start">
+            <a
+              href="/"
+              aria-label="Facebook"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 transition-colors hover:bg-blue-600"
+            >
+              <Facebook className="size-5" />
+            </a>
+            <a
+              href="/"
+              aria-label="Twitter"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 transition-colors hover:bg-blue-400"
+            >
+              <Twitter className="size-5" />
+            </a>
+            <a
+              href="/"
+              aria-label="Instagram"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 transition-colors hover:bg-pink-600"
+            >
+              <Instagram className="size-5" />
+            </a>
+            <a
+              href="/"
+              aria-label="Youtube"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-800 transition-colors hover:bg-red-600"
+            >
+              <Youtube className="size-5" />
+            </a>
           </div>
 
-          <div>
-            <h3 className="text-white mb-4">Quick Links</h3>
-            <ul className="space-y-3 text-sm">
-              <li><a href="/#pricing" className="hover:text-teal-400 transition-colors">Products & Pricing</a></li>
-              <li><a href="/about" className="hover:text-teal-400 transition-colors">About</a></li>
-              <li><a href="/cbse-question-bank" className="hover:text-teal-400 transition-colors">CBSE Question Bank</a></li>
-              <li><a href="/bihar-board-question-bank" className="hover:text-teal-400 transition-colors">Bihar Board</a></li>
-              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Features</a></li>
-              <li><a href="/contact-us" className="hover:text-teal-400 transition-colors">Contact Us</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white mb-4">Resources</h3>
-            <ul className="space-y-3 text-sm">
-              <li><a href="/#pricing" className="hover:text-teal-400 transition-colors">Question Bank Plans</a></li>
-              <li><a href="/class-10-question-bank" className="hover:text-teal-400 transition-colors">Class 10</a></li>
-              <li><a href="/class-12-question-bank" className="hover:text-teal-400 transition-colors">Class 12</a></li>
-              <li><a href="/#features" className="hover:text-teal-400 transition-colors">Mock Tests</a></li>
-              <li><a href="/support" className="hover:text-teal-400 transition-colors">Support</a></li>
-              <li><a href="/refunds-and-cancellations" className="hover:text-teal-400 transition-colors">Refund Policy</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-white mb-4">Contact</h3>
-            <ul className="space-y-4 text-sm">
-              <li className="flex gap-3">
-                <MapPin className="size-5 text-teal-400 flex-shrink-0" />
-                <span>Patna, Bihar, India</span>
-              </li>
-              <li className="flex gap-3">
-                <Mail className="size-5 text-teal-400 flex-shrink-0" />
-                <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-teal-400 transition-colors">
-                  {SUPPORT_EMAIL}
-                </a>
-              </li>
-              <li className="flex gap-3">
-                <Phone className="size-5 text-teal-400 flex-shrink-0" />
-                <a href={`tel:${SUPPORT_PHONE.replace(/\s/g, '')}`} className="hover:text-teal-400 transition-colors">
-                  {SUPPORT_PHONE}
-                </a>
-              </li>
-            </ul>
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm sm:justify-end">
+            <span className="inline-flex items-center gap-2">
+              <MapPin className="size-4 shrink-0 text-teal-400" />
+              Patna, Bihar, India
+            </span>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="inline-flex items-center gap-2 transition-colors hover:text-teal-400"
+            >
+              <Mail className="size-4 shrink-0 text-teal-400" />
+              {SUPPORT_EMAIL}
+            </a>
+            <a
+              href={`tel:${SUPPORT_PHONE.replace(/\s/g, '')}`}
+              className="inline-flex items-center gap-2 transition-colors hover:text-teal-400"
+            >
+              <Phone className="size-4 shrink-0 text-teal-400" />
+              {SUPPORT_PHONE}
+            </a>
           </div>
         </div>
 
-        <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-slate-400">
-          <p>Copyright 2026 Honhaar. All rights reserved.</p>
-          <div className="flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center sm:gap-6">
-            <a href="/privacy-policy" className="hover:text-teal-400 transition-colors">Privacy Policy</a>
-            <a href="/terms-and-conditions" className="hover:text-teal-400 transition-colors">Terms & Conditions</a>
-            <a href="/refunds-and-cancellations" className="hover:text-teal-400 transition-colors">Refunds & Cancellations</a>
-          </div>
+        <div className="mt-10 flex w-full flex-wrap items-center justify-center gap-x-5 gap-y-3 border-t border-slate-800 pt-8 text-sm text-slate-400 sm:gap-x-6">
+          <p>Copyright 2026 Kavioninnovation</p>
+          <a href="/privacy-policy" className="transition-colors hover:text-teal-400">
+            Privacy Policy
+          </a>
+          <a href="/terms-and-conditions" className="transition-colors hover:text-teal-400">
+            Terms &amp; Conditions
+          </a>
+          <a href="/contact-us" className="transition-colors hover:text-teal-400">
+            Contact Us
+          </a>
         </div>
       </div>
     </footer>

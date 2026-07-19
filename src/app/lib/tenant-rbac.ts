@@ -1,7 +1,7 @@
 const TENANT_KEY = 'qb_tenant_id';
 
 export const DEFAULT_TENANT_ID =
-  import.meta.env.VITE_DEFAULT_TENANT_ID || 'honhaar';
+  import.meta.env.VITE_DEFAULT_TENANT_ID || 'Prepmagic';
 
 export function getSessionTenantId() {
   return sessionStorage.getItem(TENANT_KEY) || DEFAULT_TENANT_ID;

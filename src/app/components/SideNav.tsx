@@ -1,9 +1,11 @@
 import { Loader2, LogOut, Menu, UserCircle, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import logoImage from '../../images/logo.png';
 import { hasPaymentAuthSession, performPaymentLogout } from '../lib/auth-session';
 import { readPaymentUserContext } from '../lib/signup-context';
+
+const headerLogoSrc = '/Logo.png';
+const headerLogoClass = 'h-full w-full object-contain object-left';
 
 type NavLink = {
   label: string;
@@ -43,15 +45,13 @@ const classDropdown: NavDropdown = {
 
 const trailingNavItems: NavItem[] = [
   { label: 'Contact Us', href: '/contact-us' },
-  { label: 'Support', href: '/support' },
 ];
 
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
 const headerActionClass =
-  'inline-flex shrink-0 items-center justify-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-teal-700 sm:px-4 sm:py-2 sm:text-sm';
-
-const logoImageClass = 'h-full w-full object-contain';
+  'inline-flex shrink-0 items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-sm';
+const headerActionStyle = { backgroundColor: '#0A121D' } as const;
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -323,10 +323,10 @@ function HeaderActions({
   if (loggedIn) {
     return (
       <div className={`flex items-center gap-2 ${stacked ? 'flex-col' : ''} ${className}`}>
-        <a href="/share-application" onClick={onNavigate} className={actionClass}>
+        <a href="/share-application" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
           Share Application
         </a>
-        <a href="/choose-plan" onClick={onNavigate} className={actionClass}>
+        <a href="/choose-plan" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
           Choose Plan
         </a>
         {showProfile ? <HeaderProfileMenu onNavigate={onNavigate} /> : null}
@@ -336,10 +336,10 @@ function HeaderActions({
 
   return (
     <div className={`flex items-center gap-2 ${stacked ? 'flex-col' : ''} ${className}`}>
-      <a href="/signup" onClick={onNavigate} className={actionClass}>
+      <a href="/signup" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
         Register
       </a>
-      <a href="/#pricing" onClick={onNavigate} className={actionClass}>
+      <a href="/#pricing" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
         Get App
       </a>
     </div>
@@ -357,15 +357,9 @@ export function SideNav() {
   const headerBar = (
     <header className="site-header fixed inset-x-0 top-0 z-[100] overflow-visible border-b border-slate-200 bg-white">
       <div className="site-header-inner mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 sm:gap-3">
-        <a href="/" className="flex min-w-0 shrink-0 items-center gap-2 text-slate-950">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white sm:h-14 sm:w-14">
-            <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
-          </span>
-          <span className="min-w-0 truncate">
-            <span className="block text-base font-extrabold leading-none sm:text-lg">Honhaar</span>
-            <span className="mt-1 hidden text-[10px] font-bold uppercase leading-none tracking-[0.08em] text-teal-700 md:block">
-              Question Bank
-            </span>
+        <a href="/" className="flex h-full min-w-0 shrink-0 items-center py-1.5">
+          <span className="flex h-11 w-auto max-w-[220px] items-center sm:h-12 sm:max-w-[260px]">
+            <img src={headerLogoSrc} alt="Prepmagic" className={headerLogoClass} />
           </span>
         </a>
         <div className="hidden min-w-0 shrink-0 overflow-visible lg:block">
@@ -403,15 +397,9 @@ export function SideNav() {
       />
       <aside className="relative flex h-full w-[min(86vw,320px)] flex-col overflow-y-auto bg-white px-4 py-5 shadow-2xl">
         <div className="mb-6 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5 text-slate-950">
-            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden">
-              <img src={logoImage} alt="Honhaar logo" className={logoImageClass} />
-            </span>
-            <span className="leading-tight">
-              <span className="block text-lg font-extrabold">Honhaar</span>
-              <span className="block text-[11px] font-bold uppercase tracking-[0.08em] text-teal-700">
-                Question Bank
-              </span>
+          <a href="/" className="flex items-center">
+            <span className="flex h-12 w-auto max-w-[200px] items-center">
+              <img src={headerLogoSrc} alt="Prepmagic" className={headerLogoClass} />
             </span>
           </a>
           <button
@@ -438,6 +426,7 @@ export function SideNav() {
               type="button"
               onClick={() => void performPaymentLogout()}
               className={`${headerActionClass} w-full text-center`}
+              style={headerActionStyle}
             >
               Logout
             </button>

@@ -36,7 +36,7 @@ export function AuthAppShowcase({
         <div className={`relative overflow-hidden rounded-[1.35rem] ${!isLogin && !compact ? 'sm:rounded-[2.5rem]' : ''}`}>
           <img
             src={studyImage}
-            alt="Student preparing with Honhaar app"
+            alt="Student preparing with Prepmagic app"
             className={`w-full object-cover ${showcaseHeights(resolvedSize)}`}
           />
         </div>
@@ -66,7 +66,7 @@ export function AuthLoginVisualPanel({ embedded = false }: { embedded?: boolean 
         <div className="relative z-10 flex flex-col items-center gap-6 lg:flex-row lg:items-center lg:gap-10">
           <div className="space-y-2 text-center lg:max-w-sm lg:text-left">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-100">
-              Honhaar Smart Prep
+              Prepmagic Smart Prep
             </p>
             <h2 className="text-xl font-bold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
               CBSE &amp; Bihar Board Question Bank
@@ -90,7 +90,7 @@ export function AuthLoginVisualPanel({ embedded = false }: { embedded?: boolean 
       <div className="relative z-10 mx-auto w-full max-w-md space-y-8">
         <div className="space-y-3 text-center lg:text-left">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-100 sm:text-sm">
-            Honhaar Smart Prep
+            Prepmagic Smart Prep
           </p>
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
             CBSE &amp; Bihar Board Question Bank

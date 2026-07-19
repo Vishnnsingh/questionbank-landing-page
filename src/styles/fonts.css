@@ -1,0 +1,15 @@
+@font-face {
+  font-family: 'Calendas Plus';
+  src:
+    url('/fonts/CalendasPlus-Regular.woff2') format('woff2'),
+    url('/fonts/CalendasPlus-Regular.woff') format('woff'),
+    url('/fonts/CalendasPlus-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-calendas: 'Calendas Plus', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Serif',
+    'Noto Sans Devanagari', serif;
+}
