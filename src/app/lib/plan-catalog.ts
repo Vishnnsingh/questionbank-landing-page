@@ -5,6 +5,7 @@ export type PlanCatalog = {
   trial: {
     label: string;
     displayAmount: number;
+    durationDays?: number;
     autoRenew: boolean;
     renewsTo?: 'yearly';
     available?: boolean;
@@ -21,12 +22,25 @@ export type PlanCatalog = {
   };
 };
 
+export function trialDurationDays(
+  catalogOrTrial?: { trial?: { durationDays?: number }; durationDays?: number } | number | null,
+  fallback = 2,
+) {
+  const raw =
+    typeof catalogOrTrial === 'number'
+      ? catalogOrTrial
+      : catalogOrTrial?.trial?.durationDays ?? catalogOrTrial?.durationDays;
+  const n = Math.round(Number(raw));
+  return Number.isFinite(n) && n > 0 ? n : fallback;
+}
+
 function trialHint(trial: {
   available?: boolean;
   lockedReason?: string | null;
   autoRenew: boolean;
   renewsTo?: 'yearly';
   displayAmount?: number;
+  durationDays?: number;
 }) {
   if (trial.available === false) {
     return (
@@ -34,19 +48,13 @@ function trialHint(trial: {
       'Trial already used — one trial per account. Choose the yearly plan.'
     );
   }
+  const days = trialDurationDays(trial);
   const trialPay = formatInr(trial.displayAmount ?? 2);
-  // Auto-payment temporarily disabled
-  // if (trial.autoRenew && trial.renewsTo === 'yearly') {
-  //   return `Full access for 2 days · ${trialPay} now · Yearly auto-pay after trial ends`;
-  // }
-  return `Full access for 2 days · ${trialPay} · One-time payment`;
+  return `Full access for ${days} day${days === 1 ? '' : 's'} · ${trialPay} · One-time payment`;
 }
 
 function yearlyHint(autoRenew: boolean) {
   const base = 'Pay via UPI — GPay, PhonePe, Paytm';
-  // Auto-payment temporarily disabled
-  // if (!autoRenew) return base;
-  // return `${base} · Auto-payment on — renews every year`;
   void autoRenew;
   return base;
 }
@@ -56,21 +64,7 @@ export function isTrialPlanAvailable(catalog: PlanCatalog) {
 }
 
 export function catalogAutoPayFooterNote(_catalog: PlanCatalog) {
-  // Auto-payment temporarily disabled
   return null;
-  /*
-  const parts: string[] = [];
-  if (catalog.trial.autoRenew && catalog.trial.renewsTo === 'yearly') {
-    parts.push(
-      `Trial: pay ${formatInr(catalog.trial.displayAmount)} now. Yearly plan auto-charges when the 2-day trial ends (if auto-pay stays on)`,
-    );
-  }
-  if (catalog.yearly.autoRenew) {
-    parts.push('Yearly plan: auto-payment renews every year after you subscribe');
-  }
-  if (!parts.length) return null;
-  return `${parts.join('. ')}.`;
-  */
 }
 
 function discountPercent(mrp: number, price: number) {
@@ -84,16 +78,16 @@ export function formatInr(amount: number) {
 
 export function planCatalogForClass(classValue: string): PlanCatalog {
   const cls = String(classValue || '').replace(/\D/g, '') === '12' ? '12' : '10';
+  const durationDays = 2;
 
   if (cls === '12') {
     const displayAmount = 249;
     const mrpDisplay = 499;
     const trial = {
-      label: '2-Day Full Trial',
+      label: `${durationDays}-Day Full Trial`,
       displayAmount: 2,
-      // Auto-payment temporarily disabled
+      durationDays,
       autoRenew: false,
-      // autoRenew: true,
       renewsTo: 'yearly' as const,
       available: true,
       lockedReason: null,
@@ -110,7 +104,6 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
         mrpDisplay,
         discountPercent: discountPercent(mrpDisplay, displayAmount),
         autoRenew: false,
-        // autoRenew: true,
         hint: yearlyHint(false),
       },
     };
@@ -119,10 +112,10 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
   const displayAmount = 199;
   const mrpDisplay = 399;
   const trial = {
-    label: '2-Day Full Trial',
+    label: `${durationDays}-Day Full Trial`,
     displayAmount: 2,
+    durationDays,
     autoRenew: false,
-    // autoRenew: true,
     renewsTo: 'yearly' as const,
     available: true,
     lockedReason: null,
@@ -139,7 +132,6 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
       mrpDisplay,
       discountPercent: discountPercent(mrpDisplay, displayAmount),
       autoRenew: false,
-      // autoRenew: true,
       hint: yearlyHint(false),
     },
   };
@@ -154,6 +146,9 @@ export function mergePlanCatalog(
   const trial = {
     ...local.trial,
     ...apiCatalog.trial,
+    displayAmount: apiCatalog.trial?.displayAmount ?? local.trial.displayAmount,
+    durationDays: apiCatalog.trial?.durationDays ?? local.trial.durationDays,
+    label: apiCatalog.trial?.label ?? local.trial.label,
   };
 
   return {

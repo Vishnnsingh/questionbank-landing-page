@@ -1,7 +1,7 @@
 import { CheckCircle2, Loader2, XCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export type PaymentFeedbackPhase = 'waiting' | 'success' | 'failed';
+export type PaymentFeedbackPhase = 'waiting' | 'processing' | 'success' | 'failed';
 
 type PaymentFeedbackProps = {
   phase: PaymentFeedbackPhase;
@@ -17,19 +17,20 @@ export function PaymentFeedback({
   title,
   message,
   gatewayStatus,
-  showElapsed = phase === 'waiting',
+  showElapsed = phase === 'waiting' || phase === 'processing',
   action,
 }: PaymentFeedbackProps) {
   const [elapsed, setElapsed] = useState(0);
+  const isBusy = phase === 'waiting' || phase === 'processing';
 
   useEffect(() => {
-    if (!showElapsed) return;
+    if (!showElapsed || !isBusy) return;
     setElapsed(0);
     const timer = window.setInterval(() => {
       setElapsed((value) => value + 1);
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [showElapsed, phase]);
+  }, [showElapsed, phase, isBusy]);
 
   const icon =
     phase === 'success' ? (
@@ -60,13 +61,13 @@ export function PaymentFeedback({
         </p>
       ) : null}
 
-      {showElapsed && phase === 'waiting' ? (
+      {showElapsed && isBusy ? (
         <p className="mt-4 text-xs font-medium text-slate-400">
           Please wait… {elapsed}s
         </p>
       ) : null}
 
-      {phase === 'waiting' ? (
+      {isBusy ? (
         <div className="mt-6 h-1.5 w-48 overflow-hidden rounded-full bg-teal-100">
           <div className="h-full w-1/3 animate-pulse rounded-full bg-[#00a897]" />
         </div>

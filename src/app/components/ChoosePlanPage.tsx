@@ -16,6 +16,7 @@ import {
   isTrialPlanAvailable,
   mergePlanCatalog,
   planCatalogForClass,
+  trialDurationDays,
   type PlanType,
 } from '../lib/plan-catalog';
 import { readPaymentUserContext, saveSelectedPlan } from '../lib/signup-context';
@@ -139,11 +140,15 @@ export function ChoosePlanPage() {
     );
   }
 
-  const handlePayNow = async (planType: PlanType) => {
+  const handlePayNow = async (planType: PlanType, forceNew = false) => {
     if (payingPlan) return;
     setPayError(null);
     setPayPhase('preparing');
-    setPayStatusMessage('Preparing secure checkout. Please wait…');
+    setPayStatusMessage(
+      forceNew
+        ? 'Creating a new payment order. Please wait…'
+        : 'Preparing secure checkout. Please wait…',
+    );
     setSelectedPlan(planType);
     saveSelectedPlan({ planType, class: catalog.class });
     setPayingPlan(planType);
@@ -156,7 +161,8 @@ export function ChoosePlanPage() {
       }
 
       setPayStatusMessage('Opening payment gateway. Do not close this page…');
-      const checkout = await createWebCheckout(accessToken, planType);
+      // Create Order: 1 call (or resume pending unless forceNew)
+      const checkout = await createWebCheckout(accessToken, planType, { forceNew });
       await openCashfreeCheckout(checkout);
     } catch (error) {
       const friendly = formatPaymentUserMessage(error, 'Could not start payment. Please try again.');
@@ -192,7 +198,7 @@ export function ChoosePlanPage() {
             </h1>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">
               {trialAvailable
-                ? `${formatInr(catalog.trial.displayAmount)} trial for 2 days, or subscribe yearly now for Class ${catalog.class}.`
+                ? `${formatInr(catalog.trial.displayAmount)} trial for ${trialDurationDays(catalog)} day${trialDurationDays(catalog) === 1 ? '' : 's'}, or subscribe yearly now for Class ${catalog.class}.`
                 : `Subscribe yearly for Class ${catalog.class}. One-time payment for full access.`}
               {/* Auto-payment copy (temporarily disabled):
                 trial: yearly auto-pay after trial
@@ -249,7 +255,7 @@ export function ChoosePlanPage() {
                 </div>
               ) : null}
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#00a897]">
-                2-day full trial
+                {catalog.trial.label || `${trialDurationDays(catalog)}-day full trial`}
               </p>
               {trialAvailable ? (
                 <p className="mt-3 text-4xl font-extrabold text-slate-950">
@@ -398,13 +404,39 @@ export function ChoosePlanPage() {
                   phase="failed"
                   message={payStatusMessage}
                   action={
-                    <button
-                      type="button"
-                      onClick={dismissPayOverlay}
-                      className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-6 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100"
-                    >
-                      OK
-                    </button>
+                    <div className="flex flex-col items-center gap-3">
+                      {selectedPlan ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              dismissPayOverlay();
+                              void handlePayNow(selectedPlan, false);
+                            }}
+                            className="inline-flex w-full max-w-xs items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#008f80]"
+                          >
+                            Continue pending
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              dismissPayOverlay();
+                              void handlePayNow(selectedPlan, true);
+                            }}
+                            className="inline-flex w-full max-w-xs items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                          >
+                            New order
+                          </button>
+                        </>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={dismissPayOverlay}
+                        className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-red-50 px-6 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100"
+                      >
+                        Close
+                      </button>
+                    </div>
                   }
                 />
               </AuthCardBody>

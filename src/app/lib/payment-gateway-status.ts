@@ -54,6 +54,16 @@ export function gatewayStatusMessage(gatewayStatus: string, paymentState: Paymen
 }
 
 export function resolveVerifyFeedback(result: WebVerifyResult) {
+  // Webhook already activated — treat as success (never error).
+  if (result.already_paid && result.payment_state !== 'failed') {
+    const gw = result.gateway_status || result.order_status || result.subscription_status || 'PAID';
+    return {
+      state: 'success' as const,
+      gatewayStatus: gw,
+      message: result.message || gatewayStatusMessage(gw, 'success'),
+    };
+  }
+
   if (result.payment_state) {
     const state = result.payment_state;
     const gw = result.gateway_status || result.order_status || result.subscription_status || '';

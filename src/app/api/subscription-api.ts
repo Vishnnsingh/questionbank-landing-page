@@ -66,6 +66,7 @@ export type SubscriptionMeResult = {
 
 export type WebVerifyResult = {
   pending?: boolean;
+  already_paid?: boolean;
   payment_state?: 'success' | 'failed' | 'pending';
   gateway_status?: string;
   order_status?: string;
@@ -154,11 +155,12 @@ export async function updateAutoRenew(
 export async function createWebCheckout(
   accessToken: string,
   planType: 'trial_2day' | 'yearly',
+  options: { forceNew?: boolean } = {},
 ): Promise<WebCheckoutResult> {
   try {
-    const { data } = await apiClient.post<ApiPayload<WebCheckoutResult>>(
+    const { data } = await apiClient.post<ApiPayload<WebCheckoutResult & { resumed?: boolean }>>(
       '/api/v1/web-payments/checkout',
-      { plan_type: planType },
+      { plan_type: planType, force_new: options.forceNew === true },
       { headers: authHeaders(accessToken) },
     );
     const checkout = data?.data;
@@ -171,6 +173,55 @@ export async function createWebCheckout(
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not start payment.'));
   }
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Poll verify every ~2.5s (max 5–6) so webhook can settle before we stop. */
+const VERIFY_POLL_INTERVAL_MS = 2500;
+
+export async function verifyWebPaymentWithRetry(
+  accessToken: string,
+  params: { orderId?: string; subscriptionId?: string },
+  maxAttempts = 6,
+): Promise<WebVerifyResult> {
+  const attempts = Math.min(Math.max(maxAttempts, 5), 6);
+  let lastResult: WebVerifyResult | null = null;
+  let lastError: unknown = null;
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      lastResult = await verifyWebPayment(accessToken, params);
+      lastError = null;
+      // Webhook-first: already_paid + success (never treat as error).
+      if (lastResult?.already_paid) {
+        return {
+          ...lastResult,
+          payment_state: lastResult.payment_state === 'failed' ? 'failed' : 'success',
+        };
+      }
+      // Success only when backend marks this payment SUCCESS (not entitlements alone).
+      const state = String(lastResult?.payment_state || '').toLowerCase();
+      if (state === 'success' || state === 'failed') {
+        return lastResult;
+      }
+      if (lastResult?.pending || state === 'pending' || !state) {
+        // keep polling — webhook may activate mid-wait
+      } else if (state) {
+        return lastResult;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+    if (attempt < attempts - 1) {
+      await sleep(VERIFY_POLL_INTERVAL_MS);
+    }
+  }
+
+  if (lastResult) return lastResult;
+  throw lastError instanceof Error
+    ? lastError
+    : new Error('Could not verify payment status. Please try again.');
 }
 
 export async function verifyWebPayment(

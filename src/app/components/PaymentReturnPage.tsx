@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { verifyWebPayment } from '../api/subscription-api';
+import { verifyWebPaymentWithRetry } from '../api/subscription-api';
 import { ensureValidAccessToken } from '../lib/auth-session';
 import { resolveVerifyFeedback } from '../lib/payment-gateway-status';
 import { formatPaymentUserMessage } from '../lib/payment-messages';
@@ -9,13 +9,14 @@ import { PaymentFeedback, type PaymentFeedbackPhase } from './PaymentFeedback';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const REDIRECT_DELAY_MS = 2200;
 
 export function PaymentReturnPage() {
-  const [phase, setPhase] = useState<PaymentFeedbackPhase>('waiting');
-  const [message, setMessage] = useState('Verifying your payment. Please do not close this page…');
-  const [gatewayStatus, setGatewayStatus] = useState('');
+  const [phase, setPhase] = useState<PaymentFeedbackPhase>('processing');
+  const [message, setMessage] = useState(
+    'Processing payment… Waiting for final confirmation. Please do not close this page.',
+  );
+  const [gatewayStatus, setGatewayStatus] = useState('PROCESSING');
 
   useEffect(() => {
     let cancelled = false;
@@ -39,31 +40,33 @@ export function PaymentReturnPage() {
           return;
         }
 
-        for (let attempt = 0; attempt < 8; attempt += 1) {
-          const result = await verifyWebPayment(accessToken, { orderId, subscriptionId });
-          if (cancelled) return;
+        // Keep Processing until poll returns verified success/failed (webhook may settle DB).
+        setPhase('processing');
+        setMessage('Processing payment… Confirming with server…');
+        setGatewayStatus('PROCESSING');
 
-          const feedback = resolveVerifyFeedback(result);
-          setGatewayStatus(feedback.gatewayStatus);
-          setMessage(feedback.message);
+        const result = await verifyWebPaymentWithRetry(
+          accessToken,
+          { orderId, subscriptionId },
+          6,
+        );
+        if (cancelled) return;
 
-          if (feedback.state === 'pending') {
-            setPhase('waiting');
-            await sleep(2000);
-            continue;
-          }
+        const feedback = resolveVerifyFeedback(result);
+        setGatewayStatus(feedback.gatewayStatus || '');
+        setMessage(feedback.message);
 
-          setPhase(
-            feedback.state === 'success' || feedback.state === 'failed'
-              ? feedback.state
-              : 'waiting',
-          );
+        if (feedback.state === 'success' || feedback.state === 'failed') {
+          setPhase(feedback.state);
           return;
         }
 
         setPhase('failed');
-        setGatewayStatus('TIMEOUT');
-        setMessage('Payment verification timed out. Please check Choose Plan or try again.');
+        setGatewayStatus(feedback.gatewayStatus || 'PENDING');
+        setMessage(
+          feedback.message ||
+            'Payment is still pending. Webhook will update status — check Choose Plan shortly, or retry.',
+        );
       } catch (err) {
         if (!cancelled) {
           setPhase('failed');
@@ -108,10 +111,20 @@ export function PaymentReturnPage() {
                 phase={phase}
                 message={message}
                 gatewayStatus={gatewayStatus}
-                showElapsed={phase === 'waiting'}
+                showElapsed={phase === 'waiting' || phase === 'processing'}
                 action={
                   phase === 'success' || phase === 'failed' ? (
-                    <p className="text-sm text-slate-500">Redirecting to plans…</p>
+                    <div className="flex flex-col items-center gap-3">
+                      <p className="text-sm text-slate-500">Redirecting to plans…</p>
+                      {phase === 'failed' ? (
+                        <a
+                          href="/choose-plan"
+                          className="inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white"
+                        >
+                          Continue / New order
+                        </a>
+                      ) : null}
+                    </div>
                   ) : null
                 }
               />

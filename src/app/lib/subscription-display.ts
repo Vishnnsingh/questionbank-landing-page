@@ -7,7 +7,9 @@ export function activePlanTitle(
   subscription?: SubscriptionInfo | null,
 ) {
   if (entitlements?.fullAccess && entitlements.tier === 'trial_2day') {
-    return '2-Day Trial';
+    const left = entitlements.trialDaysLeft;
+    if (left != null) return `Trial — ${left} day${left === 1 ? '' : 's'} left`;
+    return 'Trial';
   }
   if (entitlements?.fullAccess && entitlements.tier === 'yearly') {
     const cls = subscription?.class_plan === '12' ? '12' : '10';
@@ -26,7 +28,7 @@ export function planStatusLabel(entitlements?: SubscriptionEntitlements | null) 
 }
 
 export function paymentPlanLabel(planType: string) {
-  if (planType === 'trial_2day') return '2-Day Trial';
+  if (planType === 'trial_2day') return 'Trial';
   if (planType === 'yearly') return 'Yearly Plan';
   return planType;
 }
