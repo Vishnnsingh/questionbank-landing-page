@@ -52,7 +52,16 @@ export function formatPaymentRow(item: PaymentHistoryItem) {
   return {
     plan: paymentPlanLabel(item.plan_type),
     amount: formatInr(Number(item.amount_inr || 0)),
-    date: item.created_at ? String(item.created_at).slice(0, 10) : '—',
+    date: item.transaction_at || item.created_at
+      ? new Date(item.transaction_at || item.created_at).toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      : '—',
     status: gatewayPaymentLabel(item),
     gatewayStatus,
     gateway: item.gateway || (item.payment_provider === 'cashfree' ? 'Cashfree' : 'Razorpay'),

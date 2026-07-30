@@ -60,6 +60,7 @@ export type PaymentHistoryItem = {
   cashfree_order_id?: string | null;
   razorpay_payment_id?: string | null;
   razorpay_order_id?: string | null;
+  transaction_at?: string | null;
   created_at?: string;
 };
 
