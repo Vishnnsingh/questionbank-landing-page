@@ -30,6 +30,19 @@ export function paymentStateFromRow(row?: PaymentHistoryItem | null): PaymentUiS
 
 export function paymentStatusLabel(row?: PaymentHistoryItem | null): string {
   if (row?.status_label) return row.status_label;
+  const gateway = String(row?.gateway_status || '').trim().toUpperCase();
+  if (gateway === 'REFUND' || gateway === 'REFUNDED') return 'Refunded';
+  if (gateway === 'CANCELLED' || gateway === 'CANCELED' || gateway === 'USER_DROPPED') {
+    return 'Cancelled';
+  }
+  if (gateway === 'EXPIRED') return 'Expired';
+  if (
+    gateway === 'PROCESSING' ||
+    gateway === 'ATTEMPTED' ||
+    gateway === 'BANK_APPROVAL_PENDING'
+  ) {
+    return 'Processing';
+  }
   const state = paymentStateFromRow(row);
   if (state === 'success') return 'Success';
   if (state === 'failed') return 'Failed';
