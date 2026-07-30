@@ -126,7 +126,7 @@ export function ChoosePlanSubscriptionPanel({
                       {row.gatewayStatus ? (
                         <p className="text-xs text-slate-500">Gateway: {row.gatewayStatus}</p>
                       ) : null}
-                      <p className="truncate text-xs text-slate-400">Payment id: {row.txn}</p>
+                      <p className="truncate text-xs text-slate-400">{row.txnLabel}: {row.txn}</p>
                     </div>
                     <p className="text-sm font-bold text-slate-900">{row.amount}</p>
                     <span

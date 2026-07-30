@@ -54,6 +54,10 @@ export type PaymentHistoryItem = {
   payment_provider?: string;
   gateway?: string;
   transaction_id?: string | null;
+  cashfree_payment_id?: string | null;
+  cashfree_order_id?: string | null;
+  razorpay_payment_id?: string | null;
+  razorpay_order_id?: string | null;
   created_at?: string;
 };
 

@@ -57,5 +57,11 @@ export function formatPaymentRow(item: PaymentHistoryItem) {
     gatewayStatus,
     gateway: item.gateway || (item.payment_provider === 'cashfree' ? 'Cashfree' : 'Razorpay'),
     txn: item.transaction_id || '—',
+    txnLabel:
+      item.cashfree_payment_id || item.razorpay_payment_id
+        ? 'Payment id'
+        : item.cashfree_order_id || item.razorpay_order_id
+          ? 'Order id'
+          : 'Reference id',
   };
 }
