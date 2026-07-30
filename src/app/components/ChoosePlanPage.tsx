@@ -165,6 +165,21 @@ export function ChoosePlanPage() {
       const checkout = await createWebCheckout(accessToken, planType, { forceNew });
       await openCashfreeCheckout(checkout);
     } catch (error) {
+      const technicalMessage =
+        error instanceof Error ? error.message : String(error || '');
+      const shouldAutomaticallyCreateFreshOrder =
+        !forceNew &&
+        /order_expiry_time|expir(?:y|ed)|invalid cashfree checkout session|cashfree order|payment session/i.test(
+          technicalMessage,
+        );
+
+      if (shouldAutomaticallyCreateFreshOrder) {
+        setPayingPlan(null);
+        setPayStatusMessage('Refreshing your secure payment session…');
+        await handlePayNow(planType, true);
+        return;
+      }
+
       const friendly = formatPaymentUserMessage(error, 'Could not start payment. Please try again.');
       setPayPhase('failed');
       setPayStatusMessage(friendly);
@@ -405,30 +420,6 @@ export function ChoosePlanPage() {
                   message={payStatusMessage}
                   action={
                     <div className="flex flex-col items-center gap-3">
-                      {selectedPlan ? (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              dismissPayOverlay();
-                              void handlePayNow(selectedPlan, false);
-                            }}
-                            className="inline-flex w-full max-w-xs items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#008f80]"
-                          >
-                            Continue pending
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              dismissPayOverlay();
-                              void handlePayNow(selectedPlan, true);
-                            }}
-                            className="inline-flex w-full max-w-xs items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-                          >
-                            New order
-                          </button>
-                        </>
-                      ) : null}
                       <button
                         type="button"
                         onClick={dismissPayOverlay}

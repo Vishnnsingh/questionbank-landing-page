@@ -39,6 +39,9 @@ export function formatPaymentUserMessage(
   if (error instanceof Error) {
     const parsed = tryParseJsonMessage(error.message);
     if (parsed) return formatPaymentUserMessage(parsed, fallback);
+    if (/order_expiry_time|expiry time should be/i.test(error.message)) {
+      return 'The payment session could not be created. Please try again.';
+    }
     if (error.message.includes('Network')) {
       return 'Network issue. Check your connection and try again.';
     }

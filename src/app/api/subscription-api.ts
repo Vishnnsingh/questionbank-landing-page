@@ -16,6 +16,8 @@ export type WebCheckoutResult = {
   cashfree_mode: 'sandbox' | 'production';
   amount_paise: number;
   amount_inr: number;
+  order_expiry_minutes?: number;
+  order_expires_at?: string;
   plan_type: 'trial_2day' | 'yearly';
   payment_id: string;
   description: string;
