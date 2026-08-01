@@ -29,14 +29,18 @@ export function paymentStateFromRow(row?: PaymentHistoryItem | null): PaymentUiS
 }
 
 export function paymentStatusLabel(row?: PaymentHistoryItem | null): string {
-  if (row?.status_label) return row.status_label;
   const gateway = String(row?.gateway_status || '').trim().toUpperCase();
+  // Cashfree order ACTIVE = unpaid open session — never say "Active" (users confuse with plan).
+  if (gateway === 'ACTIVE') return 'Pending';
+  if (gateway === 'EXPIRED') return 'Expired';
+  if (row?.status_label) {
+    if (String(row.status_label).toLowerCase() === 'active') return 'Pending';
+    return row.status_label;
+  }
   if (gateway === 'REFUND' || gateway === 'REFUNDED') return 'Refunded';
   if (gateway === 'CANCELLED' || gateway === 'CANCELED' || gateway === 'USER_DROPPED') {
     return 'Cancelled';
   }
-  if (gateway === 'EXPIRED') return 'Expired';
-  if (gateway === 'ACTIVE') return 'Active';
   if (
     gateway === 'PROCESSING' ||
     gateway === 'ATTEMPTED' ||
@@ -63,7 +67,9 @@ export function gatewayStatusMessage(gatewayStatus: string, paymentState: Paymen
     return gw ? `Payment failed (${gw}).` : 'Payment failed. Please try again.';
   }
   return gw
-    ? `Payment is ${gw.toLowerCase().replace(/_/g, ' ')}. Please wait…`
+    ? gw === 'ACTIVE'
+      ? 'Payment is pending. Complete checkout to finish…'
+      : `Payment is ${gw.toLowerCase().replace(/_/g, ' ')}. Please wait…`
     : 'Payment is still processing. Please wait…';
 }
 

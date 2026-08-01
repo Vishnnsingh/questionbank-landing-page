@@ -48,7 +48,9 @@ export function paymentStatusColor(item: PaymentHistoryItem | string) {
 }
 
 export function formatPaymentRow(item: PaymentHistoryItem) {
-  const gatewayStatus = item.gateway_status ? String(item.gateway_status).toUpperCase() : '';
+  const rawGateway = item.gateway_status ? String(item.gateway_status).toUpperCase() : '';
+  // User history: ACTIVE open order → show PENDING (not Active plan).
+  const gatewayStatus = rawGateway === 'ACTIVE' ? 'PENDING' : rawGateway;
   return {
     plan: paymentPlanLabel(item.plan_type),
     amount: formatInr(Number(item.amount_inr || 0)),
