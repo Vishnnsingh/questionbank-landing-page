@@ -36,6 +36,7 @@ export function paymentStatusLabel(row?: PaymentHistoryItem | null): string {
     return 'Cancelled';
   }
   if (gateway === 'EXPIRED') return 'Expired';
+  if (gateway === 'ACTIVE') return 'Active';
   if (
     gateway === 'PROCESSING' ||
     gateway === 'ATTEMPTED' ||
