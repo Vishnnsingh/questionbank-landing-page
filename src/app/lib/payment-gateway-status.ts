@@ -32,9 +32,12 @@ export function paymentStatusLabel(row?: PaymentHistoryItem | null): string {
   const gateway = String(row?.gateway_status || '').trim().toUpperCase();
   // Cashfree order ACTIVE = unpaid open session — never say "Active" (users confuse with plan).
   if (gateway === 'ACTIVE') return 'Pending';
-  if (gateway === 'EXPIRED') return 'Expired';
+  // User landing: EXPIRED unpaid session → Failed (same as cancelled/drop).
+  if (gateway === 'EXPIRED') return 'Failed';
   if (row?.status_label) {
-    if (String(row.status_label).toLowerCase() === 'active') return 'Pending';
+    const label = String(row.status_label).toLowerCase();
+    if (label === 'active') return 'Pending';
+    if (label === 'expired') return 'Failed';
     return row.status_label;
   }
   if (gateway === 'REFUND' || gateway === 'REFUNDED') return 'Refunded';
