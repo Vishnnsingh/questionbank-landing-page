@@ -30,13 +30,20 @@ export function paymentStateFromRow(row?: PaymentHistoryItem | null): PaymentUiS
 
 export function paymentStatusLabel(row?: PaymentHistoryItem | null): string {
   const gateway = String(row?.gateway_status || '').trim().toUpperCase();
-  // Cashfree order ACTIVE = unpaid open session — never say "Active" (users confuse with plan).
-  if (gateway === 'ACTIVE') return 'Pending';
-  // User landing: EXPIRED unpaid session → Failed (same as cancelled/drop).
+  const db = String(row?.status || '').toLowerCase();
+  // Cashfree + Razorpay open unpaid → Pending; expired → Failed.
+  if (
+    gateway === 'ACTIVE' ||
+    gateway === 'CREATED' ||
+    gateway === 'PENDING' ||
+    (db === 'created' && gateway !== 'EXPIRED')
+  ) {
+    return 'Pending';
+  }
   if (gateway === 'EXPIRED') return 'Failed';
   if (row?.status_label) {
     const label = String(row.status_label).toLowerCase();
-    if (label === 'active') return 'Pending';
+    if (label === 'active' || label === 'created' || label === 'pending') return 'Pending';
     if (label === 'expired') return 'Failed';
     return row.status_label;
   }

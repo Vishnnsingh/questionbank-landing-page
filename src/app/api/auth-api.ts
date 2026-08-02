@@ -41,6 +41,7 @@ export type OnboardPayload = {
   state: string;
   district: string;
   city: string;
+  preferred_medium?: 'Hindi' | 'English';
 };
 
 export async function fetchSignupBoards(): Promise<string[]> {

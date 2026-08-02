@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import { Sparkles, X } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 import {
   completeUserOnboarding,
@@ -15,45 +15,30 @@ import {
   savePendingLoginEmail,
   savePendingOnboardCredentials,
 } from '../lib/signup-context';
-import { SUPPORT_EMAIL } from '../seo';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
   AuthAlert,
   AuthFooterLink,
   AuthPageBackground,
   AuthPrimaryButton,
-  authInputClass,
 } from './auth-ui';
 import { PasswordInput } from './PasswordInput';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-const PRIVACY_SECTIONS = [
-  {
-    title: 'Information We Handle',
-    body: [
-      'We may handle account details, support messages, payment references, device or app usage signals, mock test activity, and learning progress data needed to operate the service.',
-    ],
-  },
-  {
-    title: 'How Data Is Used',
-    body: [
-      'Data is used for account access, product delivery, payment support, learning analytics, app improvement, fraud prevention, and customer communication.',
-    ],
-  },
-  {
-    title: 'Contact for Privacy Requests',
-    body: [`For privacy questions or account data requests, contact ${SUPPORT_EMAIL}.`],
-  },
-] as const;
-
 const labelClass = 'mb-1 block text-xs font-semibold text-slate-800';
-const signupInputClass = `${authInputClass} py-2.5`;
+const signupInputClass =
+  'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-[#00a897]/15';
 
 const GENDER_OPTIONS = [
   { label: 'Male', value: 'male' },
   { label: 'Female', value: 'female' },
   { label: 'Other', value: 'other' },
+] as const;
+
+const MEDIUM_OPTIONS = [
+  { label: 'Hindi', value: 'Hindi' },
+  { label: 'English', value: 'English' },
 ] as const;
 
 const STREAM_LABELS: Record<string, string> = {
@@ -84,6 +69,7 @@ export function OnboardingPage() {
   const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState(pending?.password || '');
   const [selectedGender, setSelectedGender] = useState('');
+  const [selectedMedium, setSelectedMedium] = useState('');
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedStream, setSelectedStream] = useState('');
   const [selectedBoard, setSelectedBoard] = useState('');
@@ -101,9 +87,8 @@ export function OnboardingPage() {
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
-  const [privacyOpened, setPrivacyOpened] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
-  const [privacyModalOpen, setPrivacyModalOpen] = useState(false);
 
   const showPasswordField = !pending?.password;
   const isSenior = needsStream(selectedClass);
@@ -184,18 +169,8 @@ export function OnboardingPage() {
     };
   }, [selectedState]);
 
-  const openPrivacy = () => {
-    setPrivacyModalOpen(true);
-    setPrivacyOpened(true);
-  };
-
-  const closePrivacy = () => {
-    setPrivacyModalOpen(false);
-    setPrivacyOpened(true);
-  };
-
   const canSubmit =
-    Boolean(privacyOpened && privacyAccepted) && !isSaving && !bootLoading;
+    Boolean(termsAccepted && privacyAccepted) && !isSaving && !bootLoading;
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -212,6 +187,10 @@ export function OnboardingPage() {
     }
     if (!selectedGender) {
       setError('Please select your gender.');
+      return;
+    }
+    if (!selectedMedium) {
+      setError('Please choose your study medium (Hindi or English).');
       return;
     }
     if (!selectedClass) {
@@ -238,12 +217,12 @@ export function OnboardingPage() {
       setError('Please enter a valid city.');
       return;
     }
-    if (!privacyOpened) {
-      setError('Please open and read the Privacy Policy first.');
+    if (!termsAccepted) {
+      setError('Please agree to the Terms & Conditions to continue.');
       return;
     }
     if (!privacyAccepted) {
-      setError('Please accept the Privacy Policy to continue.');
+      setError('Please confirm you have read the Privacy Policy to continue.');
       return;
     }
 
@@ -259,6 +238,7 @@ export function OnboardingPage() {
         state: selectedState.trim(),
         district: selectedDistrict.trim(),
         city: trimmedCity,
+        preferred_medium: selectedMedium,
       });
 
       clearPendingOnboardCredentials();
@@ -293,7 +273,7 @@ export function OnboardingPage() {
                     Onboarding
                   </h1>
                   <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    Tell us your class, board and location to finish setup.
+                    Tell us your class, board, medium and location to finish setup.
                   </p>
                 </div>
 
@@ -358,6 +338,27 @@ export function OnboardingPage() {
                       >
                         <option value="">Select</option>
                         {GENDER_OPTIONS.map((option) => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className={labelClass} htmlFor="medium">
+                        Choose Medium
+                      </label>
+                      <select
+                        id="medium"
+                        className={signupInputClass}
+                        value={selectedMedium}
+                        onChange={(e) =>
+                          setSelectedMedium(e.target.value as 'Hindi' | 'English' | '')
+                        }
+                      >
+                        <option value="">Select medium</option>
+                        {MEDIUM_OPTIONS.map((option) => (
                           <option key={option.value} value={option.value}>
                             {option.label}
                           </option>
@@ -502,43 +503,58 @@ export function OnboardingPage() {
                     </div>
                   </div>
 
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-3">
-                    <div className="flex items-start gap-2.5 text-sm text-slate-700">
+                  <div className="flex flex-col items-center gap-2.5 px-3 py-3">
+                    <div className="flex items-center justify-center gap-2.5 text-sm text-slate-700">
+                      <input
+                        id="terms_accept"
+                        type="checkbox"
+                        className="size-4 shrink-0 accent-[#00a897]"
+                        checked={termsAccepted}
+                        onChange={(e) => {
+                          setTermsAccepted(e.target.checked);
+                          setError('');
+                        }}
+                      />
+                      <p className="leading-relaxed text-center">
+                        <label htmlFor="terms_accept" className="cursor-pointer">
+                          I agree to the{' '}
+                        </label>
+                        <a
+                          href="/terms-and-conditions"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-bold text-blue-600 underline decoration-blue-600/40 underline-offset-2 transition hover:text-blue-700"
+                        >
+                          Terms & Conditions
+                        </a>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-2.5 text-sm text-slate-700">
                       <input
                         id="privacy_accept"
                         type="checkbox"
-                        className="mt-1 size-4 shrink-0 accent-[#00a897]"
+                        className="size-4 shrink-0 accent-[#00a897]"
                         checked={privacyAccepted}
                         onChange={(e) => {
-                          if (!privacyOpened) {
-                            setError(
-                              'Please open and read the Privacy Policy first.',
-                            );
-                            openPrivacy();
-                            return;
-                          }
                           setPrivacyAccepted(e.target.checked);
                           setError('');
                         }}
                       />
-                      <p className="leading-relaxed">
+                      <p className="leading-relaxed text-center">
                         <label htmlFor="privacy_accept" className="cursor-pointer">
-                          I have read and accept the{' '}
+                          I have read the{' '}
                         </label>
-                        <button
-                          type="button"
-                          onClick={openPrivacy}
+                        <a
+                          href="/privacy-policy"
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="font-bold text-blue-600 underline decoration-blue-600/40 underline-offset-2 transition hover:text-blue-700"
                         >
                           Privacy Policy
-                        </button>
+                        </a>
                       </p>
                     </div>
-                    {!privacyOpened ? (
-                      <p className="mt-2 text-xs text-slate-500">
-                        Tap Privacy Policy to open and read it before accepting.
-                      </p>
-                    ) : null}
                   </div>
 
                   <AuthPrimaryButton
@@ -564,64 +580,6 @@ export function OnboardingPage() {
           </div>
         </div>
       </main>
-
-      {privacyModalOpen ? (
-        <div
-          className="fixed inset-0 z-[200] flex items-end justify-center bg-slate-950/55 p-4 sm:items-center"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="onboard-privacy-title"
-          onClick={closePrivacy}
-        >
-          <div
-            className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5">
-              <h2
-                id="onboard-privacy-title"
-                className="text-base font-bold text-slate-900 sm:text-lg"
-              >
-                Privacy Policy
-              </h2>
-              <button
-                type="button"
-                onClick={closePrivacy}
-                className="rounded-full p-1.5 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800"
-                aria-label="Close privacy policy"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <div className="overflow-y-auto px-4 py-4 sm:px-5 sm:py-5">
-              <div className="space-y-5">
-                {PRIVACY_SECTIONS.map((section) => (
-                  <section key={section.title}>
-                    <h3 className="text-sm font-bold text-slate-900">{section.title}</h3>
-                    {section.body.map((line) => (
-                      <p
-                        key={line}
-                        className="mt-1.5 text-sm leading-relaxed text-slate-600"
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </section>
-                ))}
-              </div>
-            </div>
-            <div className="border-t border-slate-100 px-4 py-3 sm:px-5">
-              <button
-                type="button"
-                onClick={closePrivacy}
-                className="inline-flex w-full items-center justify-center rounded-xl bg-[#00a897] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700"
-              >
-                Done reading
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }

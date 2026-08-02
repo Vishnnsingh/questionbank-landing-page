@@ -137,7 +137,7 @@ export function Pricing() {
                     ease: "easeInOut"
                   }}
                 >
-                  <img src={logoImage} alt="Honhaar plan logo" className={logoImageClass} />
+                  <img src={logoImage} alt="Prepmagic plan logo" className={logoImageClass} />
                 </motion.div>
                 <h3 className="text-2xl text-slate-900 mb-2">
                   <span itemProp="name">{plan.name}</span>
@@ -226,7 +226,7 @@ export function Pricing() {
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <span className="flex h-12 w-auto max-w-[180px] items-center sm:h-14 sm:max-w-[220px]">
-                  <img src="/Logo.png" alt="Honhaar" className="h-full w-full object-contain object-left" />
+                  <img src="/Logo.png" alt="Prepmagic" className="h-full w-full object-contain object-left" />
                 </span>
                 <div className="hidden h-10 w-px bg-slate-200 sm:block" />
                 <div>

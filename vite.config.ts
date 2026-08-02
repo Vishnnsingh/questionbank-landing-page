@@ -17,6 +17,12 @@ export default defineConfig({
     },
   },
 
+  server: {
+    host: true, // listen on LAN so phone / Wi‑Fi can open the site
+    port: Number(process.env.VITE_DEV_PORT || process.env.PORT) || 5173,
+    strictPort: false,
+  },
+
   // File types to support raw imports. Never add .css, .tsx, or .ts files to this.
   assetsInclude: ['**/*.svg', '**/*.csv'],
 })

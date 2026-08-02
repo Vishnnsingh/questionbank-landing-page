@@ -49,8 +49,8 @@ export default function App() {
 
   if (
     path === '/about' ||
-    path === '/about-Prepmagic' ||
-    path === '/what-is-Prepmagic' ||
+    path === '/about-prepmagic' ||
+    path === '/what-is-prepmagic' ||
     path === '/about-honhaar' ||
     path === '/what-is-honhaar'
   ) {

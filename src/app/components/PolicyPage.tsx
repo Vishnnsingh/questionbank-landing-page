@@ -1,4 +1,9 @@
+import { useEffect, useState } from 'react';
 import { CheckCircle2, Clock3, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
+import {
+  fetchAppSupportPrivacy,
+  fetchAppSupportTerms,
+} from '../api/app-support-api';
 import { Footer } from './Footer';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
@@ -6,7 +11,12 @@ import { SUPPORT_EMAIL, SUPPORT_PHONE, pageMeta, products } from '../seo';
 
 type PolicyPageKey = 'contact' | 'terms' | 'refunds' | 'privacy';
 
-const pageContent: Record<PolicyPageKey, { eyebrow: string; title: string; sections: { title: string; body: string[] }[] }> = {
+type PolicySection = { title: string; body: string[] };
+
+const pageContent: Record<
+  PolicyPageKey,
+  { eyebrow: string; title: string; sections: PolicySection[] }
+> = {
   contact: {
     eyebrow: 'Support',
     title: 'Contact Us',
@@ -236,6 +246,146 @@ function ContactPageLayout({
   );
 }
 
+function parseApiPolicyBody(value: string): PolicySection[] {
+  const prepared = String(value || '')
+    .replace(/\r\n?/g, '\n')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\s+(?=\d{1,2}[.)]\s+[A-Z])/g, '\n')
+    .trim();
+
+  if (!prepared) return [];
+
+  const sections: { number: string | null; paragraphs: string[] }[] = [];
+  const looseParagraphs: string[] = [];
+
+  prepared
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .forEach((line) => {
+      const numbered = line.match(/^(\d{1,2})[.)]\s*(.+)$/);
+      if (numbered) {
+        sections.push({
+          number: numbered[1],
+          paragraphs: [numbered[2].trim()],
+        });
+        return;
+      }
+      if (sections.length > 0) {
+        sections[sections.length - 1].paragraphs.push(line);
+      } else {
+        looseParagraphs.push(line);
+      }
+    });
+
+  if (looseParagraphs.length > 0) {
+    sections.unshift({ number: null, paragraphs: looseParagraphs });
+  }
+
+  return sections.map((section, index) => ({
+    title: section.number ? `${section.number}.` : `Section ${index + 1}`,
+    body: section.paragraphs,
+  }));
+}
+
+function ApiLegalPage({ page }: { page: 'terms' | 'privacy' }) {
+  const fallback = pageContent[page];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [title, setTitle] = useState(fallback.title);
+  const [sections, setSections] = useState<PolicySection[]>(fallback.sections);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError('');
+
+    const loader = page === 'terms' ? fetchAppSupportTerms : fetchAppSupportPrivacy;
+    loader()
+      .then((payload) => {
+        if (cancelled) return;
+        const body = String(payload?.body || '').trim();
+        const nextTitle = String(payload?.title || '').trim() || fallback.title;
+        const parsed = parseApiPolicyBody(body);
+        setTitle(nextTitle);
+        setSections(parsed.length ? parsed : fallback.sections);
+        if (!body && payload?.is_published === false) {
+          setError('This policy is not published yet.');
+        }
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(err instanceof Error ? err.message : 'Could not load policy.');
+        setTitle(fallback.title);
+        setSections(fallback.sections);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [page, fallback.title, fallback.sections]);
+
+  return (
+    <main className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+      <header className="mb-8 border-b border-slate-200 pb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">
+          {fallback.eyebrow}
+        </p>
+        <h1 className="mt-2 text-3xl tracking-tight text-slate-950 sm:text-4xl">
+          {title}
+        </h1>
+        {loading ? (
+          <p className="mt-3 text-sm text-slate-500">Loading from server…</p>
+        ) : error ? (
+          <p className="mt-3 text-sm text-amber-700">{error}</p>
+        ) : null}
+      </header>
+
+      {loading ? (
+        <p className="text-slate-500">Fetching latest policy…</p>
+      ) : (
+        <div className="space-y-8">
+          {sections
+            .filter((section) => {
+              const titleNorm = title.trim().toLowerCase();
+              const sectionTitle = String(section.title || '').trim().toLowerCase();
+              if (sectionTitle === titleNorm) return false;
+              const onlyDupBody =
+                section.body.length === 1 &&
+                section.body[0].trim().toLowerCase() === titleNorm;
+              return !onlyDupBody;
+            })
+            .map((section, index) => (
+              <section key={`${section.title}-${index}`}>
+                <h2 className="text-lg font-semibold text-slate-900 sm:text-xl">
+                  {section.title}
+                </h2>
+                <div className="mt-3 space-y-3">
+                  {section.body
+                    .filter(
+                      (paragraph) =>
+                        paragraph.trim().toLowerCase() !== title.trim().toLowerCase(),
+                    )
+                    .map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="text-[15px] leading-relaxed text-slate-600 whitespace-pre-wrap sm:text-base"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                </div>
+              </section>
+            ))}
+        </div>
+      )}
+    </main>
+  );
+}
+
 export function PolicyPage({ page }: { page: PolicyPageKey }) {
   const content = pageContent[page];
 
@@ -245,6 +395,17 @@ export function PolicyPage({ page }: { page: PolicyPageKey }) {
         <SEO page={page} />
         <SideNav />
         <ContactPageLayout content={content} />
+        <Footer />
+      </div>
+    );
+  }
+
+  if (page === 'terms' || page === 'privacy') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
+        <SEO page={page} />
+        <SideNav />
+        <ApiLegalPage page={page} />
         <Footer />
       </div>
     );
@@ -265,7 +426,6 @@ export function PolicyPage({ page }: { page: PolicyPageKey }) {
             </div>
             <h1 className="mt-4 max-w-4xl text-3xl tracking-tight text-slate-950 sm:text-5xl">{content.title}</h1>
             <p className="mt-4 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">{pageMeta[page].description}</p>
-            <p className="mt-4 text-sm text-slate-500">Last updated: June 7, 2026</p>
           </div>
         </div>
 

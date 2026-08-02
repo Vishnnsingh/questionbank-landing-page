@@ -49,9 +49,23 @@ export function paymentStatusColor(item: PaymentHistoryItem | string) {
 
 export function formatPaymentRow(item: PaymentHistoryItem) {
   const rawGateway = item.gateway_status ? String(item.gateway_status).toUpperCase() : '';
-  // User history: ACTIVE open order → PENDING; EXPIRED → FAILED label (not plan language).
-  const gatewayStatus =
-    rawGateway === 'ACTIVE' ? 'PENDING' : rawGateway === 'EXPIRED' ? 'FAILED' : rawGateway;
+  const db = String(item.status || '').toLowerCase();
+  // User history parity (Cashfree + Razorpay): open → ACTIVE, expired → FAILED.
+  let gatewayStatus = rawGateway;
+  if (rawGateway === 'EXPIRED' || (db === 'failed' && (rawGateway === 'EXPIRED' || !rawGateway))) {
+    gatewayStatus = 'FAILED';
+  } else if (
+    db === 'created' ||
+    rawGateway === 'ACTIVE' ||
+    rawGateway === 'CREATED' ||
+    rawGateway === 'PENDING' ||
+    rawGateway === 'ATTEMPTED' ||
+    (!rawGateway && db !== 'paid' && db !== 'failed')
+  ) {
+    gatewayStatus = 'ACTIVE';
+  } else if (rawGateway === 'SUCCESS' || rawGateway === 'CAPTURED') {
+    gatewayStatus = 'PAID';
+  }
   return {
     plan: paymentPlanLabel(item.plan_type),
     amount: formatInr(Number(item.amount_inr || 0)),
