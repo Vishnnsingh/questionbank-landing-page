@@ -6,12 +6,18 @@ export function Footer() {
     <footer className="bg-slate-900 text-slate-300">
       <div className="mx-auto flex max-w-7xl flex-col items-center px-4 py-12 text-center sm:px-6 sm:py-14 lg:px-8">
         <a href="/" className="inline-flex items-center justify-center">
-          <span className="flex h-12 w-auto max-w-[220px] items-center sm:h-14 sm:max-w-[260px]">
-            <img src="/Logo.png" alt="Prepmagic" className="h-full w-full object-contain" />
+          {/* Soft r10 curve — same as Hero “Register Now” */}
+          <span className="flex h-12 w-auto max-w-[220px] items-center overflow-hidden sm:h-14 sm:max-w-[260px]" style={{ borderRadius: 10 }}>
+            <img
+              src="/Logo.png"
+              alt="Prepmagic"
+              className="h-full w-full object-contain"
+              style={{ borderRadius: 10 }}
+            />
           </span>
         </a>
 
-        <p className="mt-5 max-w-xl text-sm leading-relaxed text-slate-400">
+        <p className="mt-5 w-full whitespace-nowrap text-center leading-snug text-slate-400 text-[clamp(8px,2.15vw,14px)]">
           CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.
         </p>
 

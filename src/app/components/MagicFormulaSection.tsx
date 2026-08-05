@@ -204,34 +204,54 @@ export function MagicFormulaSection() {
         </div>
 
         {/* Tabs — Figma 86:764 · active = #0F8F84 CTA r12 */}
-        <div
-          className="mx-auto mt-10 flex h-auto w-full max-w-[560px] flex-wrap items-center justify-center gap-1 rounded-2xl p-1 sm:mt-12 sm:h-11"
-          style={{ background: F.tabTrack }}
-          role="tablist"
-          aria-label="Magic formula views"
-          data-node-id="86:764"
-        >
-          {TABS.map((t) => {
-            const active = tab === t.id;
-            return (
-              <button
-                key={t.id}
-                type="button"
-                role="tab"
-                aria-selected={active}
-                onClick={() => setTab(t.id)}
-                className="inline-flex h-9 min-w-0 flex-1 items-center justify-center px-3 text-[13px] font-bold tracking-[0.14px] transition hover:opacity-95 sm:text-[14px]"
-                style={{
-                  fontFamily: "'Inter', system-ui, sans-serif",
-                  borderRadius: 12,
-                  background: active ? F.cta : 'transparent',
-                  color: active ? F.white : F.body,
-                }}
-              >
-                {t.label}
-              </button>
-            );
-          })}
+        <div className="mx-auto mt-14 sm:mt-16">
+          <p
+            className="text-center text-[14px] font-semibold uppercase tracking-[2px] sm:text-[16px] sm:leading-6"
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              color: F.label,
+            }}
+          >
+            Any school &amp; Institute
+          </p>
+          <h3
+            className="mx-auto mt-2 max-w-[640px] text-center text-[28px] font-medium leading-tight tracking-[-0.48px] sm:mt-3 sm:text-[42px] sm:leading-[56px]"
+            style={{
+              fontFamily: "'Playfair Display', Georgia, serif",
+              color: F.heading,
+            }}
+          >
+            Also learn from your Institute &amp; school
+          </h3>
+          <div
+            className="mx-auto mt-5 flex h-auto w-full max-w-[560px] flex-wrap items-center justify-center gap-1 rounded-2xl p-1 sm:mt-6 sm:h-11"
+            style={{ background: F.tabTrack }}
+            role="tablist"
+            aria-label="Magic formula views"
+            data-node-id="86:764"
+          >
+            {TABS.map((t) => {
+              const active = tab === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={active}
+                  onClick={() => setTab(t.id)}
+                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center px-3 text-[13px] font-bold tracking-[0.14px] transition hover:opacity-95 sm:text-[14px]"
+                  style={{
+                    fontFamily: "'Inter', system-ui, sans-serif",
+                    borderRadius: 12,
+                    background: active ? F.cta : 'transparent',
+                    color: active ? F.white : F.body,
+                  }}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Detail panel — Figma 86:773 mint + r40 + deep shadow */}
