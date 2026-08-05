@@ -27,10 +27,18 @@ export function planStatusLabel(entitlements?: SubscriptionEntitlements | null) 
   return 'Subscribe to unlock the app';
 }
 
-export function paymentPlanLabel(planType: string) {
+export function paymentPlanLabel(item: PaymentHistoryItem | string) {
+  if (item && typeof item === 'object') {
+    if (item.plan_label) return String(item.plan_label);
+    const days = item.plan_duration_days;
+    if (item.plan_type === 'trial_2day') {
+      return days ? `${days}-Day Trial` : 'Trial';
+    }
+  }
+  const planType = typeof item === 'string' ? item : item?.plan_type;
   if (planType === 'trial_2day') return 'Trial';
   if (planType === 'yearly') return 'Yearly Plan';
-  return planType;
+  return String(planType || '—');
 }
 
 export function paymentStatusColor(item: PaymentHistoryItem | string) {
@@ -67,7 +75,7 @@ export function formatPaymentRow(item: PaymentHistoryItem) {
     gatewayStatus = 'PAID';
   }
   return {
-    plan: paymentPlanLabel(item.plan_type),
+    plan: paymentPlanLabel(item),
     amount: formatInr(Number(item.amount_inr || 0)),
     date: item.transaction_at || item.created_at
       ? new Date(item.transaction_at || item.created_at).toLocaleString('en-IN', {

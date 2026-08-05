@@ -50,12 +50,21 @@ const trailingNavItems: NavItem[] = [
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
 /** Match Hero “Register Now” CTA — #0F8F84 · radius 10 */
+const CTA = '#0F8F84';
 const headerActionClass =
   'inline-flex h-9 shrink-0 items-center justify-center px-3.5 text-xs font-bold text-white transition hover:opacity-95 sm:h-10 sm:px-4 sm:text-sm';
 const headerActionStyle = {
-  backgroundColor: '#0F8F84',
+  backgroundColor: CTA,
   borderRadius: 10,
   fontFamily: "'Inter', system-ui, sans-serif",
+} as const;
+
+const navActiveClass =
+  'bg-white font-semibold ring-1';
+const navActiveStyle = {
+  color: CTA,
+  // ring color via boxShadow (tailwind ring teal was old #00a897 family)
+  boxShadow: `0 0 0 1px ${CTA}33`,
 } as const;
 
 function normalizePath(path: string) {
@@ -92,16 +101,20 @@ function NavDropdownMenu({
         <button
           type="button"
           onClick={() => onToggle(dropdown.label)}
-          className={`flex w-full items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+          className={`flex w-full items-center rounded-[10px] px-4 py-3 text-sm font-medium transition-colors ${
             isActive
-              ? 'bg-teal-50 text-teal-700'
+              ? 'font-semibold text-white'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
           }`}
+          style={isActive ? { backgroundColor: CTA } : undefined}
         >
           {dropdown.label}
         </button>
         {isOpen ? (
-          <div className="ml-4 space-y-1 border-l border-slate-200 pl-3">
+          <div
+            className="ml-4 space-y-1 border-l pl-3"
+            style={{ borderColor: `${CTA}44` }}
+          >
             {dropdown.items.map((item) => {
               const itemPath = normalizePath(item.href);
               const itemActive = currentPath === itemPath;
@@ -110,11 +123,12 @@ function NavDropdownMenu({
                   key={item.href}
                   href={item.href}
                   onClick={onNavigate}
-                  className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                  className={`block rounded-[10px] px-3 py-2 text-sm font-medium transition-colors ${
                     itemActive
-                      ? 'bg-teal-50 text-teal-700'
+                      ? 'font-semibold text-white'
                       : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
                   }`}
+                  style={itemActive ? { backgroundColor: CTA } : undefined}
                 >
                   {item.label}
                 </a>
@@ -129,16 +143,24 @@ function NavDropdownMenu({
   return (
     <div className="group relative shrink-0">
       <div
-        className={`inline-flex max-h-9 cursor-default items-center rounded-full px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
+        className={`inline-flex max-h-9 cursor-default items-center rounded-[10px] px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
           isActive
-            ? 'bg-white text-teal-700 ring-1 ring-teal-100'
+            ? 'bg-white'
             : 'text-slate-600 group-hover:bg-white group-hover:text-slate-950'
         }`}
+        style={
+          isActive
+            ? { color: CTA, boxShadow: `inset 0 0 0 1px ${CTA}55` }
+            : undefined
+        }
       >
         <span>{dropdown.label}</span>
       </div>
       <div className="pointer-events-none invisible absolute left-0 top-[calc(100%+0.125rem)] z-[120] min-w-[180px] opacity-0 transition-opacity duration-150 group-hover:pointer-events-auto group-hover:visible group-hover:opacity-100">
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white py-1 shadow-lg">
+        <div
+          className="overflow-hidden rounded-[10px] border bg-white py-1 shadow-lg"
+          style={{ borderColor: `${CTA}33` }}
+        >
           {dropdown.items.map((item) => {
             const itemPath = normalizePath(item.href);
             const itemActive = currentPath === itemPath;
@@ -148,10 +170,9 @@ function NavDropdownMenu({
                 href={item.href}
                 onClick={onNavigate}
                 className={`block px-4 py-2.5 text-sm font-semibold transition-colors ${
-                  itemActive
-                    ? 'bg-teal-50 text-teal-700'
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'
+                  itemActive ? 'text-white' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-950'
                 }`}
+                style={itemActive ? { backgroundColor: CTA } : undefined}
               >
                 {item.label}
               </a>
@@ -179,16 +200,22 @@ function NavLinks({
 
   const linkClass = (isActive: boolean) =>
     variant === 'desktop'
-      ? `inline-flex max-h-9 items-center rounded-full px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
+      ? `inline-flex max-h-9 items-center rounded-[10px] px-2.5 py-1 text-xs font-semibold transition-colors xl:px-3 xl:py-1.5 xl:text-sm ${
           isActive
-            ? 'bg-white text-teal-700 ring-1 ring-teal-100'
+            ? 'bg-white'
             : 'text-slate-600 hover:bg-white hover:text-slate-950'
         }`
-      : `flex items-center rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+      : `flex items-center rounded-[10px] px-4 py-3 text-sm font-medium transition-colors ${
           isActive
-            ? 'bg-teal-50 text-teal-700'
+            ? 'font-semibold text-white'
             : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950'
         }`;
+
+  const linkActiveStyle = (isActive: boolean, drawer: boolean) => {
+    if (!isActive) return undefined;
+    if (drawer) return { backgroundColor: CTA };
+    return { color: CTA, boxShadow: `inset 0 0 0 1px ${CTA}55` };
+  };
 
   return (
     <nav className={variant === 'desktop' ? 'flex max-h-10 items-center gap-0.5 xl:gap-1' : 'space-y-2'}>
@@ -202,6 +229,7 @@ function NavLinks({
             href={item.href}
             onClick={onNavigate}
             className={linkClass(isActive)}
+            style={linkActiveStyle(isActive, variant === 'drawer')}
           >
             {item.label}
           </a>
@@ -233,6 +261,7 @@ function NavLinks({
             href={item.href}
             onClick={onNavigate}
             className={linkClass(isActive)}
+            style={linkActiveStyle(isActive, variant === 'drawer')}
           >
             {item.label}
           </a>

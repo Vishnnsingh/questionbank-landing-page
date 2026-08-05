@@ -48,6 +48,14 @@ export type SubscriptionInfo = {
 export type PaymentHistoryItem = {
   id: string;
   plan_type: string;
+  plan_label?: string | null;
+  plan_duration_days?: number | null;
+  plan_snapshot?: {
+    plan_type?: string;
+    duration_days?: number;
+    amount_inr?: number;
+    label?: string;
+  } | null;
   amount_inr: number;
   status: string;
   status_label: string;

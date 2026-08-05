@@ -3,6 +3,16 @@ import { Footer } from './Footer';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
+/** Match home Hero “Register Now” CTA — #0F8F84 · radius 10 */
+const CTA = '#0F8F84';
+const ctaBtnClass =
+  'inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:opacity-95 sm:px-8 sm:text-base';
+const ctaBtnStyle = {
+  backgroundColor: CTA,
+  borderRadius: 10,
+  fontFamily: "'Inter', system-ui, sans-serif",
+} as const;
+
 type SeoPageKey =
   | 'cbseQuestionBank'
   | 'biharBoardQuestionBank'
@@ -224,11 +234,35 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
           <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-teal-300/20 blur-3xl" />
           <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-blue-300/20 blur-3xl" />
           <div className="relative">
-            <p className="inline-flex rounded-full bg-teal-50 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-teal-700">
+            <p
+              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold uppercase tracking-wide ring-1"
+              style={{ color: CTA, boxShadow: `0 0 0 1px ${CTA}33` }}
+            >
               {content.eyebrow}
             </p>
-            <h1 className="mt-4 max-w-4xl text-3xl tracking-tight text-slate-950 sm:text-5xl">{content.title}</h1>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">{content.intro}</p>
+            <h1 className="mt-4 max-w-4xl text-3xl tracking-tight text-slate-950 sm:text-5xl">
+              {content.title}
+            </h1>
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
+              {content.intro}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a href="/register" className={ctaBtnClass} style={ctaBtnStyle}>
+                Register Now
+              </a>
+              <a
+                href="/choose-plan"
+                className="inline-flex items-center justify-center gap-2 border-2 bg-white px-6 py-3.5 text-sm font-bold transition hover:bg-slate-50 sm:px-8 sm:text-base"
+                style={{
+                  borderColor: CTA,
+                  borderRadius: 10,
+                  color: CTA,
+                  fontFamily: "'Inter', system-ui, sans-serif",
+                }}
+              >
+                View plans
+              </a>
+            </div>
           </div>
         </section>
 
@@ -236,9 +270,10 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
           {content.highlights.map((highlight) => (
             <div
               key={highlight}
-              className="flex items-center gap-2 rounded-xl border border-teal-100 bg-white p-4 text-sm font-medium text-slate-700 shadow-md shadow-slate-200/60"
+              className="flex items-center gap-2 rounded-xl border bg-white p-4 text-sm font-medium text-slate-700 shadow-md shadow-slate-200/60"
+              style={{ borderColor: `${CTA}33` }}
             >
-              <CheckCircle2 className="size-5 shrink-0 text-teal-600" />
+              <CheckCircle2 className="size-5 shrink-0" style={{ color: CTA }} />
               {highlight}
             </div>
           ))}
@@ -248,11 +283,22 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
           {content.sections.map((section) => (
             <section
               key={section.title}
-              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:border-teal-300 hover:shadow-xl sm:p-6"
+              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-6"
+              style={{ ['--hover-border' as string]: CTA }}
             >
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-600 via-teal-500 to-cyan-400" />
+              <div
+                className="absolute inset-x-0 top-0 h-1"
+                style={{
+                  background: `linear-gradient(to right, #2563eb, ${CTA}, #22d3ee)`,
+                }}
+              />
               <div className="mb-4 flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-teal-500 text-white shadow-md">
+                <div
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white shadow-md"
+                  style={{
+                    background: `linear-gradient(to bottom right, #2563eb, ${CTA})`,
+                  }}
+                >
                   <CheckCircle2 className="size-5" />
                 </div>
                 <h2 className="text-2xl leading-tight text-slate-950">{section.title}</h2>
