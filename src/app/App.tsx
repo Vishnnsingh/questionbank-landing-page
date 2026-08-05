@@ -1,10 +1,10 @@
 import { Hero } from './components/Hero';
-import { Features } from './components/Features';
-import { Screenshots } from './components/Screenshots';
-import { HowItWorks } from './components/HowItWorks';
-import { Pricing } from './components/Pricing';
-import { Testimonials } from './components/Testimonials';
-import { DownloadCTA } from './components/DownloadCTA';
+import { WinningEdgeSection } from './components/WinningEdgeSection';
+import { CounterSection } from './components/CounterSection';
+import { SeeItInAction } from './components/SeeItInAction';
+import { MagicFormulaSection } from './components/MagicFormulaSection';
+import { FindYourPerfectPlan } from './components/FindYourPerfectPlan';
+import { SimpleScientificSection } from './components/SimpleScientificSection';
 import { Footer } from './components/Footer';
 import { PolicyPage } from './components/PolicyPage';
 import { SEO } from './components/SEO';
@@ -109,29 +109,15 @@ export default function App() {
     <>
       <SEO page="home" />
       <SmoothScroll>
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-white">
           <SideNav />
-          <ScrollSection intense>
-            <Hero />
-          </ScrollSection>
-          <ScrollSection>
-            <Features />
-          </ScrollSection>
-          <ScrollSection>
-            <Screenshots />
-          </ScrollSection>
-          <ScrollSection>
-            <HowItWorks />
-          </ScrollSection>
-          <ScrollSection>
-            <Pricing />
-          </ScrollSection>
-          <ScrollSection>
-            <Testimonials />
-          </ScrollSection>
-          <ScrollSection intense>
-            <DownloadCTA />
-          </ScrollSection>
+          <Hero />
+          <WinningEdgeSection />
+          <CounterSection />
+          <SeeItInAction />
+          <MagicFormulaSection />
+          <FindYourPerfectPlan />
+          <SimpleScientificSection />
           <ScrollSection>
             <Footer />
           </ScrollSection>

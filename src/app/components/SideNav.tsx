@@ -49,9 +49,14 @@ const trailingNavItems: NavItem[] = [
 
 const navDropdowns: NavDropdown[] = [boardDropdown, classDropdown];
 
+/** Match Hero “Register Now” CTA — #0F8F84 · radius 10 */
 const headerActionClass =
-  'inline-flex shrink-0 items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold text-white transition-opacity hover:opacity-90 sm:px-4 sm:py-2 sm:text-sm';
-const headerActionStyle = { backgroundColor: '#0A121D' } as const;
+  'inline-flex h-9 shrink-0 items-center justify-center px-3.5 text-xs font-bold text-white transition hover:opacity-95 sm:h-10 sm:px-4 sm:text-sm';
+const headerActionStyle = {
+  backgroundColor: '#0F8F84',
+  borderRadius: 10,
+  fontFamily: "'Inter', system-ui, sans-serif",
+} as const;
 
 function normalizePath(path: string) {
   return path.replace(/\/$/, '') || '/';
@@ -338,9 +343,6 @@ function HeaderActions({
     <div className={`flex items-center gap-2 ${stacked ? 'flex-col' : ''} ${className}`}>
       <a href="/signup" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
         Register
-      </a>
-      <a href="/#pricing" onClick={onNavigate} className={actionClass} style={headerActionStyle}>
-        Get App
       </a>
     </div>
   );

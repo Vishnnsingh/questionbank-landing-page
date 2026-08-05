@@ -12,4 +12,9 @@
 :root {
   --font-calendas: 'Calendas Plus', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'Noto Serif',
     'Noto Sans Devanagari', serif;
+  --font-hero-display: 'Playfair Display', 'Calendas Plus', Georgia, 'Times New Roman', serif;
+}
+
+.font-hero-display {
+  font-family: var(--font-hero-display);
 }
