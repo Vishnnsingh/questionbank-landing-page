@@ -1,17 +1,67 @@
-import { CheckCircle2 } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { Footer } from './Footer';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-/** Match home Hero “Register Now” CTA — #0F8F84 · radius 10 */
-const CTA = '#0F8F84';
-const ctaBtnClass =
-  'inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition hover:opacity-95 sm:px-8 sm:text-base';
-const ctaBtnStyle = {
-  backgroundColor: CTA,
-  borderRadius: 10,
-  fontFamily: "'Inter', system-ui, sans-serif",
+/** Home brand tokens — Hero CTA + Winning Edge cards */
+const F = {
+  cta: '#0F8F84',
+  heading: '#1B2A4A',
+  body: '#444444',
+  label: '#4B5A78',
+  badgeBorder: '#C7D0E6',
+  white: '#FFFFFF',
+  heroGray: '#F0F0F0',
+  cardBorder: '#C3C6D1',
+  cardTitle: '#161618',
+  cardBody: '#767676',
+  muted: '#575E71',
+  iconTeal: '#0F8F84',
+  qrBorder: 'rgba(15, 143, 132, 0.5)',
+  statsShadow: '0px 20px 50px rgba(226, 217, 220, 0.3)',
+  gradient:
+    'linear-gradient(97.77deg, rgba(20, 184, 166, 0.5) 0%, rgba(208, 247, 234, 0.5) 97.73%)',
 } as const;
+
+const titleFont =
+  "'Libre Caslon Text', 'Playfair Display', Georgia, serif";
+const bodyFont = "'Manrope', 'Inter', system-ui, sans-serif";
+const labelFont = "'DM Sans', system-ui, sans-serif";
+const displayFont = "'Playfair Display', Georgia, serif";
+const ctaFont = "'Inter', system-ui, sans-serif";
+
+const EDGE_ICONS = [
+  { src: '/image/winning-edge/qb.svg', w: 18.65, h: 14.85 },
+  { src: '/image/winning-edge/ai.svg', w: 17.89, h: 19 },
+  { src: '/image/winning-edge/target.svg', w: 17, h: 19 },
+  { src: '/image/winning-edge/mock.svg', w: 18.5, h: 18.5 },
+  { src: '/image/winning-edge/chapter.svg', w: 20.99, h: 17.55 },
+  { src: '/image/winning-edge/performance.svg', w: 21.5, h: 16.14 },
+  { src: '/image/winning-edge/syllabus.svg', w: 21, h: 14.9 },
+  { src: '/image/winning-edge/career.svg', w: 18.42, h: 18.42 },
+] as const;
+
+const DECOR = [
+  '/image/winning-edge/decor-vector2.svg',
+  '/image/winning-edge/decor-vector3.svg',
+] as const;
+
+function CardDecor({ src }: { src: string }) {
+  return (
+    <div
+      className="pointer-events-none absolute bottom-[40%] left-[30%] right-0 h-[160px] overflow-hidden opacity-80"
+      aria-hidden
+    >
+      <div className="h-full w-full rotate-180">
+        <img
+          src={src}
+          alt=""
+          className="h-full w-full object-cover object-left-bottom"
+        />
+      </div>
+    </div>
+  );
+}
 
 type SeoPageKey =
   | 'cbseQuestionBank'
@@ -226,38 +276,79 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
   const content = seoPages[page];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-cyan-50 to-blue-50">
+    <div className="min-h-screen" style={{ background: F.heroGray }}>
       <SEO page={page} />
       <SideNav />
-      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
-        <section className="relative mb-10 overflow-hidden rounded-2xl border border-white/70 bg-white/80 p-6 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-8 lg:p-10">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-teal-300/20 blur-3xl" />
-          <div className="absolute bottom-0 left-0 h-32 w-32 rounded-full bg-blue-300/20 blur-3xl" />
+      <main className="mx-auto max-w-[1138px] px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-16">
+        {/* Hero — home badge + Playfair + Register CTA */}
+        <section
+          className="relative mb-10 overflow-hidden rounded-[18px] border bg-white p-6 sm:p-8 lg:p-10"
+          style={{
+            borderColor: 'rgba(15, 143, 132, 0.22)',
+            boxShadow: F.statsShadow,
+          }}
+        >
+          <div
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{ background: F.gradient }}
+            aria-hidden
+          />
           <div className="relative">
-            <p
-              className="inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold uppercase tracking-wide ring-1"
-              style={{ color: CTA, boxShadow: `0 0 0 1px ${CTA}33` }}
+            <div
+              className="inline-flex h-10 items-center gap-2.5 px-3.5 sm:h-11"
+              style={{
+                background: F.white,
+                border: `1px solid ${F.badgeBorder}`,
+                borderRadius: 20,
+              }}
             >
-              {content.eyebrow}
-            </p>
-            <h1 className="mt-4 max-w-4xl text-3xl tracking-tight text-slate-950 sm:text-5xl">
+              <span
+                className="size-[7px] shrink-0 rounded-full"
+                style={{ background: F.cta }}
+                aria-hidden
+              />
+              <span
+                className="text-[13px] font-semibold uppercase tracking-wide sm:text-[14px]"
+                style={{ fontFamily: labelFont, color: F.cardTitle }}
+              >
+                {content.eyebrow}
+              </span>
+            </div>
+
+            <h1
+              className="mt-4 max-w-4xl text-[28px] font-bold leading-[1.25] sm:text-[36px] lg:text-[42px] lg:leading-[1.3]"
+              style={{ fontFamily: displayFont, color: F.heading }}
+            >
               {content.title}
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
+            <p
+              className="mt-4 max-w-3xl text-[15px] leading-[1.5] sm:text-[17px] lg:text-[18px]"
+              style={{ fontFamily: labelFont, color: F.body }}
+            >
               {content.intro}
             </p>
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a href="/register" className={ctaBtnClass} style={ctaBtnStyle}>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8 sm:gap-5">
+              <a
+                href="/signup"
+                className="inline-flex h-12 w-[153px] shrink-0 items-center justify-center text-[15px] font-bold text-white transition hover:opacity-95 sm:h-[56px] sm:w-[180px] sm:text-[16px]"
+                style={{
+                  background: F.cta,
+                  borderRadius: 10,
+                  fontFamily: ctaFont,
+                }}
+              >
                 Register Now
               </a>
               <a
                 href="/choose-plan"
-                className="inline-flex items-center justify-center gap-2 border-2 bg-white px-6 py-3.5 text-sm font-bold transition hover:bg-slate-50 sm:px-8 sm:text-base"
+                className="inline-flex h-12 shrink-0 items-center justify-center px-6 text-[15px] font-bold transition hover:bg-white/80 sm:h-[56px] sm:px-8 sm:text-[16px]"
                 style={{
-                  borderColor: CTA,
+                  border: `1px solid ${F.qrBorder}`,
                   borderRadius: 10,
-                  color: CTA,
-                  fontFamily: "'Inter', system-ui, sans-serif",
+                  color: F.cta,
+                  fontFamily: ctaFont,
+                  background: F.white,
                 }}
               >
                 View plans
@@ -266,62 +357,143 @@ export function SeoLandingPage({ page }: { page: SeoPageKey }) {
           </div>
         </section>
 
+        {/* Highlights — home check pills */}
         <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {content.highlights.map((highlight) => (
             <div
               key={highlight}
-              className="flex items-center gap-2 rounded-xl border bg-white p-4 text-sm font-medium text-slate-700 shadow-md shadow-slate-200/60"
-              style={{ borderColor: `${CTA}33` }}
+              className="flex items-center gap-2.5 rounded-xl border bg-white p-4"
+              style={{
+                borderColor: F.cardBorder,
+                boxShadow: F.statsShadow,
+              }}
             >
-              <CheckCircle2 className="size-5 shrink-0" style={{ color: CTA }} />
-              {highlight}
+              <span
+                className="flex size-6 shrink-0 items-center justify-center rounded-full text-white"
+                style={{ background: F.cta }}
+                aria-hidden
+              >
+                <Check className="size-3.5" strokeWidth={2.5} />
+              </span>
+              <span
+                className="text-[14px] font-medium sm:text-[15px]"
+                style={{ fontFamily: labelFont, color: F.muted }}
+              >
+                {highlight}
+              </span>
             </div>
           ))}
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
-          {content.sections.map((section) => (
-            <section
-              key={section.title}
-              className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white p-5 shadow-lg shadow-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-6"
-              style={{ ['--hover-border' as string]: CTA }}
-            >
-              <div
-                className="absolute inset-x-0 top-0 h-1"
+        {/* Section cards — Winning Edge icon + glass card */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {content.sections.map((section, index) => {
+            const icon = EDGE_ICONS[index % EDGE_ICONS.length];
+            const decor = DECOR[index % DECOR.length];
+            return (
+              <article
+                key={section.title}
+                className="relative flex min-h-[280px] flex-col overflow-hidden rounded-xl border p-8"
                 style={{
-                  background: `linear-gradient(to right, #2563eb, ${CTA}, #22d3ee)`,
+                  background: F.white,
+                  borderColor: F.cardBorder,
                 }}
-              />
-              <div className="mb-4 flex items-start gap-3">
+              >
+                <CardDecor src={decor} />
+
                 <div
-                  className="flex size-10 shrink-0 items-center justify-center rounded-lg text-white shadow-md"
-                  style={{
-                    background: `linear-gradient(to bottom right, #2563eb, ${CTA})`,
-                  }}
+                  className="relative z-[1] flex size-12 shrink-0 items-center justify-center rounded-lg"
+                  style={{ background: F.iconTeal }}
                 >
-                  <CheckCircle2 className="size-5" />
+                  <img
+                    src={icon.src}
+                    alt=""
+                    aria-hidden
+                    width={icon.w}
+                    height={icon.h}
+                    style={{ width: icon.w, height: icon.h }}
+                  />
                 </div>
-                <h2 className="text-2xl leading-tight text-slate-950">{section.title}</h2>
-              </div>
-              <div className="mt-4 space-y-3">
-                {section.body.map((paragraph) => (
-                  <p key={paragraph} className="leading-relaxed text-slate-600">
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-              {section.bullets && (
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {section.bullets.map((bullet) => (
-                    <li key={bullet} className="rounded-md bg-slate-50 p-3 text-sm text-slate-700">
-                      {bullet}
-                    </li>
+
+                <h2
+                  className="relative z-[1] mt-4 text-[22px] font-normal leading-8 sm:text-[24px]"
+                  style={{ fontFamily: titleFont, color: F.cardTitle }}
+                >
+                  {section.title}
+                </h2>
+
+                <div className="relative z-[1] mt-4 space-y-3">
+                  {section.body.map((paragraph) => (
+                    <p
+                      key={paragraph}
+                      className="text-[15px] font-normal leading-6 sm:text-[16px]"
+                      style={{ fontFamily: bodyFont, color: F.cardBody }}
+                    >
+                      {paragraph}
+                    </p>
                   ))}
-                </ul>
-              )}
-            </section>
-          ))}
+                </div>
+
+                {section.bullets ? (
+                  <ul className="relative z-[1] mt-5 flex flex-col gap-3">
+                    {section.bullets.map((bullet) => (
+                      <li
+                        key={bullet}
+                        className="flex items-start gap-2.5 text-[14px] sm:text-[15px]"
+                        style={{ fontFamily: labelFont, color: F.muted }}
+                      >
+                        <span
+                          className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-white"
+                          style={{ background: F.cta }}
+                          aria-hidden
+                        >
+                          <Check className="size-3.5" strokeWidth={2.5} />
+                        </span>
+                        {bullet}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </article>
+            );
+          })}
         </div>
+
+        {/* Bottom CTA band — home Get Started */}
+        <section
+          className="mt-12 overflow-hidden rounded-[18px] px-6 py-8 sm:px-10 sm:py-10"
+          style={{ background: F.cta }}
+        >
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2
+                className="text-[24px] font-medium leading-tight sm:text-[28px]"
+                style={{ fontFamily: displayFont, color: F.white }}
+              >
+                Start board exam practice today
+              </h2>
+              <p
+                className="mt-2 max-w-xl text-[15px] leading-relaxed sm:text-[16px]"
+                style={{ fontFamily: bodyFont, color: 'rgba(255,255,255,0.9)' }}
+              >
+                Register free, pick a plan, and practice previous year questions
+                for CBSE &amp; Bihar Board.
+              </p>
+            </div>
+            <a
+              href="/signup"
+              className="inline-flex h-[56px] shrink-0 items-center justify-center px-8 text-[16px] font-bold transition hover:opacity-95"
+              style={{
+                background: F.white,
+                color: F.cta,
+                borderRadius: 10,
+                fontFamily: ctaFont,
+              }}
+            >
+              Get Started
+            </a>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
