@@ -8,7 +8,7 @@ import {
 
 export { SITE_URL, SUPPORT_EMAIL };
 export const SITE_NAME = 'Prepmagic';
-export const SUPPORT_PHONE = '8084048167';
+export const SUPPORT_PHONE = '7837068345';
 export const PRODUCT_IMAGE_URL = `${SITE_URL}/images/og-homepage.jpg`;
 
 export const products = [
