@@ -91,6 +91,12 @@ export const pageMeta = {
       'Learn how Prepmagic handles student account data, support requests, payment records, and app usage information.',
     path: '/privacy-policy',
   },
+  deleteAccount: {
+    title: 'Delete Your PrepMagic Account | Account Deletion Guide',
+    description:
+      'How to permanently delete your PrepMagic account from the app, what data is removed, and what may be retained for legal compliance.',
+    path: '/delete-account',
+  },
   cbseQuestionBank: {
     title: 'CBSE Question Bank 2025-26 | Class 10 & 12 Previous Year Questions | Prepmagic',
     description:

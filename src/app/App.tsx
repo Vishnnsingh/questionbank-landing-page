@@ -16,6 +16,7 @@ import { PaymentReturnPage } from './components/PaymentReturnPage';
 import { SignUpPage } from './components/SignUpPage';
 import { OnboardingPage } from './components/OnboardingPage';
 import { AboutPage } from './components/AboutPage';
+import { DeleteAccountPage } from './components/DeleteAccountPage';
 import { SideNav } from './components/SideNav';
 import { SmoothScroll } from './components/SmoothScroll';
 import { ScrollSection } from './components/scroll-fx';
@@ -71,6 +72,10 @@ export default function App() {
 
   if (path === '/privacy-policy') {
     return <PolicyPage page="privacy" />;
+  }
+
+  if (path === '/delete-account') {
+    return <DeleteAccountPage />;
   }
 
   if (path === '/cbse-question-bank') {

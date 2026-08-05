@@ -31,3 +31,15 @@ export async function fetchAppSupportPrivacy(): Promise<AppSupportPagePayload> {
     throw new Error(getApiErrorMessage(error, 'Could not load privacy policy.'));
   }
 }
+
+/** Public — used by /delete-account (admin-editable App Support content). */
+export async function fetchAppSupportAccountDeletion(): Promise<AppSupportPagePayload> {
+  try {
+    const { data } = await apiClient.get<ApiPayload<AppSupportPagePayload>>(
+      '/api/v1/user-app/app-support/account-deletion',
+    );
+    return data?.data ?? {};
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load account deletion policy.'));
+  }
+}
