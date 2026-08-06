@@ -117,12 +117,20 @@ export function PaymentReturnPage() {
                     <div className="flex flex-col items-center gap-3">
                       <p className="text-sm text-slate-500">Redirecting to plans…</p>
                       {phase === 'failed' ? (
-                        <a
-                          href="/choose-plan"
-                          className="inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white"
-                        >
-                          Continue / New order
-                        </a>
+                        <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-center">
+                          <a
+                            href="/choose-plan"
+                            className="inline-flex items-center justify-center rounded-xl bg-[#00a897] px-6 py-3 text-sm font-semibold text-white"
+                          >
+                            Retry
+                          </a>
+                          <a
+                            href="/choose-plan"
+                            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                          >
+                            Back to plan
+                          </a>
+                        </div>
                       ) : null}
                     </div>
                   ) : null
