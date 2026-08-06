@@ -12,11 +12,46 @@ export type ApiPayload<T = unknown> = {
 
 export const apiClient = axios.create({
   baseURL: API_BASE,
+  timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
   },
   withCredentials: true,
 });
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const isRetryableNetworkError = (error: unknown) => {
+  if (!axios.isAxiosError(error) || error.response) return false;
+  const code = String(error.code || '');
+  const msg = String(error.message || '').toLowerCase();
+  return (
+    code === 'ECONNABORTED' ||
+    code === 'ERR_NETWORK' ||
+    code === 'ETIMEDOUT' ||
+    msg.includes('network error') ||
+    msg.includes('timeout')
+  );
+};
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error?.config as
+      | (typeof error.config & { __retryCount?: number })
+      | undefined;
+    if (!config || !isRetryableNetworkError(error)) {
+      return Promise.reject(error);
+    }
+    const count = config.__retryCount || 0;
+    if (count >= 2) {
+      return Promise.reject(error);
+    }
+    config.__retryCount = count + 1;
+    await sleep(700 * (count + 1));
+    return apiClient.request(config);
+  },
+);
 
 apiClient.interceptors.request.use((config) => {
   config.headers = config.headers || {};
