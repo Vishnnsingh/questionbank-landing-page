@@ -2,6 +2,7 @@ import {
   apiClient,
   authHeaders,
   getApiErrorMessage,
+  withNetworkRetry,
   type ApiPayload,
 } from './client';
 
@@ -142,10 +143,16 @@ export type LoginResult = {
 
 export async function loginUser(email: string, password: string): Promise<LoginResult> {
   try {
-    const { data } = await apiClient.post<ApiPayload<LoginResult>>('/api/v1/auth/login', {
-      email: email.trim().toLowerCase(),
-      password,
-    });
+    const { data } = await withNetworkRetry(({ timeout, headers }) =>
+      apiClient.post<ApiPayload<LoginResult>>(
+        '/api/v1/auth/login',
+        {
+          email: email.trim().toLowerCase(),
+          password,
+        },
+        { timeout, headers },
+      ),
+    );
     const session = data?.data;
     if (!session?.accessToken) {
       throw new Error('Invalid login response.');
