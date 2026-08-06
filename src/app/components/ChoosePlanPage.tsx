@@ -161,25 +161,15 @@ export function ChoosePlanPage() {
       }
 
       setPayStatusMessage('Opening payment gateway. Do not close this page…');
-      // Create Order: 1 call (or resume pending unless forceNew)
+      // Create / resume order — amount always from live admin (backend)
       const checkout = await createWebCheckout(accessToken, planType, { forceNew });
+      // Leave preparing overlay — Cashfree takes over (don't re-show "new order" after fail)
+      setPayPhase('idle');
+      setPayStatusMessage('');
+      setPayingPlan(null);
       await openCashfreeCheckout(checkout);
     } catch (error) {
-      const technicalMessage =
-        error instanceof Error ? error.message : String(error || '');
-      const shouldAutomaticallyCreateFreshOrder =
-        !forceNew &&
-        /order_expiry_time|expir(?:y|ed)|invalid cashfree checkout session|cashfree order|payment session/i.test(
-          technicalMessage,
-        );
-
-      if (shouldAutomaticallyCreateFreshOrder) {
-        setPayingPlan(null);
-        setPayStatusMessage('Refreshing your secure payment session…');
-        await handlePayNow(planType, true);
-        return;
-      }
-
+      // Never auto force-new mid-flow (show failed once; user retries Pay Now themselves)
       const friendly = formatPaymentUserMessage(error, 'Could not start payment. Please try again.');
       setPayPhase('failed');
       setPayStatusMessage(friendly);
