@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from 'axios';
-import { API_BASE } from '../config/env';
+import { API_BASE, API_BASE_CANDIDATES } from '../config/env';
 import { DEFAULT_TENANT_ID, getSessionTenantId } from '../lib/tenant-rbac';
 
 export { API_BASE };
@@ -10,8 +10,25 @@ export type ApiPayload<T = unknown> = {
   data?: T;
 };
 
+let baseIndex = 0;
+
+function currentBase(): string {
+  const list = API_BASE_CANDIDATES.length
+    ? API_BASE_CANDIDATES
+    : [API_BASE];
+  return list[baseIndex % list.length] || API_BASE;
+}
+
+function rotateBase(): string {
+  if (API_BASE_CANDIDATES.length <= 1) return currentBase();
+  baseIndex = (baseIndex + 1) % API_BASE_CANDIDATES.length;
+  const next = currentBase();
+  apiClient.defaults.baseURL = next;
+  return next;
+}
+
 export const apiClient = axios.create({
-  baseURL: API_BASE,
+  baseURL: currentBase(),
   timeout: 60000,
   headers: {
     'Content-Type': 'application/json',
@@ -33,6 +50,7 @@ const isRetryableNetworkError = (error: unknown) => {
     code === 'ERR_CANCELED' ||
     msg.includes('network error') ||
     msg.includes('timeout') ||
+    msg.includes('timed out') ||
     msg.includes('aborted') ||
     msg.includes('failed to fetch') ||
     msg.includes('socket hang up')
@@ -40,18 +58,22 @@ const isRetryableNetworkError = (error: unknown) => {
 };
 
 /**
- * Auth POSTs: short per-attempt timeout + fresh retries.
- * Avoids Chrome "Queueing / Stalled" hangs behind 6 busy TCP sockets.
+ * Auth POSTs: short attempts + rotate API host (Vercel proxy ↔ direct VPS).
  */
 export async function withNetworkRetry<T>(
-  requestFn: (opts: { timeout: number; headers: Record<string, string> }) => Promise<T>,
-  { retries = 3, baseDelayMs = 500, attemptTimeoutMs = 22000 } = {},
+  requestFn: (opts: {
+    timeout: number;
+    headers: Record<string, string>;
+    baseURL: string;
+  }) => Promise<T>,
+  { retries = 4, baseDelayMs = 400, attemptTimeoutMs = 20000 } = {},
 ): Promise<T> {
   let lastError: unknown;
   for (let attempt = 0; attempt <= retries; attempt += 1) {
     try {
       return await requestFn({
         timeout: attemptTimeoutMs,
+        baseURL: currentBase(),
         headers: {
           'Cache-Control': 'no-cache',
           Pragma: 'no-cache',
@@ -63,7 +85,8 @@ export async function withNetworkRetry<T>(
       if (!isRetryableNetworkError(error) || attempt === retries) {
         throw error;
       }
-      await sleep(baseDelayMs * (attempt + 1) + Math.floor(Math.random() * 200));
+      rotateBase();
+      await sleep(baseDelayMs * (attempt + 1) + Math.floor(Math.random() * 150));
     }
   }
   throw lastError;
@@ -83,21 +106,22 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
     config.__retryCount = count + 1;
-    // Prefer a fresh shorter timeout on retries (stalled sockets / Wi‑Fi change)
-    config.timeout = 22000;
+    config.timeout = 20000;
+    config.baseURL = rotateBase();
     config.headers = {
       ...(config.headers || {}),
       'Cache-Control': 'no-cache',
       Pragma: 'no-cache',
       'X-Client-Retry': String(count + 1),
     };
-    await sleep(500 * (count + 1));
+    await sleep(400 * (count + 1));
     return apiClient.request(config);
   },
 );
 
 apiClient.interceptors.request.use((config) => {
   config.headers = config.headers || {};
+  config.baseURL = config.baseURL || currentBase();
   const token =
     typeof config.headers.Authorization === 'string'
       ? config.headers.Authorization.replace(/^Bearer\s+/i, '').trim()

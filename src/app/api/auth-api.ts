@@ -143,14 +143,14 @@ export type LoginResult = {
 
 export async function loginUser(email: string, password: string): Promise<LoginResult> {
   try {
-    const { data } = await withNetworkRetry(({ timeout, headers }) =>
+    const { data } = await withNetworkRetry(({ timeout, headers, baseURL }) =>
       apiClient.post<ApiPayload<LoginResult>>(
         '/api/v1/auth/login',
         {
           email: email.trim().toLowerCase(),
           password,
         },
-        { timeout, headers },
+        { timeout, headers, baseURL },
       ),
     );
     const session = data?.data;

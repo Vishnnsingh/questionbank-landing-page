@@ -8,17 +8,22 @@ function stripTrailingSlash(value: string): string {
 
 const LOOPBACK = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1']);
 
-/** Production API — never fall back to localhost in deploy builds. */
-const PRODUCTION_API_BASE = 'https://api.prepmagic.in';
-const PRODUCTION_SITE_URL = 'https://prepmagic.in';
+const DIRECT_API = 'https://api.prepmagic.in';
+const SITE = 'https://prepmagic.in';
 
 /**
- * When the site is opened via PC LAN IP on a phone (Wi‑Fi), and env still has
- * loopback API, rewrite to page hostname (local dev only).
- * Production .env should set VITE_API_BASE_URL=https://api.prepmagic.in
+ * On production landing host, force same-origin API so the browser never needs
+ * the bare VPS IP (which some Wi‑Fi time out). Vercel rewrites /api/* → backend.
  */
 function resolveApiBase(configured: string): string {
-  const raw = stripTrailingSlash(configured || PRODUCTION_API_BASE);
+  if (typeof window !== 'undefined') {
+    const pageHost = String(window.location.hostname || '').toLowerCase();
+    if (pageHost === 'prepmagic.in' || pageHost === 'www.prepmagic.in') {
+      return stripTrailingSlash(window.location.origin);
+    }
+  }
+
+  const raw = stripTrailingSlash(configured || DIRECT_API);
   if (typeof window === 'undefined') return raw;
   try {
     const url = new URL(
@@ -31,16 +36,27 @@ function resolveApiBase(configured: string): string {
       return stripTrailingSlash(url.toString());
     }
   } catch {
-    /* keep configured */
+    /* keep */
   }
   return raw;
 }
 
 export const API_BASE = resolveApiBase(
-  readEnv('VITE_API_BASE_URL') || PRODUCTION_API_BASE,
+  readEnv('VITE_API_BASE_URL') || DIRECT_API,
 );
+
+/** Direct backend + same-origin — rotate on connection timeout. */
+export const API_BASE_CANDIDATES = (() => {
+  const list = [
+    API_BASE,
+    SITE,
+    DIRECT_API,
+  ].map(stripTrailingSlash);
+  return [...new Set(list.filter(Boolean))];
+})();
+
 export const SITE_URL = stripTrailingSlash(
-  readEnv('VITE_SITE_URL') || PRODUCTION_SITE_URL,
+  readEnv('VITE_SITE_URL') || SITE,
 );
 export const SUPPORT_EMAIL =
   readEnv('VITE_SUPPORT_EMAIL') || 'support@prepmagic.in';
