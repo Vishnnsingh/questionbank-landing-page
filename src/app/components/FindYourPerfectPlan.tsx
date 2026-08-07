@@ -1,4 +1,4 @@
-import { Check } from 'lucide-react';
+import { Check, Flame } from 'lucide-react';
 import {
   SCHEMA_IN_STOCK,
   SCHEMA_NEW_CONDITION,
@@ -9,41 +9,36 @@ import { usePublicPlanPricing } from '../lib/usePublicPlanPricing';
 import type { PlanCatalog } from '../lib/plan-catalog';
 
 /**
- * Choose Your Plan — Class 10 / Class 12 prices from /plans-catalog API
- * (same source as login → Choose Plan). CTA: home style #0F8F84 · r10
+ * PrepMagic-UI — Choose Your Plan (Figma home pricing cards)
+ * Prices from /plans-catalog API; layout matches Class 10 / Class 12 card mock.
  */
 
 const F = {
-  sectionBg: '#F8F8F8',
+  sectionBg: '#FFFFFF',
   label: '#A63426',
   heading: '#0F172A',
   body: '#4B5A78',
-  muted: '#575E71',
+  /** Card accent — same for CTA, price, Annual Plan, badge */
+  brand: '#0F8F84',
+  muted: '#6B7280',
+  check: '#9CA3AF',
   strike: '#9DA4B5',
-  price: '#14B8A6',
-  cta: '#0F8F84',
-  border: '#BFBFBF',
-  badge: '#F2C94C',
-  badgeText: '#222222',
+  border: '#E5E7EB',
   white: '#FFFFFF',
+  cardBg: '#F8F9FC',
+  badge: '#F2C94C',
+  badgeText: '#1A1A1A',
+  cardShadow: '0px 4px 24px rgba(15, 23, 42, 0.06)',
 } as const;
 
-const PLAN_FEATURES = {
-  '10': [
-    '10 Years Question Bank',
-    'AI Exam Prediction',
-    'Unlimited Mock Tests',
-    'Performance Analytics',
-    'Chapter-wise Practice',
-  ],
-  '12': [
-    '10 Years Question Bank',
-    'AI Exam Prediction',
-    'Unlimited Mock Tests',
-    'Career Guidance',
-    'College Information',
-  ],
-} as const;
+/** Same feature list on both cards — left-aligned (not staggered/centered). */
+const PLAN_FEATURES = [
+  '10 Years Question Bank',
+  'AI Exam Prediction',
+  'Unlimited Mock Tests',
+  'Performance Analytics',
+  'Chapter-wise Practice',
+] as const;
 
 function planUi(
   catalog: PlanCatalog,
@@ -51,18 +46,196 @@ function planUi(
   classKey: '10' | '12',
 ) {
   return {
-    classLabel: `Class ${classKey}`,
-    subtitle: 'Annual Plan',
-    salePrice: catalog.yearly.displayAmount,
-    originalPrice: catalog.yearly.mrpDisplay,
-    popular: true,
-    features: PLAN_FEATURES[classKey],
+    classKey,
+    forLabel: `For Class ${classKey}`,
+    planName: 'Annual Plan',
+    salePrice: Number(catalog.yearly.displayAmount) || 0,
+    originalPrice: Number(catalog.yearly.mrpDisplay) || 0,
+    features: PLAN_FEATURES,
     product: products[productIndex],
   };
 }
 
+function PlanCard({
+  plan,
+  loading,
+}: {
+  plan: ReturnType<typeof planUi>;
+  loading?: boolean;
+}) {
+  const showStrike = plan.originalPrice > plan.salePrice && plan.salePrice > 0;
+
+  return (
+    <article
+      itemScope
+      itemType={`${SCHEMA_ORG_URL}/Product`}
+      className="relative flex w-full max-w-[451px] flex-col rounded-[16px] border-[#BFBFBF] border-2 px-7 pb-8 pt-7 sm:px-8 sm:pb-9 sm:pt-8 md:min-h-[601px]"
+      style={{
+        borderColor: F.border,
+        background: F.cardBg,
+        boxShadow: F.cardShadow,
+      }}
+    >
+      {/* Most Popular — half above top edge; gold badge + dark text (Figma) */}
+      <span
+        className="absolute right-5 z-20 inline-flex h-[24px] -translate-y-1/2 items-center gap-1 rounded-full px-3 text-[11px] font-bold leading-none sm:right-7 sm:text-[12px]"
+        style={{
+          top: 0,
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          background: F.badge,
+          color: F.badgeText,
+        }}
+      >
+        <Flame className="size-3" strokeWidth={2.25} aria-hidden />
+        Most Popular
+      </span>
+
+      {/* Class label — CTA-matched corner radius, white fill */}
+      <div className="relative z-10 mb-1 flex min-h-[28px] items-center">
+        <span
+          className="inline-flex items-center px-3 py-1 text-[12px] font-semibold sm:text-[13px]"
+          style={{
+            fontFamily: "'DM Sans', system-ui, sans-serif",
+            background: F.white,
+            color: F.brand,
+            borderRadius: 10,
+          }}
+        >
+          {plan.forLabel}
+        </span>
+      </div>
+
+      <meta itemProp="image" content={PRODUCT_IMAGE_URL} />
+      <span
+        itemProp="brand"
+        itemScope
+        itemType={`${SCHEMA_ORG_URL}/Brand`}
+        className="sr-only"
+      >
+        <meta itemProp="name" content={SITE_NAME} />
+      </span>
+      <meta itemProp="name" content={`${plan.forLabel} — ${plan.planName}`} />
+      <p className="sr-only" itemProp="description">
+        {plan.product.description}
+      </p>
+
+      {/* PM logo */}
+      <div className="mx-auto mt-4 flex size-[88px] items-center justify-center sm:mt-5 sm:size-[100px]">
+        <img
+          src="/iconb.png"
+          alt=""
+          className="h-full w-full object-contain"
+          width={100}
+          height={100}
+        />
+      </div>
+
+      {/* Annual Plan — same color as Get Started */}
+      <h3
+        className="mt-4 text-center text-[22px] font-bold tracking-[-0.01em] sm:text-[24px]"
+        style={{
+          fontFamily: "'DM Sans', system-ui, sans-serif",
+          color: F.brand,
+        }}
+      >
+        {plan.planName}
+      </h3>
+
+      {/* Dynamic prices from API */}
+      <div
+        className="mt-3 flex min-h-[44px] flex-wrap items-baseline justify-center gap-x-2 gap-y-1"
+        itemProp="offers"
+        itemScope
+        itemType={`${SCHEMA_ORG_URL}/Offer`}
+      >
+        <meta itemProp="priceCurrency" content="INR" />
+        <meta
+          itemProp="price"
+          content={plan.salePrice > 0 ? String(plan.salePrice) : undefined}
+        />
+        <meta itemProp="availability" content={SCHEMA_IN_STOCK} />
+        <meta itemProp="itemCondition" content={SCHEMA_NEW_CONDITION} />
+        <meta itemProp="url" content={absoluteUrl('/#pricing')} />
+
+        {loading ? (
+          <span
+            className="inline-block h-9 w-36 animate-pulse rounded-md bg-slate-100"
+            aria-hidden
+          />
+        ) : (
+          <>
+            {showStrike ? (
+              <span
+                className="text-[15px] font-semibold line-through sm:text-[16px]"
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  color: F.strike,
+                }}
+              >
+                ₹{plan.originalPrice}
+              </span>
+            ) : null}
+
+            <span
+              className="inline-flex items-baseline font-semibold"
+              style={{
+                fontFamily: "'DM Sans', system-ui, sans-serif",
+                color: F.brand,
+              }}
+            >
+              <span className="text-[34px] leading-none tracking-tight sm:text-[38px]">
+                ₹{plan.salePrice || '—'}
+              </span>
+              <span className="text-[15px] font-semibold sm:text-[16px]">
+                /year
+              </span>
+            </span>
+          </>
+        )}
+      </div>
+
+      {/* Features — left-aligned single column (same line on both cards) */}
+      <ul className="mt-7 w-full max-w-[280px] self-center sm:mt-8 sm:max-w-[300px]">
+        {plan.features.map((feature) => (
+          <li
+            key={feature}
+            className="flex items-center gap-2.5 py-[7px] text-[14px] sm:gap-3 sm:text-[15px]"
+            style={{
+              fontFamily: "'DM Sans', system-ui, sans-serif",
+              color: F.muted,
+            }}
+          >
+            <span className="inline-flex w-5 shrink-0 items-center justify-center">
+              <Check
+                className="size-4 sm:size-[18px]"
+                strokeWidth={2.5}
+                style={{ color: F.check }}
+                aria-hidden
+              />
+            </span>
+            <span className="min-w-0 flex-1 leading-snug">{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      {/* Large gap above CTA — same visual breathing room as Figma mock */}
+      <a
+        href="/signup"
+        className="mt-12 flex h-[52px] w-full items-center justify-center text-[15px] font-bold text-white transition hover:opacity-95 sm:mt-14 sm:h-[56px] sm:text-[16px]"
+        style={{
+          background: F.brand,
+          borderRadius: 10,
+          fontFamily: "'Inter', 'DM Sans', system-ui, sans-serif",
+        }}
+      >
+        Get Started
+      </a>
+    </article>
+  );
+}
+
 export function FindYourPerfectPlan() {
-  const { class10, class12 } = usePublicPlanPricing();
+  const { class10, class12, loading } = usePublicPlanPricing();
   const plans = [
     planUi(class10, 0, '10'),
     planUi(class12, 1, '12'),
@@ -77,7 +250,7 @@ export function FindYourPerfectPlan() {
     >
       <div className="mx-auto w-full max-w-[1130px]">
         <p
-          className="text-center text-[14px] font-semibold uppercase tracking-[2px] sm:text-[16px]"
+          className="text-center text-[13px] font-semibold uppercase tracking-[0.14em] sm:text-[14px]"
           style={{
             fontFamily: "'DM Sans', system-ui, sans-serif",
             color: F.label,
@@ -98,7 +271,7 @@ export function FindYourPerfectPlan() {
         </h2>
 
         <p
-          className="mx-auto mt-3 max-w-[464px] text-center text-[15px] leading-relaxed sm:mt-4 sm:text-[16px]"
+          className="mx-auto mt-3 max-w-[480px] text-center text-[15px] leading-relaxed sm:mt-4 sm:text-[16px]"
           style={{
             fontFamily: "'DM Sans', system-ui, sans-serif",
             color: F.body,
@@ -108,152 +281,9 @@ export function FindYourPerfectPlan() {
           exam-focused practice.
         </p>
 
-        <div className="mx-auto mt-10 grid max-w-[980px] grid-cols-1 gap-8 md:mt-12 md:grid-cols-2 md:gap-10">
+        <div className="mx-auto mt-10 flex max-w-[1024px] flex-col items-center justify-center gap-8 md:mt-12 md:flex-row md:items-stretch md:gap-[102px] lg:gap40">
           {plans.map((plan) => (
-            <article
-              key={plan.classLabel}
-              itemScope
-              itemType={`${SCHEMA_ORG_URL}/Product`}
-              className="relative flex flex-col rounded-[14px] border bg-white px-6 pb-7 pt-8 sm:px-8 sm:pb-8 sm:pt-10"
-              style={{
-                borderColor: F.border,
-                minHeight: 520,
-              }}
-            >
-              {plan.popular ? (
-                <div
-                  className="absolute -top-3 right-6 flex h-[22px] items-center gap-1.5 rounded-[20px] px-3 sm:right-8"
-                  style={{ background: F.badge }}
-                >
-                  <span
-                    className="whitespace-nowrap text-[11px] font-bold"
-                    style={{
-                      fontFamily: "'DM Sans', system-ui, sans-serif",
-                      color: F.badgeText,
-                    }}
-                  >
-                    Most Popular
-                  </span>
-                </div>
-              ) : null}
-
-              <meta itemProp="image" content={PRODUCT_IMAGE_URL} />
-              <span
-                itemProp="brand"
-                itemScope
-                itemType={`${SCHEMA_ORG_URL}/Brand`}
-                className="sr-only"
-              >
-                <meta itemProp="name" content={SITE_NAME} />
-              </span>
-
-              <div className="mx-auto size-[120px] overflow-hidden sm:size-[172px]">
-                <img
-                  src="/iconb.png"
-                  alt=""
-                  className="h-full w-full object-contain"
-                />
-              </div>
-
-              <h3
-                className="mt-4 text-center text-[24px] font-semibold sm:text-[28px]"
-                style={{
-                  fontFamily: "'Playfair Display', Georgia, serif",
-                  color: F.heading,
-                }}
-              >
-                <span itemProp="name">{plan.classLabel}</span>
-              </h3>
-              <p
-                className="mt-1 text-center text-[16px] font-semibold sm:text-[18px]"
-                style={{
-                  fontFamily: "'DM Sans', system-ui, sans-serif",
-                  color: F.muted,
-                }}
-              >
-                {plan.subtitle}
-              </p>
-              <p className="sr-only" itemProp="description">
-                {plan.product.description}
-              </p>
-
-              <div
-                className="mt-3 flex flex-wrap items-end justify-center gap-x-3 gap-y-1"
-                itemProp="offers"
-                itemScope
-                itemType={`${SCHEMA_ORG_URL}/Offer`}
-              >
-                <meta itemProp="priceCurrency" content="INR" />
-                <meta itemProp="price" content={String(plan.salePrice)} />
-                <meta itemProp="availability" content={SCHEMA_IN_STOCK} />
-                <meta
-                  itemProp="itemCondition"
-                  content={SCHEMA_NEW_CONDITION}
-                />
-                <meta itemProp="url" content={absoluteUrl('/#pricing')} />
-
-                {plan.originalPrice > plan.salePrice ? (
-                  <span
-                    className="flex items-center gap-0.5 text-[22px] font-semibold line-through"
-                    style={{
-                      fontFamily: "'DM Sans', system-ui, sans-serif",
-                      color: F.strike,
-                    }}
-                  >
-                    <span className="text-[18px]">₹</span>
-                    {plan.originalPrice}
-                  </span>
-                ) : null}
-
-                <span
-                  className="flex items-baseline gap-1 font-semibold"
-                  style={{
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    color: F.price,
-                  }}
-                >
-                  <span className="text-[32px] sm:text-[40px]">₹</span>
-                  <span className="text-[32px] leading-none sm:text-[40px]">
-                    {plan.salePrice}
-                  </span>
-                  <span className="text-[18px] sm:text-[22px]">/year</span>
-                </span>
-              </div>
-
-              <ul className="mt-8 flex flex-1 flex-col gap-[13px]">
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-2.5 text-[15px] sm:text-[16px]"
-                    style={{
-                      fontFamily: "'DM Sans', system-ui, sans-serif",
-                      color: F.muted,
-                    }}
-                  >
-                    <span
-                      className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full text-white"
-                      style={{ background: F.cta }}
-                      aria-hidden
-                    >
-                      <Check className="size-3.5" strokeWidth={2.5} />
-                    </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              <a
-                href="/signup"
-                className="mt-8 flex h-[56px] w-full items-center justify-center text-[16px] font-bold text-white transition hover:opacity-95"
-                style={{
-                  background: F.cta,
-                  borderRadius: 10,
-                  fontFamily: "'Inter', system-ui, sans-serif",
-                }}
-              >
-                Get Started
-              </a>
-            </article>
+            <PlanCard key={plan.classKey} plan={plan} loading={loading} />
           ))}
         </div>
       </div>

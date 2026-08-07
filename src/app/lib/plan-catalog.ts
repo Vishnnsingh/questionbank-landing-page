@@ -82,7 +82,7 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
 
   if (cls === '12') {
     const displayAmount = 249;
-    const mrpDisplay = 399;
+    const mrpDisplay = 499;
     const trial = {
       label: `${durationDays}-Day Full Trial`,
       displayAmount: 2,
@@ -110,7 +110,7 @@ export function planCatalogForClass(classValue: string): PlanCatalog {
   }
 
   const displayAmount = 199;
-  const mrpDisplay = 299;
+  const mrpDisplay = 399;
   const trial = {
     label: `${durationDays}-Day Full Trial`,
     displayAmount: 2,
