@@ -20,6 +20,7 @@ const F = {
   body: '#4B5A78',
   /** Card accent — same for CTA, price, Annual Plan, badge */
   brand: '#0F8F84',
+  annualPlan: '#5A6273',
   muted: '#6B7280',
   check: '#9CA3AF',
   strike: '#9DA4B5',
@@ -135,7 +136,7 @@ function PlanCard({
         className="mt-4 text-center text-[22px] font-bold tracking-[-0.01em] sm:text-[24px]"
         style={{
           fontFamily: "'DM Sans', system-ui, sans-serif",
-          color: F.brand,
+          color: F.annualPlan,
         }}
       >
         {plan.planName}
