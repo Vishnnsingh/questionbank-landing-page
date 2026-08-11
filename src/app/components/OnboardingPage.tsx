@@ -6,6 +6,7 @@ import {
   fetchSignupBoards,
   fetchSignupClasses,
   fetchSignupDistricts,
+  fetchSignupMedia,
   fetchSignupStates,
   fetchSignupStreams,
 } from '../api/auth-api';
@@ -16,19 +17,24 @@ import {
   savePendingOnboardCredentials,
 } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
+import { AuthSelect } from './AuthSelect';
 import {
   AuthAlert,
   AuthFooterLink,
   AuthPageBackground,
   AuthPrimaryButton,
+  authCompactInputClass,
+  authFieldLabelClass,
 } from './auth-ui';
 import { PasswordInput } from './PasswordInput';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-const labelClass = 'mb-1 block text-xs font-semibold text-slate-800';
-const signupInputClass =
-  'w-full rounded-xl border-0 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-[#00a897]/15';
+const labelClass = authFieldLabelClass;
+const signupInputClass = authCompactInputClass;
+const sectionTitleClass =
+  'col-span-full -mb-1 mt-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 first:mt-0';
+const fieldsGridClass = 'grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3';
 
 const GENDER_OPTIONS = [
   { label: 'Male', value: 'male' },
@@ -36,7 +42,7 @@ const GENDER_OPTIONS = [
   { label: 'Other', value: 'other' },
 ] as const;
 
-const MEDIUM_OPTIONS = [
+const FALLBACK_MEDIUM_OPTIONS = [
   { label: 'Hindi', value: 'Hindi' },
   { label: 'English', value: 'English' },
 ] as const;
@@ -48,7 +54,6 @@ const STREAM_LABELS: Record<string, string> = {
   vocational: 'Vocational',
 };
 
-const FALLBACK_CLASSES = ['9', '10', '11', '12'];
 const FALLBACK_STREAMS = ['science', 'arts', 'commerce', 'vocational'];
 
 function classLabel(value: string) {
@@ -61,6 +66,44 @@ function needsStream(classValue: string) {
   return classValue === '11' || classValue === '12';
 }
 
+function normalizeMediumValue(raw: string) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  const lower = s.toLowerCase();
+  if (lower === 'hindi' || lower === 'hi') return 'Hindi';
+  if (lower === 'english' || lower === 'en') return 'English';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function mediumOptionsFromList(media: string[]) {
+  const seen = new Set<string>();
+  const out: { label: string; value: string }[] = [];
+  for (const item of media) {
+    const value = normalizeMediumValue(item);
+    if (!value) continue;
+    const key = value.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ label: value, value });
+  }
+  return out;
+}
+
+function pickDefaultMedium(media: string[], current: string) {
+  const opts = mediumOptionsFromList(media);
+  if (!opts.length) return '';
+  const cur = normalizeMediumValue(current);
+  if (cur) {
+    const hit = opts.find((o) => o.value.toLowerCase() === cur.toLowerCase());
+    if (hit) return hit.value;
+  }
+  const hi = opts.find((o) => o.value.toLowerCase() === 'hindi');
+  if (hi) return hi.value;
+  const en = opts.find((o) => o.value.toLowerCase() === 'english');
+  if (en) return en.value;
+  return opts[0].value;
+}
+
 export function OnboardingPage() {
   const pending = readPendingOnboardCredentials();
   const emailFromQuery = new URLSearchParams(window.location.search).get('email') || '';
@@ -70,6 +113,9 @@ export function OnboardingPage() {
   const [password, setPassword] = useState(pending?.password || '');
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedMedium, setSelectedMedium] = useState('');
+  const [mediumOptions, setMediumOptions] = useState<{ label: string; value: string }[]>([
+    ...FALLBACK_MEDIUM_OPTIONS,
+  ]);
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedStream, setSelectedStream] = useState('');
   const [selectedBoard, setSelectedBoard] = useState('');
@@ -77,13 +123,15 @@ export function OnboardingPage() {
   const [selectedDistrict, setSelectedDistrict] = useState('');
   const [city, setCity] = useState('');
 
-  const [classOptions, setClassOptions] = useState<string[]>(FALLBACK_CLASSES);
+  const [classOptions, setClassOptions] = useState<string[]>([]);
   const [streamOptions, setStreamOptions] = useState<string[]>([]);
   const [boardOptions, setBoardOptions] = useState<string[]>([]);
   const [stateOptions, setStateOptions] = useState<string[]>([]);
   const [districtOptions, setDistrictOptions] = useState<string[]>([]);
 
   const [bootLoading, setBootLoading] = useState(true);
+  const [loadingClasses, setLoadingClasses] = useState(false);
+  const [loadingMedia, setLoadingMedia] = useState(false);
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
@@ -102,21 +150,20 @@ export function OnboardingPage() {
     [streamOptions],
   );
 
+  // Boot: boards + states only (classes/medium depend on board — same as app)
   useEffect(() => {
     let cancelled = false;
     (async () => {
       setBootLoading(true);
       try {
-        const [classes, boards, states] = await Promise.all([
-          fetchSignupClasses().catch(() => FALLBACK_CLASSES),
-          fetchSignupBoards().catch(() => ['CBSE', 'BBSE']),
+        const [boards, states] = await Promise.all([
+          fetchSignupBoards().catch(() => ['CBSE', 'BBSE', 'BSEB']),
           fetchSignupStates().catch(() => []),
         ]);
         if (cancelled) return;
-        setClassOptions(classes.length ? classes : FALLBACK_CLASSES);
         setBoardOptions(boards);
         setStateOptions(states);
-        setSelectedBoard((prev) => prev || boards[0] || '');
+        // Do not auto-pick board — user chooses; classes load after selection
       } finally {
         if (!cancelled) setBootLoading(false);
       }
@@ -125,6 +172,76 @@ export function OnboardingPage() {
       cancelled = true;
     };
   }, []);
+
+  // Classes for selected board (API)
+  useEffect(() => {
+    let cancelled = false;
+    if (!selectedBoard) {
+      setClassOptions([]);
+      setSelectedClass('');
+      setSelectedStream('');
+      setStreamOptions([]);
+      setLoadingClasses(false);
+      return undefined;
+    }
+    (async () => {
+      setLoadingClasses(true);
+      try {
+        const classes = await fetchSignupClasses(selectedBoard);
+        if (cancelled) return;
+        const list = classes.length ? classes : [];
+        setClassOptions(list);
+        setSelectedClass((prev) => (list.includes(prev) ? prev : ''));
+        setSelectedStream('');
+      } catch {
+        if (!cancelled) {
+          setClassOptions([]);
+          setSelectedClass('');
+          setSelectedStream('');
+        }
+      } finally {
+        if (!cancelled) setLoadingClasses(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedBoard]);
+
+  // Medium for selected board (API)
+  useEffect(() => {
+    let cancelled = false;
+    if (!selectedBoard) {
+      setMediumOptions([...FALLBACK_MEDIUM_OPTIONS]);
+      setSelectedMedium('');
+      setLoadingMedia(false);
+      return undefined;
+    }
+    (async () => {
+      setLoadingMedia(true);
+      try {
+        const media = await fetchSignupMedia(selectedBoard);
+        if (cancelled) return;
+        const opts = mediumOptionsFromList(media);
+        if (opts.length) {
+          setMediumOptions(opts);
+          setSelectedMedium((prev) => pickDefaultMedium(media, prev));
+        } else {
+          setMediumOptions([]);
+          setSelectedMedium('');
+        }
+      } catch {
+        if (!cancelled) {
+          setMediumOptions([...FALLBACK_MEDIUM_OPTIONS]);
+        }
+      } finally {
+        if (!cancelled) setLoadingMedia(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedBoard]);
 
   useEffect(() => {
     if (!isSenior) {
@@ -189,20 +306,28 @@ export function OnboardingPage() {
       setError('Please select your gender.');
       return;
     }
-    if (!selectedMedium) {
-      setError('Please choose your study medium (Hindi or English).');
+    if (!selectedBoard.trim()) {
+      setError('Please select your board first.');
       return;
     }
     if (!selectedClass) {
-      setError('Please select your class.');
+      setError(
+        classOptions.length
+          ? 'Please select your class.'
+          : 'No class available for this board yet. Choose another board or try later.',
+      );
       return;
     }
     if (isSenior && !selectedStream) {
       setError('Please select a stream for Class 11 / 12.');
       return;
     }
-    if (!selectedBoard.trim()) {
-      setError('Please select your board.');
+    if (!selectedMedium) {
+      setError(
+        mediumOptions.length
+          ? `Please choose your study medium (${mediumOptions.map((o) => o.label).join(' / ')}).`
+          : 'No medium available for this board yet.',
+      );
       return;
     }
     if (!selectedState.trim()) {
@@ -283,7 +408,7 @@ export function OnboardingPage() {
                     <p className="text-sm text-slate-500">Loading options…</p>
                   ) : null}
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className={fieldsGridClass}>
                     {!pending?.email ? (
                       <div className="sm:col-span-2 xl:col-span-3">
                         <label className={labelClass} htmlFor="onboard_email">
@@ -300,8 +425,8 @@ export function OnboardingPage() {
                         />
                       </div>
                     ) : (
-                      <div className="sm:col-span-2 xl:col-span-3 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                        Account: <span className="font-semibold">{email}</span>
+                      <div className="sm:col-span-2 xl:col-span-3 rounded-xl border border-slate-200/90 bg-slate-50/60 px-4 py-2.5 text-sm text-slate-700">
+                        Account: <span className="font-semibold text-slate-900">{email}</span>
                       </div>
                     )}
 
@@ -326,63 +451,51 @@ export function OnboardingPage() {
                       </div>
                     ) : null}
 
-                    <div>
-                      <label className={labelClass} htmlFor="gender">
-                        Gender
-                      </label>
-                      <select
-                        id="gender"
-                        className={signupInputClass}
-                        value={selectedGender}
-                        onChange={(e) => setSelectedGender(e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        {GENDER_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    {/* Row group 1 — Academic: Board → Class → Medium */}
+                    <p className={sectionTitleClass}>Academic</p>
 
                     <div>
-                      <label className={labelClass} htmlFor="medium">
-                        Choose Medium
+                      <label className={labelClass} htmlFor="board">
+                        Board
                       </label>
-                      <select
-                        id="medium"
-                        className={signupInputClass}
-                        value={selectedMedium}
-                        onChange={(e) =>
-                          setSelectedMedium(e.target.value as 'Hindi' | 'English' | '')
+                      <AuthSelect
+                        id="board"
+                        value={selectedBoard}
+                        onChange={setSelectedBoard}
+                        disabled={bootLoading || boardOptions.length === 0}
+                        placeholder={
+                          bootLoading ? 'Loading boards…' : 'Select board'
                         }
-                      >
-                        <option value="">Select medium</option>
-                        {MEDIUM_OPTIONS.map((option) => (
-                          <option key={option.value} value={option.value}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
+                        options={boardOptions.map((board) => ({
+                          label: board,
+                          value: board,
+                        }))}
+                      />
                     </div>
 
                     <div>
                       <label className={labelClass} htmlFor="class">
                         Class
                       </label>
-                      <select
+                      <AuthSelect
                         id="class"
-                        className={signupInputClass}
                         value={selectedClass}
-                        onChange={(e) => setSelectedClass(e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        {classOptions.map((value) => (
-                          <option key={value} value={value}>
-                            {classLabel(value)}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={setSelectedClass}
+                        disabled={!selectedBoard || loadingClasses || classOptions.length === 0}
+                        placeholder={
+                          !selectedBoard
+                            ? 'Select board first'
+                            : loadingClasses
+                              ? 'Loading classes…'
+                              : classOptions.length
+                                ? 'Select'
+                                : 'No class for this board'
+                        }
+                        options={classOptions.map((value) => ({
+                          label: classLabel(value),
+                          value,
+                        }))}
+                      />
                     </div>
 
                     {isSenior ? (
@@ -390,59 +503,56 @@ export function OnboardingPage() {
                         <label className={labelClass} htmlFor="stream">
                           Stream
                         </label>
-                        <select
+                        <AuthSelect
                           id="stream"
-                          className={signupInputClass}
                           value={selectedStream}
-                          onChange={(e) => setSelectedStream(e.target.value)}
-                        >
-                          <option value="">Select</option>
-                          {streamSelectOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                          onChange={setSelectedStream}
+                          placeholder="Select"
+                          options={streamSelectOptions}
+                        />
                       </div>
                     ) : null}
 
                     <div>
-                      <label className={labelClass} htmlFor="board">
-                        Board
+                      <label className={labelClass} htmlFor="medium">
+                        Choose Medium
                       </label>
-                      <select
-                        id="board"
-                        className={signupInputClass}
-                        value={selectedBoard}
-                        onChange={(e) => setSelectedBoard(e.target.value)}
-                      >
-                        <option value="">Select</option>
-                        {boardOptions.map((board) => (
-                          <option key={board} value={board}>
-                            {board}
-                          </option>
-                        ))}
-                      </select>
+                      <AuthSelect
+                        id="medium"
+                        value={selectedMedium}
+                        onChange={setSelectedMedium}
+                        disabled={!selectedBoard || loadingMedia || mediumOptions.length === 0}
+                        placeholder={
+                          !selectedBoard
+                            ? 'Select board first'
+                            : loadingMedia
+                              ? 'Loading mediums…'
+                              : mediumOptions.length
+                                ? 'Select medium'
+                                : 'No medium for this board'
+                        }
+                        options={mediumOptions}
+                      />
                     </div>
+
+                    {/* Row group 2 — Area: State → District → City */}
+                    <p className={sectionTitleClass}>Area</p>
 
                     <div>
                       <label className={labelClass} htmlFor="state">
                         State
                       </label>
                       {stateOptions.length ? (
-                        <select
+                        <AuthSelect
                           id="state"
-                          className={signupInputClass}
                           value={selectedState}
-                          onChange={(e) => setSelectedState(e.target.value)}
-                        >
-                          <option value="">Select</option>
-                          {stateOptions.map((state) => (
-                            <option key={state} value={state}>
-                              {state}
-                            </option>
-                          ))}
-                        </select>
+                          onChange={setSelectedState}
+                          placeholder="Select"
+                          options={stateOptions.map((state) => ({
+                            label: state,
+                            value: state,
+                          }))}
+                        />
                       ) : (
                         <input
                           id="state"
@@ -460,22 +570,17 @@ export function OnboardingPage() {
                         District
                       </label>
                       {districtOptions.length || loadingDistricts ? (
-                        <select
+                        <AuthSelect
                           id="district"
-                          className={signupInputClass}
                           value={selectedDistrict}
-                          onChange={(e) => setSelectedDistrict(e.target.value)}
+                          onChange={setSelectedDistrict}
                           disabled={loadingDistricts || !selectedState}
-                        >
-                          <option value="">
-                            {loadingDistricts ? 'Loading…' : 'Select'}
-                          </option>
-                          {districtOptions.map((district) => (
-                            <option key={district} value={district}>
-                              {district}
-                            </option>
-                          ))}
-                        </select>
+                          placeholder={loadingDistricts ? 'Loading…' : 'Select'}
+                          options={districtOptions.map((district) => ({
+                            label: district,
+                            value: district,
+                          }))}
+                        />
                       ) : (
                         <input
                           id="district"
@@ -499,6 +604,25 @@ export function OnboardingPage() {
                         onChange={(e) => setCity(e.target.value)}
                         placeholder="Patna"
                         autoComplete="address-level2"
+                      />
+                    </div>
+
+                    {/* Row group 3 — Personal: Gender */}
+                    <p className={sectionTitleClass}>Personal</p>
+
+                    <div>
+                      <label className={labelClass} htmlFor="gender">
+                        Gender
+                      </label>
+                      <AuthSelect
+                        id="gender"
+                        value={selectedGender}
+                        onChange={setSelectedGender}
+                        placeholder="Select"
+                        options={GENDER_OPTIONS.map((option) => ({
+                          label: option.label,
+                          value: option.value,
+                        }))}
                       />
                     </div>
                   </div>

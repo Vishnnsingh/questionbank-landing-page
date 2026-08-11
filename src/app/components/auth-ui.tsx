@@ -7,9 +7,21 @@ import { SideNav } from './SideNav';
 export const BRAND_PRIMARY = '#00a897';
 
 export const authInputClass =
-  'w-full rounded-xl border border-slate-200/90 bg-slate-50/60 px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#00a897] focus:bg-white focus:ring-2 focus:ring-[#00a897]/15';
+  'w-full rounded-xl border border-slate-200/90 bg-slate-50/60 px-4 py-3.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-[#00a897] focus:bg-white focus:ring-2 focus:ring-[#00a897]/15 disabled:cursor-not-allowed disabled:opacity-60';
+
+/** Native select — same cast as auth inputs + right chevron (signup / onboarding CTAs). */
+export const authSelectClass =
+  `${authInputClass} cursor-pointer appearance-none bg-no-repeat pr-10 ` +
+  `[background-position:right_0.85rem_center] ` +
+  `[background-size:0.95rem] ` +
+  `[background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364758b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")]`;
 
 export const authLabelClass = 'mb-2 block text-sm font-semibold text-slate-800';
+
+/** Compact variant used on signup / onboarding dense grids */
+export const authFieldLabelClass = 'mb-1 block text-xs font-semibold text-slate-800';
+export const authCompactInputClass = `${authInputClass} py-2.5`;
+export const authCompactSelectClass = `${authSelectClass} py-2.5`;
 
 export function AuthPageBackground() {
   return (

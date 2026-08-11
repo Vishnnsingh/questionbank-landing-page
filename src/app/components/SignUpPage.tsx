@@ -10,15 +10,16 @@ import {
   AuthFooterLink,
   AuthPageBackground,
   AuthPrimaryButton,
-  authInputClass,
+  authCompactInputClass,
+  authFieldLabelClass,
 } from './auth-ui';
 import { PasswordInput } from './PasswordInput';
 import { PasswordStrengthHint } from './PasswordStrengthHint';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
-const labelClass = 'mb-1 block text-xs font-semibold text-slate-800';
-const signupInputClass = `${authInputClass} py-2.5`;
+const labelClass = authFieldLabelClass;
+const signupInputClass = authCompactInputClass;
 
 function formatIndianMobileInput(text: string) {
   let digits = String(text || '').replace(/\D/g, '');

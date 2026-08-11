@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { CheckCircle2, Clock3, Mail, MapPin, Phone, Sparkles } from 'lucide-react';
+import { CheckCircle2, Clock3, Mail, MapPin, Phone, Sparkles, UserRound } from 'lucide-react';
 import {
   fetchAppSupportPrivacy,
   fetchAppSupportTerms,
@@ -339,6 +339,66 @@ function ContactPageLayout({
           </p>
         </div>
       </div>
+
+      {/* Founder — professional identity band */}
+      <section
+        className="relative mb-10 overflow-hidden rounded-[12px] border bg-white"
+        style={{
+          borderColor: F.cardBorder,
+          boxShadow: '0px 12px 30px rgba(226, 217, 220, 0.35)',
+        }}
+        aria-labelledby="founder-heading"
+      >
+        <div
+          className="absolute inset-0 opacity-50"
+          style={{ background: F.gradient }}
+          aria-hidden
+        />
+        <div className="relative flex flex-col gap-5 p-6 sm:flex-row sm:items-center sm:gap-7 sm:p-7 lg:p-8">
+          <div
+            className="flex size-16 shrink-0 items-center justify-center rounded-full border-2 bg-white text-lg font-bold tracking-wide sm:size-[4.5rem] sm:text-xl"
+            style={{
+              borderColor: F.cta,
+              color: F.cta,
+              fontFamily: fontDisplay,
+              boxShadow: '0 8px 24px rgba(15, 143, 132, 0.18)',
+            }}
+            aria-hidden
+          >
+            VS
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full border bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em]"
+                style={{
+                  borderColor: F.cardBorder,
+                  color: F.cta,
+                  fontFamily: fontCta,
+                }}
+              >
+                <UserRound className="size-3.5" aria-hidden />
+                Founder &amp; CEO
+              </span>
+            </div>
+            <h2
+              id="founder-heading"
+              className="mt-2.5 text-2xl font-bold tracking-tight sm:text-3xl"
+              style={{ fontFamily: fontDisplay, color: F.heading }}
+            >
+              Vishnu Singh
+            </h2>
+            <p
+              className="mt-2 max-w-2xl text-sm leading-relaxed sm:text-[15px]"
+              style={{ fontFamily: fontBody, color: F.body }}
+            >
+              Founder of PrepMagic — building exam preparation for CBSE and Bihar Board
+              students, with focus on clear question banks, mocks, and reliable student support
+              from Patna, Bihar.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Detail cards — same content */}
       <div className="grid gap-5 lg:grid-cols-2">

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatInr } from '../lib/plan-catalog';
 import { usePublicPlanPricing } from '../lib/usePublicPlanPricing';
 
@@ -35,16 +36,101 @@ const ASSETS = {
 } as const;
 
 const STATS = [
-  { value: '10+', label: 'Years Question Bank' },
-  { value: '20,000+', label: 'Practice Questions' },
-  { value: '24×7', label: 'Learning Access' },
+  {
+    end: 10,
+    durationMs: 1200,
+    format: (n: number) => `${n}+`,
+    label: 'Years Question Bank',
+  },
+  {
+    end: 20000,
+    durationMs: 1800,
+    format: (n: number) => `${n.toLocaleString('en-IN')}+`,
+    label: 'Practice Questions',
+  },
+  {
+    end: 24,
+    durationMs: 1000,
+    format: (n: number) => `${n}×7`,
+    label: 'Learning Access',
+  },
 ] as const;
 
 const CONTENT_MAX = 1130;
 
+function easeOutCubic(t: number) {
+  return 1 - (1 - t) ** 3;
+}
+
+/** Count 0 → target when card becomes visible (layout/styles unchanged). */
+function useCountUp(end: number, durationMs: number, active: boolean) {
+  const [value, setValue] = useState(0);
+
+  useEffect(() => {
+    if (!active) {
+      setValue(0);
+      return;
+    }
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / durationMs);
+      setValue(Math.round(end * easeOutCubic(p)));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, end, durationMs]);
+
+  return value;
+}
+
+function StatValue({
+  end,
+  durationMs,
+  format,
+  active,
+}: {
+  end: number;
+  durationMs: number;
+  format: (n: number) => string;
+  active: boolean;
+}) {
+  const n = useCountUp(end, durationMs, active);
+  return <>{format(n)}</>;
+}
+
 function DataCountCard({ className = '' }: { className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+
+    const start = () => setActive(true);
+
+    if (typeof IntersectionObserver === 'undefined') {
+      start();
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          start();
+          io.disconnect();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <div
+      ref={ref}
       className={`grid w-full grid-cols-3 bg-white max-lg:min-h-[132px] max-lg:h-auto lg:h-[174px] ${className}`}
       style={{
         borderRadius: 18,
@@ -71,7 +157,12 @@ function DataCountCard({ className = '' }: { className?: string }) {
               color: F.statValue,
             }}
           >
-            {stat.value}
+            <StatValue
+              end={stat.end}
+              durationMs={stat.durationMs}
+              format={stat.format}
+              active={active}
+            />
           </span>
           <span
             className="mt-1.5 text-[11px] leading-snug sm:mt-2 sm:text-[14px] sm:leading-5 lg:text-[16px] lg:leading-6"

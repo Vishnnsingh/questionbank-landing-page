@@ -42,7 +42,7 @@ export type OnboardPayload = {
   state: string;
   district: string;
   city: string;
-  preferred_medium?: 'Hindi' | 'English';
+  preferred_medium?: string;
 };
 
 export async function fetchSignupBoards(): Promise<string[]> {
@@ -54,16 +54,18 @@ export async function fetchSignupBoards(): Promise<string[]> {
     if (!Array.isArray(boards)) {
       throw new Error('Invalid boards response.');
     }
-    return boards;
+    return boards.map((b) => String(b).trim()).filter(Boolean);
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not load boards.'));
   }
 }
 
-export async function fetchSignupClasses(): Promise<string[]> {
+/** Classes with content for the selected board (app-parity). */
+export async function fetchSignupClasses(board?: string): Promise<string[]> {
   try {
     const { data } = await apiClient.get<ApiPayload<{ classes: string[] }>>(
       '/api/v1/user-app/classes',
+      board ? { params: { board: String(board).trim() } } : undefined,
     );
     const classes = data?.data?.classes;
     if (!Array.isArray(classes)) {
@@ -72,6 +74,25 @@ export async function fetchSignupClasses(): Promise<string[]> {
     return classes.map((c) => String(c).trim()).filter(Boolean);
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not load classes.'));
+  }
+}
+
+/** Medium / language options present in question bank for board. */
+export async function fetchSignupMedia(board: string): Promise<string[]> {
+  try {
+    const b = String(board || '').trim();
+    if (!b) return [];
+    const { data } = await apiClient.get<ApiPayload<{ media: string[] }>>(
+      '/api/v1/user-app/media',
+      { params: { board: b } },
+    );
+    const media = data?.data?.media;
+    if (!Array.isArray(media)) {
+      throw new Error('Invalid media response.');
+    }
+    return media.map((m) => String(m).trim()).filter(Boolean);
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not load medium options.'));
   }
 }
 
