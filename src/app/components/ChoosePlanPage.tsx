@@ -130,6 +130,19 @@ export function ChoosePlanPage() {
     subscriptionData?.entitlements?.fullAccess &&
       subscriptionData?.entitlements?.tier === 'yearly',
   );
+  const yearlyExpiresAt =
+    subscriptionData?.subscription?.expires_at ||
+    subscriptionData?.entitlements?.expiresAt ||
+    null;
+  const yearlyExpiresMs = yearlyExpiresAt ? Date.parse(String(yearlyExpiresAt)) : NaN;
+  const yearlyStillValid =
+    isYearlyActive && Number.isFinite(yearlyExpiresMs) && yearlyExpiresMs > Date.now();
+  const yearlyExpiredNoDate = isYearlyActive && !Number.isFinite(yearlyExpiresMs);
+  /** Yearly paid & not yet expired → no checkout until renew date (expiry). */
+  const yearlyPayLocked = yearlyStillValid || yearlyExpiredNoDate;
+  const yearlyRenewLabel = Number.isFinite(yearlyExpiresMs)
+    ? String(yearlyExpiresAt).slice(0, 10)
+    : null;
 
   if (!sessionReady || !paymentUser || !catalog) {
     return (
@@ -142,6 +155,8 @@ export function ChoosePlanPage() {
 
   const handlePayNow = async (planType: PlanType, forceNew = false) => {
     if (payingPlan) return;
+    if (planType === 'yearly' && yearlyPayLocked) return;
+    if (planType === 'trial_2day' && yearlyPayLocked) return;
     setPayError(null);
     setPayPhase('preparing');
     setPayStatusMessage(
@@ -290,7 +305,7 @@ export function ChoosePlanPage() {
               <button
                 type="button"
                 onClick={() => handlePayNow('trial_2day')}
-                disabled={Boolean(payingPlan) || !trialAvailable}
+                disabled={Boolean(payingPlan) || !trialAvailable || yearlyPayLocked}
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 border-[#00a897] bg-white px-6 py-3.5 text-sm font-semibold text-[#00a897] transition hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-70 disabled:border-slate-200 disabled:bg-slate-100 disabled:text-slate-400"
               >
                 {payingPlan === 'trial_2day' ? (
@@ -298,6 +313,8 @@ export function ChoosePlanPage() {
                     <Loader2 className="size-4 animate-spin" />
                     Opening Cashfree…
                   </>
+                ) : yearlyPayLocked ? (
+                  'Yearly plan active'
                 ) : trialAvailable ? (
                   'Pay Now — Trial'
                 ) : (
@@ -361,18 +378,27 @@ export function ChoosePlanPage() {
               <button
                 type="button"
                 onClick={() => handlePayNow('yearly')}
-                disabled={Boolean(payingPlan)}
-                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#00a897] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-70"
+                disabled={Boolean(payingPlan) || yearlyPayLocked}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#00a897] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-70 disabled:bg-slate-300 disabled:text-slate-600"
               >
                 {payingPlan === 'yearly' ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
                     Opening Cashfree…
                   </>
+                ) : yearlyPayLocked ? (
+                  yearlyRenewLabel ? `Renew from ${yearlyRenewLabel}` : 'Renew after plan ends'
+                ) : isYearlyActive ? (
+                  'Renew 1 Year Plan'
                 ) : (
                   'Pay Now — 1 Year'
                 )}
               </button>
+              {yearlyPayLocked && yearlyRenewLabel ? (
+                <p className="mt-2 text-center text-xs leading-relaxed text-slate-500">
+                  Yearly access is active. Payment opens on the renew date ({yearlyRenewLabel}).
+                </p>
+              ) : null}
             </article>
           </div>
 
