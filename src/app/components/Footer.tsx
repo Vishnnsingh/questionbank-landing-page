@@ -17,7 +17,7 @@ export function Footer() {
           </span>
         </a>
 
-        <p className="mt-5 w-full whitespace-nowrap text-center leading-snug text-slate-400 text-[clamp(8px,2.15vw,14px)]">
+        <p className="mt-5 max-w-[22rem] px-1 text-center text-[14px] font-medium leading-6 text-slate-400 sm:max-w-xl sm:text-[15px] sm:leading-6">
           CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.
         </p>
 

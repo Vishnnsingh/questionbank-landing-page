@@ -141,7 +141,7 @@ function DataCountCard({ className = '' }: { className?: string }) {
       {STATS.map((stat, i) => (
         <div
           key={stat.label}
-          className="relative flex flex-col items-center justify-center px-1.5 py-5 text-center sm:px-2 sm:py-6 lg:py-0"
+          className="relative flex min-w-0 flex-col items-center justify-center overflow-hidden px-1 py-5 text-center sm:px-2 sm:py-6 lg:py-0"
         >
           {i > 0 ? (
             <span
@@ -151,7 +151,7 @@ function DataCountCard({ className = '' }: { className?: string }) {
             />
           ) : null}
           <span
-            className="font-semibold leading-none max-lg:text-[28px] sm:max-lg:text-[34px] lg:text-[56px] lg:leading-[62px]"
+            className="w-full max-w-full px-0.5 text-center font-semibold leading-none tabular-nums max-lg:text-[18px] sm:max-lg:text-[26px] lg:text-[56px] lg:leading-[62px]"
             style={{
               fontFamily: "'Poppins', system-ui, sans-serif",
               color: F.statValue,
@@ -215,7 +215,7 @@ function HeroCopy({
             color: F.badgeText,
           }}
         >
-          {trialDays}-{dayWord} free trial in just{' '}
+          {trialDays}-{dayWord}  trial in just{' '}
           <span className="font-semibold" style={{ color: F.cta }}>
             {formatInr(trialAmount)}
           </span>

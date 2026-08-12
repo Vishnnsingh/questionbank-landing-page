@@ -224,33 +224,35 @@ export function MagicFormulaSection() {
             Also learn from your Institute &amp; school
           </h3>
           <div
-            className="mx-auto mt-5 flex h-auto w-full max-w-[560px] flex-wrap items-center justify-center gap-1 rounded-2xl p-1 sm:mt-6 sm:h-11"
+            className="mx-auto mt-5 w-full max-w-[560px] rounded-2xl p-1.5 sm:mt-6 sm:h-11 sm:rounded-[22px] sm:p-1"
             style={{ background: F.tabTrack }}
             role="tablist"
             aria-label="Magic formula views"
             data-node-id="86:764"
           >
-            {TABS.map((t) => {
-              const active = tab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setTab(t.id)}
-                  className="inline-flex h-9 min-w-0 flex-1 items-center justify-center px-3 text-[13px] font-bold tracking-[0.14px] transition hover:opacity-95 sm:text-[14px]"
-                  style={{
-                    fontFamily: "'Inter', system-ui, sans-serif",
-                    borderRadius: 12,
-                    background: active ? F.cta : 'transparent',
-                    color: active ? F.white : F.body,
-                  }}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
+            <div className="grid grid-cols-2 gap-1.5 sm:flex sm:h-full sm:grid-cols-none sm:gap-1">
+              {TABS.map((t) => {
+                const active = tab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setTab(t.id)}
+                    className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap px-2.5 text-[13px] font-bold tracking-[0.14px] transition hover:opacity-95 sm:h-9 sm:min-h-0 sm:min-w-0 sm:flex-1 sm:px-3 sm:text-[14px]"
+                    style={{
+                      fontFamily: "'Inter', system-ui, sans-serif",
+                      borderRadius: 12,
+                      background: active ? F.cta : 'transparent',
+                      color: active ? F.white : F.body,
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
