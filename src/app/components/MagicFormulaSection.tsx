@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { ArrowRight, BookOpen, Brain, RefreshCw } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import dashboardPreview from '../../images/Dashbaord.png';
+import mockTestPreview from '../../images/Mocktest.png';
+import importantPreview from '../../images/ImportantQuestion.png';
+import studentPreview from '../../images/Student.png';
+import previousYearQuestions from '../../images/PreviousYearQuestions.svg';
+import previousYearQuestions1 from '../../images/PreviousYearQuestions1.svg';
+import repeatedInsights from '../../images/RepeatedInsights.svg';
+import repeatedInsights1 from '../../images/RepeatedInsights1.svg';
+import aiAnalysis from '../../images/AIAnalysis.svg';
+import aiAnalysis1 from '../../images/AIAnalysis1.svg';
 
 /**
  * PrepMagic-UI — THE MAGIC FORMULA
@@ -30,90 +40,62 @@ const CARDS = [
     title: 'Previous Year Questions',
     description:
       'Every single paper from the last 15 years, digitally remastered and chapter-tagged.',
-    icon: BookOpen,
-    showPhones: false,
+    images: [previousYearQuestions, previousYearQuestions1],
   },
   {
     title: 'Repeated Insights',
     description:
       'We track which questions reappear and when. Know exactly what the examiners are thinking.',
-    icon: RefreshCw,
-    showPhones: true,
+    images: [repeatedInsights, repeatedInsights1],
   },
   {
     title: 'AI Analysis',
     description:
       'Our LLM-powered engine predicts the likelihood of any question appearing in your next exam.',
-    icon: Brain,
-    showPhones: true,
+    images: [aiAnalysis, aiAnalysis1],
   },
 ] as const;
 
 const TABS = [
-  { id: 'bank', label: 'Question Bank' },
+  { id: 'bank', label: 'Dashboard' },
   { id: 'mock', label: 'Mock Tests' },
-  { id: 'ai', label: 'AI Insights' },
-  { id: 'track', label: 'Performance' },
+  { id: 'ai', label: 'Important question' },
+  { id: 'track', label: 'Student Tracker' },
 ] as const;
 
 const PANEL_COPY: Record<
   (typeof TABS)[number]['id'],
-  { title: string; body: string; cta: string }
+  { title: string; body: string; cta: string; image: string; imageAlt: string }
 > = {
   bank: {
-    title: 'The Ultimate Bank',
+    title: 'Dashboard View',
     body: '20,000+ questions tagged by difficulty, chapter, and "repeat frequency".',
     cta: 'Explore Bank',
+    image: dashboardPreview,
+    imageAlt: 'Dashboard preview',
   },
   mock: {
     title: 'Exam-ready Mocks',
     body: 'Timed papers that mirror board patterns so you build stamina and accuracy.',
     cta: 'Start Mock',
+    image: mockTestPreview,
+    imageAlt: 'Mock Tests preview',
   },
   ai: {
-    title: 'AI Exam Radar',
+    title: 'Important question',
     body: 'See which topics and questions are most likely to appear next board season.',
     cta: 'View Insights',
+    image: importantPreview,
+    imageAlt: 'Important Questions preview',
   },
   track: {
-    title: 'Performance Map',
+    title: 'Student Tracker',
     body: 'Track weak chapters, accuracy streaks, and rank against peers in real time.',
     cta: 'Open Dashboard',
+    image: studentPreview,
+    imageAlt: 'Student Tracker preview',
   },
 };
-
-function PhoneStub() {
-  return (
-    <div
-      className="flex h-[206px] w-[116px] flex-col overflow-hidden rounded-lg border bg-white"
-      style={{ borderColor: F.border }}
-    >
-      <div
-        className="h-7 shrink-0 px-2 pt-1.5 text-[8px] font-semibold tracking-wide text-white"
-        style={{ background: F.cta }}
-      >
-        PrepMagic
-      </div>
-      <div className="flex-1 space-y-1.5 bg-slate-50 p-1.5">
-        <div className="h-2.5 w-full rounded bg-white shadow-sm" />
-        <div className="flex gap-0.5">
-          <span className="h-2 flex-1 rounded-full bg-teal-100" />
-          <span className="h-2 flex-1 rounded-full bg-slate-200" />
-          <span className="h-2 flex-1 rounded-full bg-slate-200" />
-        </div>
-        {[1, 2, 3].map((n) => (
-          <div
-            key={n}
-            className="rounded border border-slate-100 bg-white p-1 shadow-sm"
-          >
-            <div className="h-1.5 w-3/4 rounded bg-slate-200" />
-            <div className="mt-1 h-1 w-1/2 rounded bg-slate-100" />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 export function MagicFormulaSection() {
   const [tab, setTab] = useState<(typeof TABS)[number]['id']>('bank');
@@ -154,53 +136,47 @@ export function MagicFormulaSection() {
           className="mx-auto mt-10 grid max-w-[1216px] grid-cols-1 gap-5 sm:mt-12 md:grid-cols-3 md:gap-6"
           data-node-id="86:712"
         >
-          {CARDS.map((card) => {
-            const Icon = card.icon;
-            return (
-              <article
-                key={card.title}
-                className="flex min-h-[300px] flex-col rounded-3xl border bg-white p-6 sm:min-h-[338px]"
+          {CARDS.map((card) => (
+            <article
+              key={card.title}
+              className="flex flex-col rounded-3xl border bg-white p-6"
+              style={{
+                borderColor: F.border,
+                boxShadow: F.cardShadow,
+              }}
+            >
+              <div className="flex w-full items-end justify-center gap-3">
+                {card.images.map((src, idx) => (
+                  <img
+                    key={`${card.title}-${idx}`}
+                    src={src}
+                    alt=""
+                    className="h-auto max-h-[220px] w-auto max-w-[48%] object-contain object-bottom"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ))}
+              </div>
+              <h3
+                className="mt-4 text-[16px] leading-6"
                 style={{
-                  borderColor: F.border,
-                  boxShadow: F.cardShadow,
+                  fontFamily: "'Playfair Display', Georgia, serif",
+                  color: F.navy,
                 }}
               >
-                <div className="flex min-h-[180px] flex-1 items-center justify-center gap-3 sm:min-h-[206px]">
-                  {card.showPhones ? (
-                    <>
-                      <PhoneStub />
-                      <PhoneStub />
-                    </>
-                  ) : (
-                    <div
-                      className="flex size-16 items-center justify-center rounded-2xl text-white"
-                      style={{ background: F.cta }}
-                    >
-                      <Icon className="size-7" strokeWidth={1.75} />
-                    </div>
-                  )}
-                </div>
-                <h3
-                  className="mt-4 text-[16px] leading-6"
-                  style={{
-                    fontFamily: "'Playfair Display', Georgia, serif",
-                    color: F.navy,
-                  }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  className="mt-2 text-[15px] leading-6 sm:text-[16px]"
-                  style={{
-                    fontFamily: "'DM Sans', system-ui, sans-serif",
-                    color: F.body,
-                  }}
-                >
-                  {card.description}
-                </p>
-              </article>
-            );
-          })}
+                {card.title}
+              </h3>
+              <p
+                className="mt-2 text-[15px] leading-6 sm:text-[16px]"
+                style={{
+                  fontFamily: "'DM Sans', system-ui, sans-serif",
+                  color: F.body,
+                }}
+              >
+                {card.description}
+              </p>
+            </article>
+          ))}
         </div>
 
         {/* Tabs — Figma 86:764 · active = #0F8F84 CTA r12 */}
@@ -224,8 +200,8 @@ export function MagicFormulaSection() {
             Also learn from your Institute &amp; school
           </h3>
           <div
-            className="mx-auto mt-5 w-full max-w-[560px] rounded-2xl p-1.5 sm:mt-6 sm:h-11 sm:rounded-[22px] sm:p-1"
-            style={{ background: F.tabTrack }}
+            className="mx-auto mt-5 w-full max-w-[560px] p-1.5 sm:mt-6 sm:h-11 sm:p-1"
+            style={{ background: F.tabTrack, borderRadius: 10 }}
             role="tablist"
             aria-label="Magic formula views"
             data-node-id="86:764"
@@ -243,7 +219,7 @@ export function MagicFormulaSection() {
                     className="inline-flex min-h-11 w-full items-center justify-center whitespace-nowrap px-2.5 text-[13px] font-bold tracking-[0.14px] transition hover:opacity-95 sm:h-9 sm:min-h-0 sm:min-w-0 sm:flex-1 sm:px-3 sm:text-[14px]"
                     style={{
                       fontFamily: "'Inter', system-ui, sans-serif",
-                      borderRadius: 12,
+                      borderRadius: 10,
                       background: active ? F.cta : 'transparent',
                       color: active ? F.white : F.body,
                     }}
@@ -311,27 +287,14 @@ export function MagicFormulaSection() {
                 className="flex h-full min-h-[240px] items-center justify-center overflow-hidden bg-white sm:min-h-[320px] lg:min-h-full"
                 style={{ borderRadius: 24 }}
               >
-                <div className="px-6 py-10 text-center">
-                  <div
-                    className="mx-auto flex size-14 items-center justify-center rounded-2xl text-white"
-                    style={{ background: F.cta }}
-                  >
-                    <BookOpen className="size-6" />
-                  </div>
-                  <p
-                    className="mt-4 text-[15px] font-medium"
-                    style={{ color: F.navy }}
-                  >
-                    {panel.title} preview
-                  </p>
-                  <p
-                    className="mx-auto mt-2 max-w-sm text-[13px] leading-5"
-                    style={{ color: F.muted }}
-                  >
-                    Connect live product screenshots or embed dashboard capture
-                    here to match Figma media.
-                  </p>
-                </div>
+                <img
+                  key={tab}
+                  src={panel.image}
+                  alt={panel.imageAlt}
+                  className="h-full w-full object-contain object-center p-2 sm:p-3"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
             </div>
           </div>

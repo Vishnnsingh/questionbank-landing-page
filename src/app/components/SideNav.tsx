@@ -394,7 +394,10 @@ export function SideNav() {
           </span>
         </a>
         <div className="hidden min-w-0 shrink-0 overflow-visible lg:block">
-          <div className="rounded-full border border-slate-200 bg-slate-50/90 p-0.5">
+          <div
+            className="border border-slate-200 bg-slate-50/90 p-0.5"
+            style={{ borderRadius: 10 }}
+          >
             <NavLinks variant="desktop" />
           </div>
         </div>
