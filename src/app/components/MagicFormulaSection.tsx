@@ -62,7 +62,7 @@ const TABS = [
   { id: 'ai', label: 'Important question' },
   { id: 'track', label: 'Student Tracker' },
 ] as const;
-
+// added images for the panel copy
 const PANEL_COPY: Record<
   (typeof TABS)[number]['id'],
   { title: string; body: string; cta: string; image: string; imageAlt: string }
