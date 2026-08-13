@@ -4,4 +4,6 @@
   import "./styles/index.css";
 
   createRoot(document.getElementById("root")!).render(<App />);
-  
+  setTimeout(() => {
+    document.dispatchEvent(new Event('custom-render-trigger'));
+  }, 100);

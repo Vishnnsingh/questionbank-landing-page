@@ -21,10 +21,10 @@ const F = {
 } as const;
 
 const ABOUT_PARAS = [
-  'PrepMagic is an AI-powered educational technology platform built to transform the way students prepare for exams. Our mission is to make high-quality education accessible, affordable, and data-driven for every learner.',
-  'Designed for students from Classes 9 to 12, PrepMagic combines a comprehensive 10-year question bank, chapter-wise and subject-wise mock tests, intelligent performance analytics, and personalized learning insights in one powerful platform.',
-  'Beyond exam preparation, PrepMagic connects students with their schools and coaching institutes, enabling access to exclusive mock tests, important questions, and academic resources directly from educators.',
-  'We believe every student deserves the right guidance, reliable study material, and smart technology to achieve academic success. Our goal is to build India\'s most trusted digital learning ecosystem that helps students learn with confidence and perform better in every examination.',
+  'PrepMagic is an AI-powered educational platform designed to provide Class 9 to 12 students with comprehensive 10-year question banks, mock tests, and smart analytics for exam preparation.',
+  'By combining historical board data with personalized insights, PrepMagic enables students from CBSE and Bihar Board to practice effectively and track their performance chapter by chapter.',
+  'Beyond individual exam preparation, PrepMagic connects students directly with their schools and coaching institutes, enabling access to exclusive mock tests and verified academic resources from top educators.',
+  'Our primary goal is to build India\'s most trusted digital learning ecosystem, ensuring every student has the tools and data-driven guidance necessary to achieve academic success.',
 ] as const;
 
 const MISSION =
@@ -157,7 +157,7 @@ export function AboutPage() {
               color: F.heading,
             }}
           >
-            Built for every learner
+            What is Prepmagic?
           </h2>
           <div className="mt-8 space-y-5">
             {ABOUT_PARAS.map((para) => (
@@ -202,7 +202,7 @@ export function AboutPage() {
                 color: F.heading,
               }}
             >
-              Quality education for every student
+              Our Mission
             </h3>
             <p
               className="mt-4 text-base leading-relaxed sm:text-lg"
@@ -235,7 +235,7 @@ export function AboutPage() {
                 color: F.heading,
               }}
             >
-              India's most trusted AI learning platform
+              Our Vision
             </h3>
             <p
               className="mt-4 text-base leading-relaxed sm:text-lg"

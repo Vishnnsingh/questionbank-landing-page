@@ -1,0 +1,24 @@
+# Prepmagic
+
+> PrepMagic is an AI-powered educational technology platform built to transform the way students prepare for exams. Our mission is to make high-quality education accessible, affordable, and data-driven for every learner.
+
+## About
+Designed for students from Classes 9 to 12, PrepMagic combines a comprehensive 10-year question bank, chapter-wise and subject-wise mock tests, intelligent performance analytics, and personalized learning insights in one powerful platform.
+
+Beyond exam preparation, PrepMagic connects students with their schools and coaching institutes, enabling access to exclusive mock tests, important questions, and academic resources directly from educators.
+
+## Contact Information
+- **Support Email**: support@prepmagic.in
+- **Phone**: 7837068345
+- **Location**: Patna, Bihar, India
+
+## Key Links
+- **Home**: https://prepmagic.in/
+- **Pricing & Plans**: https://prepmagic.in/choose-plan
+- **About Us**: https://prepmagic.in/about
+- **Contact Us**: https://prepmagic.in/contact-us
+
+## Offerings
+Prepmagic offers Class 10 and Class 12 one-year question bank plans for CBSE and Bihar Board students.
+- **Class 10 Question Bank**: One-year access to previous year questions, objective practice, mock tests, analytics, and chapter-wise preparation (INR 199/year).
+- **Class 12 Question Bank**: One-year access to stream-wise practice, mock tests, analytics, and board exam preparation (INR 249/year).
