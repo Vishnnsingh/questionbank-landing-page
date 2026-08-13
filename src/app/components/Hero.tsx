@@ -24,14 +24,13 @@ const F = {
   statLabel: '#6B6B6B',
   line: '#979797',
   statsShadow: '0px 20px 50px rgba(226, 217, 220, 0.3)',
-  qrShadow: '0px 1.25806px 9.43548px rgba(59, 58, 58, 0.25)',
 } as const;
 
 const ASSETS = {
   heroBg: '/image/hero-bg-main.svg',
   heroBgOverlay: '/image/hero-bg-layer2.svg',
   girl: '/image/girl-hero.png',
-  qr: '/image/qr-hero.svg',
+  qr: '/image/qr-code.jpeg',
   ellipse: '/image/ellipse-dot.svg',
 } as const;
 
@@ -257,7 +256,7 @@ function HeroCopy({
           Register Now
         </a>
         <div
-          className="inline-flex h-12 w-[186px] shrink-0 items-center gap-2.5 px-2.5 sm:h-[56px]"
+          className="inline-flex h-[72px] shrink-0 items-center gap-3 px-2 sm:h-[84px] sm:gap-3.5 sm:px-2.5"
           style={{
             border: `1px solid ${F.qrBorder}`,
             borderRadius: 10,
@@ -266,13 +265,12 @@ function HeroCopy({
           <img
             src={ASSETS.qr}
             alt="QR code to download the Prepmagic app"
-            className="size-[36px] shrink-0 object-contain sm:size-[39px]"
-            width={39}
-            height={39}
-            style={{ filter: `drop-shadow(${F.qrShadow})` }}
+            className="size-[58px] shrink-0 rounded-[4px] object-contain sm:size-[68px]"
+            width={68}
+            height={68}
           />
           <p
-            className="text-left text-[12px] font-medium leading-[1.35]"
+            className="pr-2 text-left text-[12px] font-medium leading-[1.35] sm:text-[13px]"
             style={{
               fontFamily: "'Jost', 'DM Sans', system-ui, sans-serif",
               color: F.badgeText,
