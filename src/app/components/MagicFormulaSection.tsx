@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import dashboardPreview from '../../images/Dashbaord.png';
 import mockTestPreview from '../../images/Mocktest.png';
-import importantPreview from '../../images/ImportantQuestion.png';
+import importantPreview from '../../images/Importantquestion.png';
 import studentPreview from '../../images/Student.png';
 import previousYearQuestions from '../../images/PreviousYearQuestions.svg';
 import previousYearQuestions1 from '../../images/PreviousYearQuestions1.svg';
