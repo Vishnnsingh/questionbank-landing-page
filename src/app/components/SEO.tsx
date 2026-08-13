@@ -18,7 +18,7 @@ function upsertMeta(selector: string, create: () => HTMLMetaElement | HTMLLinkEl
   }
 }
 
-export function SEO({ page }: { page: PageKey }) {
+export function SEO({ page, structuredData }: { page: PageKey; structuredData?: object | object[] }) {
   useEffect(() => {
     const meta = pageMeta[page];
     const canonical = absoluteUrl(meta.path);
@@ -70,7 +70,9 @@ export function SEO({ page }: { page: PageKey }) {
     }
 
     schema.text = JSON.stringify(
-      page === 'home'
+      structuredData 
+        ? structuredData
+        : page === 'home'
         ? buildHomeJsonLd()
         : {
             '@context': SCHEMA_ORG_URL,
@@ -81,7 +83,7 @@ export function SEO({ page }: { page: PageKey }) {
             isPartOf: { '@id': `${SITE_URL}/#website` },
           }
     );
-  }, [page]);
+  }, [page, structuredData]);
 
   return null;
 }
