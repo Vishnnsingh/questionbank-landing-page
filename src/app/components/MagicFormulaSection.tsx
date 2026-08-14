@@ -145,16 +145,20 @@ export function MagicFormulaSection() {
                 boxShadow: F.cardShadow,
               }}
             >
-              <div className="flex w-full items-end justify-center gap-3">
+              <div className="flex w-full items-center justify-center gap-3">
                 {card.images.map((src, idx) => (
-                  <img
+                  <div
                     key={`${card.title}-${idx}`}
-                    src={src}
-                    alt=""
-                    className="h-auto max-h-[220px] w-auto max-w-[48%] object-contain object-bottom"
-                    loading="lazy"
-                    decoding="async"
-                  />
+                    className="h-[220px] w-[48%] overflow-hidden rounded-2xl"
+                  >
+                    <img
+                      src={src}
+                      alt=""
+                      className="h-full w-full object-cover object-top"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
                 ))}
               </div>
               <h3
@@ -268,7 +272,7 @@ export function MagicFormulaSection() {
               </p>
               {/* CTA — Figma teal CTA curve (r10) like Register Now */}
               <a
-                href="/signup"
+                href="/contact-us"
                 className="mt-6 inline-flex h-10 w-fit items-center justify-center gap-2 px-5 text-[14px] font-bold text-white transition hover:opacity-95 sm:h-11 sm:text-[15px]"
                 style={{
                   background: F.cta,
