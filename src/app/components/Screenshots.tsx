@@ -77,7 +77,7 @@ export function Screenshots() {
                   <div>
                     <p className="text-white text-base font-semibold sm:text-lg">Practice. Track. Improve.</p>
                     <p className="mt-1 text-teal-100 text-xs sm:text-sm">
-                      CBSE &amp; Bihar Board · Class 10 &amp; 12
+                      CBSE &amp; BSEB · Class 10 &amp; 12
                     </p>
                   </div>
                 </div>

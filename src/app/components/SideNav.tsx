@@ -31,7 +31,7 @@ const boardDropdown: NavDropdown = {
   label: 'Board',
   items: [
     { label: 'CBSE', href: '/cbse-question-bank' },
-    { label: 'Bihar Board', href: '/bihar-board-question-bank' },
+    { label: 'BSEB', href: '/bihar-board-question-bank' },
   ],
 };
 

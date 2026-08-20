@@ -108,7 +108,7 @@ const EDGE_FEATURES: EdgeFeature[] = [
     iconH: 14.9,
     titleLines: ['Full Syllabus', 'Coverage'],
     description:
-      'Complete Bihar Board & CBSE syllabus with deep-dive explanations and curated study notes.',
+      'Complete BSEB & CBSE syllabus with deep-dive explanations and curated study notes.',
     decorSrc: DECOR_A,
   },
   {
@@ -173,7 +173,7 @@ export function WinningEdgeSection() {
           className="mx-auto mt-3 max-w-[627px] text-center text-[15px] leading-7 sm:mt-4 sm:text-[18px]"
           style={{ fontFamily: bodyFont, color: F.stepLabel }}
         >
-          Everything you need to excel in CBSE and Bihar Board exams. Engineered
+          Everything you need to excel in CBSE and BSEB exams. Engineered
           for scholars who demand excellence.
         </p>
 

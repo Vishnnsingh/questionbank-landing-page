@@ -42,19 +42,12 @@ const GENDER_OPTIONS = [
   { label: 'Other', value: 'other' },
 ] as const;
 
-const FALLBACK_MEDIUM_OPTIONS = [
-  { label: 'Hindi', value: 'Hindi' },
-  { label: 'English', value: 'English' },
-] as const;
-
 const STREAM_LABELS: Record<string, string> = {
   science: 'Science',
   arts: 'Arts',
   commerce: 'Commerce',
   vocational: 'Vocational',
 };
-
-const FALLBACK_STREAMS = ['science', 'arts', 'commerce', 'vocational'];
 
 function classLabel(value: string) {
   const v = String(value || '').trim();
@@ -113,9 +106,7 @@ export function OnboardingPage() {
   const [password, setPassword] = useState(pending?.password || '');
   const [selectedGender, setSelectedGender] = useState('');
   const [selectedMedium, setSelectedMedium] = useState('');
-  const [mediumOptions, setMediumOptions] = useState<{ label: string; value: string }[]>([
-    ...FALLBACK_MEDIUM_OPTIONS,
-  ]);
+  const [mediumOptions, setMediumOptions] = useState<{ label: string; value: string }[]>([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedStream, setSelectedStream] = useState('');
   const [selectedBoard, setSelectedBoard] = useState('');
@@ -143,7 +134,7 @@ export function OnboardingPage() {
 
   const streamSelectOptions = useMemo(
     () =>
-      (streamOptions.length ? streamOptions : FALLBACK_STREAMS).map((value) => ({
+      streamOptions.map((value) => ({
         value,
         label: STREAM_LABELS[value] || value,
       })),
@@ -157,7 +148,7 @@ export function OnboardingPage() {
       setBootLoading(true);
       try {
         const [boards, states] = await Promise.all([
-          fetchSignupBoards().catch(() => ['CBSE', 'BBSE', 'BSEB']),
+          fetchSignupBoards().catch(() => []),
           fetchSignupStates().catch(() => []),
         ]);
         if (cancelled) return;
@@ -189,9 +180,13 @@ export function OnboardingPage() {
       try {
         const classes = await fetchSignupClasses(selectedBoard);
         if (cancelled) return;
-        const list = classes.length ? classes : [];
-        setClassOptions(list);
-        setSelectedClass((prev) => (list.includes(prev) ? prev : ''));
+        const next = [...new Set(
+          (classes || [])
+            .map((c) => String(c || '').replace(/\D/g, '') || String(c || '').trim())
+            .filter(Boolean),
+        )];
+        setClassOptions(next);
+        setSelectedClass((prev) => (next.includes(prev) ? prev : ''));
         setSelectedStream('');
       } catch {
         if (!cancelled) {
@@ -212,7 +207,7 @@ export function OnboardingPage() {
   useEffect(() => {
     let cancelled = false;
     if (!selectedBoard) {
-      setMediumOptions([...FALLBACK_MEDIUM_OPTIONS]);
+      setMediumOptions([]);
       setSelectedMedium('');
       setLoadingMedia(false);
       return undefined;
@@ -232,7 +227,7 @@ export function OnboardingPage() {
         }
       } catch {
         if (!cancelled) {
-          setMediumOptions([...FALLBACK_MEDIUM_OPTIONS]);
+          setMediumOptions([]);
         }
       } finally {
         if (!cancelled) setLoadingMedia(false);
@@ -252,10 +247,10 @@ export function OnboardingPage() {
     let cancelled = false;
     fetchSignupStreams(selectedClass)
       .then((streams) => {
-        if (!cancelled) setStreamOptions(streams.length ? streams : FALLBACK_STREAMS);
+        if (!cancelled) setStreamOptions(streams);
       })
       .catch(() => {
-        if (!cancelled) setStreamOptions(FALLBACK_STREAMS);
+        if (!cancelled) setStreamOptions([]);
       });
     return () => {
       cancelled = true;

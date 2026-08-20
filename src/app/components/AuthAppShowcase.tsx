@@ -69,7 +69,7 @@ export function AuthLoginVisualPanel({ embedded = false }: { embedded?: boolean 
               Prepmagic Smart Prep
             </p>
             <h2 className="text-xl font-bold leading-tight tracking-tight sm:text-2xl lg:text-3xl">
-              CBSE &amp; Bihar Board Question Bank
+              CBSE &amp; BSEB Question Bank
             </h2>
             <p className="text-sm leading-relaxed text-white/90">
               20,000+ questions, mock tests &amp; analytics in one app.
@@ -93,7 +93,7 @@ export function AuthLoginVisualPanel({ embedded = false }: { embedded?: boolean 
             Prepmagic Smart Prep
           </p>
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl">
-            CBSE &amp; Bihar Board Question Bank
+            CBSE &amp; BSEB Question Bank
           </h2>
           <p className="hidden text-sm leading-relaxed text-white/90 sm:block sm:text-base">
             Practice 20,000+ previous year questions, mock tests, and analytics — all in one app.

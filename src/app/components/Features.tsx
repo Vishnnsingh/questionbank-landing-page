@@ -51,7 +51,7 @@ const features = [
   {
     icon: FileText,
     title: 'Complete Syllabus Coverage',
-    description: 'Full Bihar Board syllabus with detailed explanations.',
+    description: 'Full BSEB syllabus with detailed explanations.',
     span: 'lg:col-span-1',
     size: 'normal' as const,
   },
@@ -103,7 +103,7 @@ export function Features() {
             </span>
           </h2>
           <p className="text-lg leading-relaxed text-slate-600 sm:text-xl">
-            Everything you need to excel in CBSE and Bihar Board exams
+            Everything you need to excel in CBSE and BSEB exams
           </p>
         </div>
 

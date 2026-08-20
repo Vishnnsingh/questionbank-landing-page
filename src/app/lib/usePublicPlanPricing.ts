@@ -15,6 +15,43 @@ export type PublicPlanPricing = {
   class12: PlanCatalog;
 };
 
+type CatalogPair = { class10: PlanCatalog; class12: PlanCatalog };
+
+const CATALOG_TTL_MS = 5 * 60 * 1000;
+let catalogCache: { at: number; data: CatalogPair } | null = null;
+let catalogInflight: Promise<CatalogPair> | null = null;
+
+async function loadPublicPlanCatalogs(): Promise<CatalogPair> {
+  const local10 = planCatalogForClass('10');
+  const local12 = planCatalogForClass('12');
+  const now = Date.now();
+  if (catalogCache && now - catalogCache.at < CATALOG_TTL_MS) {
+    return catalogCache.data;
+  }
+  if (catalogInflight) return catalogInflight;
+
+  catalogInflight = (async () => {
+    try {
+      const [res10, res12] = await Promise.all([
+        fetchPublicPlansCatalog('10'),
+        fetchPublicPlansCatalog('12'),
+      ]);
+      const data: CatalogPair = {
+        class10: res10?.catalog ? mergePlanCatalog(local10, res10.catalog) : local10,
+        class12: res12?.catalog ? mergePlanCatalog(local12, res12.catalog) : local12,
+      };
+      catalogCache = { at: Date.now(), data };
+      return data;
+    } catch {
+      return catalogCache?.data || { class10: local10, class12: local12 };
+    } finally {
+      catalogInflight = null;
+    }
+  })();
+
+  return catalogInflight;
+}
+
 /**
  * Public /plans-catalog API (class 10 + 12) for home hero + pricing.
  * Falls back to local defaults until / if the request fails.
@@ -23,28 +60,23 @@ export function usePublicPlanPricing(): PublicPlanPricing {
   const local10 = planCatalogForClass('10');
   const local12 = planCatalogForClass('12');
 
-  const [class10, setClass10] = useState<PlanCatalog>(local10);
-  const [class12, setClass12] = useState<PlanCatalog>(local12);
-  const [loading, setLoading] = useState(true);
+  const [class10, setClass10] = useState<PlanCatalog>(
+    catalogCache?.data.class10 || local10,
+  );
+  const [class12, setClass12] = useState<PlanCatalog>(
+    catalogCache?.data.class12 || local12,
+  );
+  const [loading, setLoading] = useState(!catalogCache);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       try {
-        const [res10, res12] = await Promise.all([
-          fetchPublicPlansCatalog('10'),
-          fetchPublicPlansCatalog('12'),
-        ]);
+        const data = await loadPublicPlanCatalogs();
         if (cancelled) return;
-        if (res10?.catalog) {
-          setClass10(mergePlanCatalog(local10, res10.catalog));
-        }
-        if (res12?.catalog) {
-          setClass12(mergePlanCatalog(local12, res12.catalog));
-        }
-      } catch {
-        // Keep local defaults (same as Choose Plan page).
+        setClass10(data.class10);
+        setClass12(data.class12);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -54,7 +86,6 @@ export function usePublicPlanPricing(): PublicPlanPricing {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
   }, []);
 
   return {

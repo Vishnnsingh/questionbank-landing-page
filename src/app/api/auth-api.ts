@@ -45,6 +45,17 @@ export type OnboardPayload = {
   preferred_medium?: string;
 };
 
+/** Canonical board name for UI (Bihar family → BSEB). */
+export function formatBoardDisplayName(board: string): string {
+  const raw = String(board || '').trim();
+  if (!raw) return '';
+  const compact = raw.toLowerCase().replace(/[^a-z0-9]/g, '');
+  if (compact === 'cbse' || compact === 'centralboardofsecondaryeducation') return 'CBSE';
+  const t = raw.toLowerCase();
+  if (t === 'bbse' || t === 'bseb' || t === 'bihar' || t.includes('bihar')) return 'BSEB';
+  return raw;
+}
+
 export async function fetchSignupBoards(): Promise<string[]> {
   try {
     const { data } = await apiClient.get<ApiPayload<{ boards: string[] }>>(
@@ -54,7 +65,11 @@ export async function fetchSignupBoards(): Promise<string[]> {
     if (!Array.isArray(boards)) {
       throw new Error('Invalid boards response.');
     }
-    return boards.map((b) => String(b).trim()).filter(Boolean);
+    return [...new Set(
+      boards
+        .map((b) => formatBoardDisplayName(String(b)))
+        .filter(Boolean),
+    )];
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Could not load boards.'));
   }

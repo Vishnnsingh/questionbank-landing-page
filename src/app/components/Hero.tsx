@@ -290,7 +290,7 @@ function HeroCopy({
           color: F.label,
         }}
       >
-        CBSE &amp; Bihar Board · Class 10 &amp; 12
+        CBSE &amp; BSEB · Class 10 &amp; 12
       </p>
     </div>
   );
