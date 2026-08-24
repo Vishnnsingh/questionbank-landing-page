@@ -21,8 +21,8 @@ export function Footer() {
           CBSE and Bihar Board Class 10 and Class 12 question bank app with smart exam preparation insights.
         </p>
 
-        <div className="mt-8 flex w-full max-w-4xl flex-col items-center justify-between gap-6 sm:flex-row sm:items-center sm:gap-8">
-          <div className="flex justify-center gap-3 sm:justify-start">
+        <div className="mt-8 flex w-full max-w-4xl flex-col items-center justify-between gap-8 sm:flex-row sm:items-start sm:gap-10">
+          <div className="flex shrink-0 justify-center gap-3 sm:justify-start">
             <a
               href="/"
               aria-label="Facebook"
@@ -53,11 +53,15 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm sm:justify-end">
-            <span className="inline-flex items-center gap-2">
-              <MapPin className="size-4 shrink-0 text-teal-400" />
-              Patna, Bihar, India
-            </span>
+          <div className="flex w-full max-w-md flex-col items-center gap-3 text-left text-sm leading-6 sm:items-end">
+            <p className="flex max-w-sm gap-2 text-slate-300 sm:text-right">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-teal-400" />
+              <span>
+                B-272, Alpha I, Block B, Aashirwad
+                <br />
+                Greater Noida, Uttar Pradesh 201310, India
+              </span>
+            </p>
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
               className="inline-flex items-center gap-2 transition-colors hover:text-teal-400"

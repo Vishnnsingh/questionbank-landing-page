@@ -44,7 +44,7 @@ const pageContent: Record<
           'For app access, payments, account issues, study material, mock tests, or refund questions, contact the Prepmagic support team.',
           `Email: ${SUPPORT_EMAIL}`,
           `Phone: ${SUPPORT_PHONE}`,
-          'Location: Patna, Bihar, India',
+          'Location: B 272 alpha 1, Block B, Alpha I, Greater Noida, Uttar Pradesh 201310, India, B block, Aashirwad, Uttar Pradesh, Noida, 201310',
         ],
       },
       {
