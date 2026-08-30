@@ -30,7 +30,45 @@ export type RegisterPayload = {
   confirm_password: string;
   role?: 'student' | 'teacher';
   referral_code?: string;
+  /** Required — from POST /api/v1/auth/verify-mobile-otp */
+  mobile_verify_token: string;
 };
+
+/** POST /api/v1/auth/send-mobile-otp — WhatsApp OTP for signup */
+export async function sendMobileOtp(mobileNumber: string) {
+  try {
+    const { data } = await apiClient.post<ApiPayload<{ mobile_number?: string; expires_in_seconds?: number }>>(
+      '/api/v1/auth/send-mobile-otp',
+      {
+        mobile_number: String(mobileNumber || '').trim(),
+        purpose: 'signup',
+      },
+    );
+    return data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not send WhatsApp OTP.'));
+  }
+}
+
+/** POST /api/v1/auth/verify-mobile-otp → mobile_verify_token for register */
+export async function verifyMobileOtp(mobileNumber: string, otp: string) {
+  try {
+    const { data } = await apiClient.post<
+      ApiPayload<{ mobile_number?: string; mobile_verify_token?: string }>
+    >('/api/v1/auth/verify-mobile-otp', {
+      mobile_number: String(mobileNumber || '').trim(),
+      otp: String(otp || '').trim(),
+      purpose: 'signup',
+    });
+    const token = data?.data?.mobile_verify_token;
+    if (typeof token !== 'string' || !token) {
+      throw new Error('Invalid response: missing mobile verify token.');
+    }
+    return { ...data, mobile_verify_token: token };
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'OTP verification failed.'));
+  }
+}
 
 export type OnboardPayload = {
   email: string;
