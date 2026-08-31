@@ -30,18 +30,19 @@ export type RegisterPayload = {
   confirm_password: string;
   role?: 'student' | 'teacher';
   referral_code?: string;
-  /** Required — from POST /api/v1/auth/verify-mobile-otp */
-  mobile_verify_token: string;
 };
 
-/** POST /api/v1/auth/send-mobile-otp — WhatsApp OTP for signup */
-export async function sendMobileOtp(mobileNumber: string) {
+/** POST /api/v1/auth/send-mobile-otp — WhatsApp OTP for mobile verify */
+export async function sendMobileOtp(
+  mobileNumber: string,
+  purpose: 'mobile_verify' | 'signup' = 'mobile_verify',
+) {
   try {
-    const { data } = await apiClient.post<ApiPayload<{ mobile_number?: string; expires_in_seconds?: number }>>(
+    const { data } = await apiClient.post<ApiPayload<{ mobile_number?: string; expires_in_seconds?: number; resend_cooldown_seconds?: number }>>(
       '/api/v1/auth/send-mobile-otp',
       {
         mobile_number: String(mobileNumber || '').trim(),
-        purpose: 'signup',
+        purpose,
       },
     );
     return data;
@@ -50,23 +51,48 @@ export async function sendMobileOtp(mobileNumber: string) {
   }
 }
 
-/** POST /api/v1/auth/verify-mobile-otp → mobile_verify_token for register */
-export async function verifyMobileOtp(mobileNumber: string, otp: string) {
+/** POST /api/v1/auth/verify-mobile-otp */
+export async function verifyMobileOtp(
+  mobileNumber: string,
+  otp: string,
+  purpose: 'mobile_verify' | 'signup' = 'mobile_verify',
+) {
   try {
     const { data } = await apiClient.post<
-      ApiPayload<{ mobile_number?: string; mobile_verify_token?: string }>
+      ApiPayload<{ mobile_number?: string; mobile_verified?: boolean }>
     >('/api/v1/auth/verify-mobile-otp', {
       mobile_number: String(mobileNumber || '').trim(),
       otp: String(otp || '').trim(),
-      purpose: 'signup',
+      purpose,
     });
-    const token = data?.data?.mobile_verify_token;
-    if (typeof token !== 'string' || !token) {
-      throw new Error('Invalid response: missing mobile verify token.');
-    }
-    return { ...data, mobile_verify_token: token };
+    return data;
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'OTP verification failed.'));
+  }
+}
+
+/** POST /api/v1/auth/verify-login-mobile-otp — complete login after WhatsApp OTP */
+export async function verifyLoginMobileOtp(payload: {
+  loginPendingToken: string;
+  mobileNumber: string;
+  otp: string;
+}): Promise<LoginResult> {
+  try {
+    const { data } = await apiClient.post<ApiPayload<LoginResult>>(
+      '/api/v1/auth/verify-login-mobile-otp',
+      {
+        login_pending_token: String(payload.loginPendingToken || '').trim(),
+        mobile_number: String(payload.mobileNumber || '').trim(),
+        otp: String(payload.otp || '').trim(),
+      },
+    );
+    const session = data?.data;
+    if (!session?.accessToken) {
+      throw new Error('Invalid login verification response.');
+    }
+    return session;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Login verification failed.'));
   }
 }
 
@@ -213,6 +239,10 @@ export type LoginResult = {
   refreshToken: string;
   expiresIn: number;
   fullName: string;
+  needs_mobile_verify?: boolean;
+  login_pending_token?: string;
+  mobile_number?: string;
+  resend_cooldown_seconds?: number;
 };
 
 export async function loginUser(email: string, password: string): Promise<LoginResult> {
@@ -228,7 +258,13 @@ export async function loginUser(email: string, password: string): Promise<LoginR
       ),
     );
     const session = data?.data;
-    if (!session?.accessToken) {
+    if (!session) {
+      throw new Error('Invalid login response.');
+    }
+    if (session.needs_mobile_verify) {
+      return session;
+    }
+    if (!session.accessToken) {
       throw new Error('Invalid login response.');
     }
     return session;

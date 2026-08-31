@@ -1,7 +1,7 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { CheckCircle2, MessageCircle, Sparkles } from 'lucide-react';
+import { FormEvent, useState } from 'react';
+import { Sparkles } from 'lucide-react';
 
-import { registerUser, sendMobileOtp, verifyMobileOtp } from '../api/auth-api';
+import { registerUser } from '../api/auth-api';
 import { isStrongPassword, STRONG_PASSWORD_MESSAGE } from '../lib/password-policy';
 import { savePendingOnboardCredentials } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
@@ -31,108 +31,11 @@ function formatIndianMobileInput(text: string) {
 export function SignUpPage() {
   const [fullName, setFullName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
-  const [mobileVerified, setMobileVerified] = useState(false);
-  const [mobileVerifyToken, setMobileVerifyToken] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
-  const lastSentMobile = useRef('');
-  const otpInputRef = useRef<HTMLInputElement | null>(null);
-
-  const mobile = formatIndianMobileInput(mobileNumber);
-  const isValidMobile = /^[6-9]\d{9}$/.test(mobile);
-  const showOtpField = otpSent && !mobileVerified;
-
-  const sendOtpToWhatsApp = async (number: string, { force }: { force?: boolean } = {}) => {
-    if (isSendingOtp || mobileVerified) return;
-    if (!/^[6-9]\d{9}$/.test(number)) return;
-    if (!force && lastSentMobile.current === number && otpSent) return;
-
-    setError('');
-    setInfo('');
-    try {
-      setIsSendingOtp(true);
-      await sendMobileOtp(number);
-      lastSentMobile.current = number;
-      setOtpSent(true);
-      setOtp('');
-      setInfo('OTP sent on WhatsApp. Enter the 6-digit code.');
-      setTimeout(() => otpInputRef.current?.focus(), 80);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not send OTP. Try again.');
-    } finally {
-      setIsSendingOtp(false);
-    }
-  };
-
-  // 10-digit number complete → auto-send WhatsApp OTP
-  useEffect(() => {
-    if (!isValidMobile || mobileVerified) return;
-    if (lastSentMobile.current === mobile && otpSent) return;
-    if (isSendingOtp || isVerifyingOtp || isSaving) return;
-    const t = window.setTimeout(() => {
-      void sendOtpToWhatsApp(mobile);
-    }, 400);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobile, isValidMobile, mobileVerified]);
-
-  const handleMobileChange = (value: string) => {
-    const next = formatIndianMobileInput(value);
-    setMobileNumber(next);
-    if (next !== lastSentMobile.current) {
-      lastSentMobile.current = '';
-      setOtpSent(false);
-      setOtp('');
-      setMobileVerified(false);
-      setMobileVerifyToken('');
-      setInfo('');
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    if (isVerifyingOtp || mobileVerified) return;
-    const code = String(otp || '').trim();
-    if (!isValidMobile) {
-      setError('Please enter a valid 10-digit mobile number.');
-      return;
-    }
-    if (!/^\d{6}$/.test(code)) {
-      setError('Enter the 6-digit OTP from WhatsApp.');
-      return;
-    }
-
-    setError('');
-    try {
-      setIsVerifyingOtp(true);
-      const res = await verifyMobileOtp(mobile, code);
-      setMobileVerifyToken(res.mobile_verify_token);
-      setMobileVerified(true);
-      setOtpSent(false);
-      setOtp('');
-      setInfo('Mobile number verified.');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'OTP verification failed.');
-    } finally {
-      setIsVerifyingOtp(false);
-    }
-  };
-
-  // Auto-verify when 6 digits entered
-  useEffect(() => {
-    if (!showOtpField || mobileVerified) return;
-    if (String(otp).length !== 6) return;
-    if (isVerifyingOtp || isSendingOtp) return;
-    void handleVerifyOtp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otp, showOtpField]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -158,10 +61,6 @@ export function SignUpPage() {
       setError('Please enter a valid 10-digit mobile number.');
       return;
     }
-    if (!mobileVerified || !mobileVerifyToken) {
-      setError('Please verify your mobile number with WhatsApp OTP first.');
-      return;
-    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setError('Please enter a valid email address.');
       return;
@@ -184,14 +83,19 @@ export function SignUpPage() {
         password: trimmedPassword,
         confirm_password: trimmedConfirmPassword,
         role: 'student',
-        mobile_verify_token: mobileVerifyToken,
       });
 
       savePendingOnboardCredentials({
         email: normalizedEmail,
         password: trimmedPassword,
       });
-      window.location.href = '/onboarding';
+
+      const params = new URLSearchParams({
+        mode: 'signup',
+        mobile: trimmedMobile,
+        email: normalizedEmail,
+      });
+      window.location.href = `/verify-mobile?${params.toString()}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
@@ -221,13 +125,12 @@ export function SignUpPage() {
                     Create account
                   </h1>
                   <p className="mt-1 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    Verify mobile on WhatsApp, then complete email and password.
+                    Enter your details. We will verify your mobile on WhatsApp next.
                   </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-3">
                   {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
-                  {!error && info ? <AuthAlert variant="success">{info}</AuthAlert> : null}
 
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div className="sm:col-span-2">
@@ -248,13 +151,7 @@ export function SignUpPage() {
                       <label className={labelClass} htmlFor="mobile_number">
                         Mobile
                       </label>
-                      <div
-                        className={`flex overflow-hidden rounded-xl border bg-slate-50/60 focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a897]/15 ${
-                          mobileVerified
-                            ? 'border-[#00a897] focus-within:border-[#00a897]'
-                            : 'border-slate-200/90 focus-within:border-[#00a897]'
-                        }`}
-                      >
+                      <div className="flex overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/60 focus-within:border-[#00a897] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a897]/15">
                         <span className="flex items-center border-r border-slate-200/90 px-2.5 text-xs font-medium text-slate-600">
                           +91
                         </span>
@@ -262,79 +159,16 @@ export function SignUpPage() {
                           id="mobile_number"
                           className="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm outline-none"
                           value={mobileNumber}
-                          onChange={(e) => handleMobileChange(e.target.value)}
+                          onChange={(e) =>
+                            setMobileNumber(formatIndianMobileInput(e.target.value))
+                          }
                           placeholder="9876543210"
                           inputMode="numeric"
                           maxLength={10}
                           autoComplete="tel"
-                          disabled={mobileVerified}
                         />
-                        {mobileVerified ? (
-                          <span className="flex items-center gap-1 px-3 text-xs font-bold text-[#00a897]">
-                            <CheckCircle2 className="size-3.5" />
-                            Verified
-                          </span>
-                        ) : mobile.length > 0 ? (
-                          <button
-                            type="button"
-                            className="flex items-center gap-1.5 px-3 text-[#25D366] disabled:opacity-50"
-                            onClick={() => void sendOtpToWhatsApp(mobile, { force: true })}
-                            disabled={isSendingOtp || !isValidMobile}
-                            title="Send OTP on WhatsApp"
-                          >
-                            <MessageCircle className="size-4" />
-                            <span className="hidden text-[11px] font-bold sm:inline">
-                              {isSendingOtp ? 'Sending…' : 'WhatsApp'}
-                            </span>
-                          </button>
-                        ) : null}
                       </div>
                     </div>
-
-                    {showOtpField ? (
-                      <div className="sm:col-span-2 space-y-2">
-                        <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
-                          <MessageCircle className="size-4 text-[#25D366]" />
-                          {isSendingOtp
-                            ? 'Sending OTP on WhatsApp…'
-                            : 'OTP sent on WhatsApp. Enter the 6-digit code.'}
-                        </div>
-                        <label className={labelClass} htmlFor="whatsapp_otp">
-                          WhatsApp OTP
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            ref={otpInputRef}
-                            id="whatsapp_otp"
-                            className={signupInputClass}
-                            value={otp}
-                            onChange={(e) =>
-                              setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))
-                            }
-                            placeholder="6-digit OTP"
-                            inputMode="numeric"
-                            maxLength={6}
-                            autoComplete="one-time-code"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => void handleVerifyOtp()}
-                            disabled={isVerifyingOtp || otp.length !== 6}
-                            className="shrink-0 rounded-xl bg-[#00a897] px-4 text-sm font-bold text-white disabled:opacity-50"
-                          >
-                            {isVerifyingOtp ? '…' : 'Verify'}
-                          </button>
-                        </div>
-                        <button
-                          type="button"
-                          className="text-xs font-bold text-[#00a897]"
-                          onClick={() => void sendOtpToWhatsApp(mobile, { force: true })}
-                          disabled={isSendingOtp}
-                        >
-                          {isSendingOtp ? 'Resending…' : 'Resend OTP on WhatsApp'}
-                        </button>
-                      </div>
-                    ) : null}
 
                     <div>
                       <label className={labelClass} htmlFor="email">
@@ -383,19 +217,9 @@ export function SignUpPage() {
                     </div>
                   </div>
 
-                  <AuthPrimaryButton
-                    loading={isSaving}
-                    loadingText="Creating account…"
-                    disabled={!mobileVerified}
-                  >
-                    Continue
+                  <AuthPrimaryButton loading={isSaving} loadingText="Creating account…">
+                    Sign Up
                   </AuthPrimaryButton>
-
-                  {!mobileVerified ? (
-                    <p className="text-center text-[11px] font-medium text-slate-500">
-                      Mobile WhatsApp OTP verification is required to create account.
-                    </p>
-                  ) : null}
 
                   <AuthFooterLink
                     text="Already have an account?"

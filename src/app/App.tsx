@@ -14,6 +14,7 @@ import { ShareApplicationPage } from './components/ShareApplicationPage';
 import { PaymentLoginPage } from './components/PaymentLoginPage';
 import { PaymentReturnPage } from './components/PaymentReturnPage';
 import { SignUpPage } from './components/SignUpPage';
+import { VerifyMobilePage } from './components/VerifyMobilePage';
 import { OnboardingPage } from './components/OnboardingPage';
 import { AboutPage } from './components/AboutPage';
 import { DeleteAccountPage } from './components/DeleteAccountPage';
@@ -26,6 +27,10 @@ export default function App() {
 
   if (path === '/signup' || path === '/register') {
     return <SignUpPage />;
+  }
+
+  if (path === '/verify-mobile') {
+    return <VerifyMobilePage />;
   }
 
   if (path === '/onboarding') {

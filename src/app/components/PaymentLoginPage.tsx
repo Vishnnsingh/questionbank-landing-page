@@ -7,6 +7,7 @@ import {
   clearPendingLoginEmail,
   readPendingLoginEmail,
   savePaymentUserContext,
+  savePendingLoginMobileVerify,
   savePendingOnboardCredentials,
 } from '../lib/signup-context';
 import { DEFAULT_TENANT_ID, setSessionTenantId } from '../lib/tenant-rbac';
@@ -60,6 +61,26 @@ export function PaymentLoginPage() {
     setIsSaving(true);
     try {
       const login = await loginUser(normalizedEmail, trimmedPassword);
+
+      if (login.needs_mobile_verify) {
+        const mobile = String(login.mobile_number || '').replace(/\D/g, '').slice(0, 10);
+        const token = String(login.login_pending_token || '').trim();
+        if (!token || !/^[6-9]\d{9}$/.test(mobile)) {
+          throw new Error('Could not start mobile verification. Try again.');
+        }
+        savePendingLoginMobileVerify({
+          loginPendingToken: token,
+          mobileNumber: mobile,
+          email: normalizedEmail,
+        });
+        const params = new URLSearchParams({
+          mode: 'login',
+          mobile,
+        });
+        window.location.href = `/verify-mobile?${params.toString()}`;
+        return;
+      }
+
       const profile = await fetchAuthMe(login.accessToken);
 
       savePaymentUserContext({

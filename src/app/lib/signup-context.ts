@@ -134,3 +134,38 @@ export function clearPendingOnboardCredentials() {
   sessionStorage.removeItem(PENDING_ONBOARD_KEY);
 }
 
+const PENDING_LOGIN_MOBILE_KEY = 'Prepmagic_pending_login_mobile';
+
+export type PendingLoginMobileVerify = {
+  loginPendingToken: string;
+  mobileNumber: string;
+  email?: string;
+};
+
+export function savePendingLoginMobileVerify(data: PendingLoginMobileVerify) {
+  sessionStorage.setItem(
+    PENDING_LOGIN_MOBILE_KEY,
+    JSON.stringify({
+      loginPendingToken: String(data.loginPendingToken || '').trim(),
+      mobileNumber: String(data.mobileNumber || '').replace(/\D/g, '').slice(0, 10),
+      email: data.email ? String(data.email).trim().toLowerCase() : undefined,
+    }),
+  );
+}
+
+export function readPendingLoginMobileVerify(): PendingLoginMobileVerify | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_LOGIN_MOBILE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as PendingLoginMobileVerify;
+    if (!parsed?.loginPendingToken || !parsed?.mobileNumber) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingLoginMobileVerify() {
+  sessionStorage.removeItem(PENDING_LOGIN_MOBILE_KEY);
+}
+
