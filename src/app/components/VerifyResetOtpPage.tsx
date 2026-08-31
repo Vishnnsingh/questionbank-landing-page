@@ -1,8 +1,14 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { MessageCircle, Sparkles, Timer } from 'lucide-react';
+import { ChevronLeft, MessageCircle } from 'lucide-react';
 
 import { forgotPassword, verifyResetOtp } from '../api/auth-api';
 import { maskAuthTarget } from '../lib/auth-identifier';
+import {
+  authErrorAlertVariant,
+  classifyOtpSendError,
+  formatVerifyCountdown,
+  VERIFY_MOBILE_RESEND_SECONDS,
+} from '../lib/verify-mobile-ui';
 import {
   readPendingResetIdentifier,
   savePasswordResetToken,
@@ -10,7 +16,7 @@ import {
 } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
-  AuthAlert,
+  AuthAlertModal,
   AuthFooterLink,
   AuthPageBackground,
   AuthPrimaryButton,
@@ -20,14 +26,7 @@ import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
 const OTP_SIZE = 6;
-const RESEND_SECONDS = 60;
-
-function formatCountdown(seconds: number) {
-  const s = Math.max(0, seconds);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, '0')}`;
-}
+const RESEND_SECONDS = VERIFY_MOBILE_RESEND_SECONDS;
 
 function readQuery() {
   const params = new URLSearchParams(window.location.search);
@@ -51,7 +50,11 @@ export function VerifyResetOtpPage() {
   const maskedTarget = maskAuthTarget(targetRaw, channel);
 
   const [otp, setOtp] = useState('');
-  const [error, setError] = useState('');
+  const [alert, setAlert] = useState<{
+    title: string;
+    message: string;
+    variant: 'error' | 'warning';
+  } | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [countdown, setCountdown] = useState(RESEND_SECONDS);
@@ -68,6 +71,13 @@ export function VerifyResetOtpPage() {
   }, [viaWhatsApp, mobile, email]);
 
   useEffect(() => {
+    setOtp('');
+    setCountdown(RESEND_SECONDS);
+    const focusTimer = window.setTimeout(() => otpInputRef.current?.focus(), 200);
+    return () => window.clearTimeout(focusTimer);
+  }, [viaWhatsApp, mobile, email]);
+
+  useEffect(() => {
     if (countdown <= 0) return;
     const t = window.setInterval(() => {
       setCountdown((c) => (c > 0 ? c - 1 : 0));
@@ -77,18 +87,34 @@ export function VerifyResetOtpPage() {
 
   const resendOtp = async () => {
     if (isSending || countdown > 0) return;
-    setError('');
+    setAlert(null);
     try {
       setIsSending(true);
       await forgotPassword(
         viaWhatsApp ? { mobile_number: mobile } : { email },
       );
       setCountdown(RESEND_SECONDS);
+      setOtp('');
+      window.setTimeout(() => otpInputRef.current?.focus(), 80);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not resend code.');
+      const raw = err instanceof Error ? err.message : '';
+      if (classifyOtpSendError(raw) === 'cooldown') {
+        setCountdown(RESEND_SECONDS);
+        return;
+      }
+      const message = err instanceof Error ? err.message : 'Could not resend code.';
+      setAlert({
+        title: 'Could not resend OTP',
+        message,
+        variant: authErrorAlertVariant(message),
+      });
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleBack = () => {
+    window.location.href = '/forgot-password';
   };
 
   const handleVerify = async (event?: FormEvent) => {
@@ -97,11 +123,15 @@ export function VerifyResetOtpPage() {
 
     const code = otp.trim();
     if (!/^\d{6}$/.test(code)) {
-      setError('Enter the 6-digit code we sent you.');
+      setAlert({
+        title: 'Invalid OTP',
+        message: 'Enter the 6-digit code we sent you.',
+        variant: 'warning',
+      });
       return;
     }
 
-    setError('');
+    setAlert(null);
     setIsVerifying(true);
     try {
       const result = await verifyResetOtp(
@@ -117,7 +147,12 @@ export function VerifyResetOtpPage() {
       });
       window.location.href = '/reset-password';
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Verification failed.');
+      const message = err instanceof Error ? err.message : 'Verification failed.';
+      setAlert({
+        title: 'Verification failed',
+        message,
+        variant: authErrorAlertVariant(message),
+      });
     } finally {
       setIsVerifying(false);
     }
@@ -142,30 +177,30 @@ export function VerifyResetOtpPage() {
 
             <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
               <div className="flex flex-col justify-center px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-7">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-[#00a897] shadow-sm transition hover:bg-slate-50"
+                  aria-label="Go back"
+                >
+                  <ChevronLeft className="size-5" />
+                </button>
+
                 <div className="mb-4 border-b border-slate-100 pb-4">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-teal-800">
-                    <Sparkles className="size-3.5 text-[#00a897]" />
-                    Verify OTP
-                  </div>
-                  <h1 className="mt-3 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
-                    Enter verification code
-                  </h1>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    We&apos;ve sent the 6-digit OTP
-                    {viaWhatsApp ? ' on WhatsApp to' : ' to'}
+                  <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                    Type the verification code we have sent
+                    {viaWhatsApp ? ' to your WhatsApp number' : ' to your email'}
                   </p>
                   <p className="mt-1 text-sm font-bold text-[#00a897]">{maskedTarget}</p>
                 </div>
 
                 <form onSubmit={handleVerify} className="space-y-4">
-                  {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
-
-                  <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
-                    {viaWhatsApp ? (
+                  {viaWhatsApp ? (
+                    <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
                       <MessageCircle className="size-4 text-[#25D366]" />
-                    ) : null}
-                    Check {viaWhatsApp ? 'WhatsApp' : 'your email'} for the 6-digit code.
-                  </div>
+                      OTP sent on WhatsApp. Enter the 6-digit code below.
+                    </div>
+                  ) : null}
 
                   <input
                     ref={otpInputRef}
@@ -180,15 +215,8 @@ export function VerifyResetOtpPage() {
                     autoComplete="one-time-code"
                   />
 
-                  <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-600">
-                    <Timer className="size-4 text-slate-500" />
-                    {countdown > 0
-                      ? `Resend available in ${formatCountdown(countdown)}`
-                      : 'You can resend the code now'}
-                  </div>
-
                   <AuthPrimaryButton loading={isVerifying} loadingText="Verifying…">
-                    Verify OTP
+                    Verify
                   </AuthPrimaryButton>
 
                   <button
@@ -198,9 +226,9 @@ export function VerifyResetOtpPage() {
                     disabled={isSending || countdown > 0}
                   >
                     {isSending
-                      ? 'Resending…'
+                      ? 'Sending…'
                       : countdown > 0
-                        ? `Resend OTP (${formatCountdown(countdown)})`
+                        ? `Resend OTP (${formatVerifyCountdown(countdown)})`
                         : 'Resend OTP'}
                   </button>
 
@@ -219,6 +247,14 @@ export function VerifyResetOtpPage() {
           </div>
         </div>
       </main>
+
+      <AuthAlertModal
+        open={Boolean(alert)}
+        title={alert?.title || ''}
+        message={alert?.message || ''}
+        variant={alert?.variant || 'error'}
+        onClose={() => setAlert(null)}
+      />
     </div>
   );
 }

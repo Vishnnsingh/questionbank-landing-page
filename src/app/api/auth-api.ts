@@ -32,6 +32,36 @@ export type RegisterPayload = {
   referral_code?: string;
 };
 
+/** POST /api/v1/auth/update-verify-mobile — change mobile before WhatsApp verify */
+export async function updateVerifyMobileNumber(payload: {
+  new_mobile_number: string;
+  email?: string;
+  login_pending_token?: string;
+}): Promise<{ mobile_number: string; login_pending_token?: string }> {
+  try {
+    const { data } = await apiClient.post<
+      ApiPayload<{ mobile_number?: string; login_pending_token?: string }>
+    >('/api/v1/auth/update-verify-mobile', {
+      new_mobile_number: String(payload.new_mobile_number || '').replace(/\D/g, '').slice(0, 10),
+      email: payload.email ? String(payload.email).trim().toLowerCase() : undefined,
+      login_pending_token: payload.login_pending_token
+        ? String(payload.login_pending_token).trim()
+        : undefined,
+    });
+    const row = data?.data;
+    const mobile = String(row?.mobile_number || '').replace(/\D/g, '').slice(0, 10);
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      throw new Error('Invalid mobile update response.');
+    }
+    return {
+      mobile_number: mobile,
+      login_pending_token: row?.login_pending_token,
+    };
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not update mobile number.'));
+  }
+}
+
 /** POST /api/v1/auth/send-mobile-otp — WhatsApp OTP for mobile verify */
 export async function sendMobileOtp(
   mobileNumber: string,

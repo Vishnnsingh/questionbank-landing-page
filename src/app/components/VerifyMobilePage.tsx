@@ -1,14 +1,22 @@
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import { MessageCircle, Sparkles, Timer } from 'lucide-react';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronLeft, MessageCircle } from 'lucide-react';
 
 import {
   sendMobileOtp,
+  updateVerifyMobileNumber,
   verifyLoginMobileOtp,
   verifyMobileOtp,
 } from '../api/auth-api';
+import {
+  classifyOtpSendError,
+  formatVerifyCountdown,
+  otpSendErrorMessage,
+  VERIFY_MOBILE_RESEND_SECONDS,
+} from '../lib/verify-mobile-ui';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
   AuthAlert,
+  AuthField,
   AuthPageBackground,
   AuthPrimaryButton,
   authCompactInputClass,
@@ -18,16 +26,17 @@ import { SideNav } from './SideNav';
 import {
   clearPendingLoginMobileVerify,
   readPendingLoginMobileVerify,
+  savePendingLoginMobileVerify,
 } from '../lib/signup-context';
 
 const OTP_SIZE = 6;
-const RESEND_SECONDS = 60;
+const RESEND_SECONDS = VERIFY_MOBILE_RESEND_SECONDS;
 
-function formatCountdown(seconds: number) {
-  const s = Math.max(0, seconds);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2, '0')}`;
+function formatIndianMobileInput(text: string) {
+  let digits = String(text || '').replace(/\D/g, '');
+  if (digits.startsWith('91') && digits.length > 10) digits = digits.slice(2);
+  if (digits.startsWith('0') && digits.length > 10) digits = digits.slice(1);
+  return digits.slice(0, 10);
 }
 
 function readQuery() {
@@ -43,30 +52,55 @@ export function VerifyMobilePage() {
   const query = readQuery();
   const isLoginMode = query.mode === 'login';
   const pendingLogin = readPendingLoginMobileVerify();
-  const mobile = query.mobile || pendingLogin?.mobileNumber || '';
+
+  const initialMobile = query.mobile || pendingLogin?.mobileNumber || '';
+  const [mobile, setMobile] = useState(initialMobile);
+  const [editMobile, setEditMobile] = useState(initialMobile);
+  const [loginToken, setLoginToken] = useState(pendingLogin?.loginPendingToken || '');
 
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [countdown, setCountdown] = useState(RESEND_SECONDS);
-  const [initialSent, setInitialSent] = useState(false);
-  const sentOnMount = useRef(false);
+  const [countdown, setCountdown] = useState(isLoginMode ? RESEND_SECONDS : 0);
+  const [sendFailed, setSendFailed] = useState(false);
+  const [otpSent, setOtpSent] = useState(isLoginMode);
   const otpInputRef = useRef<HTMLInputElement | null>(null);
+  const sentOnMount = useRef(false);
 
   const maskedMobile = mobile
     ? `+91 ${mobile.slice(0, 2)}****${mobile.slice(-2)}`
     : 'your WhatsApp number';
 
+  const showOtpInput = otpSent && !sendFailed;
+
   useEffect(() => {
-    if (!mobile || !/^[6-9]\d{9}$/.test(mobile)) {
-      window.location.href = isLoginMode ? '/login' : '/signup';
+    if (!initialMobile || !/^[6-9]\d{9}$/.test(initialMobile)) {
+      window.location.replace(isLoginMode ? '/login' : '/signup');
       return;
     }
-    if (isLoginMode && !pendingLogin?.loginPendingToken) {
-      window.location.href = '/login';
+    if (isLoginMode && !readPendingLoginMobileVerify()?.loginPendingToken) {
+      window.location.replace('/login');
     }
-  }, [mobile, isLoginMode, pendingLogin]);
+  }, [initialMobile, isLoginMode]);
+
+  useEffect(() => {
+    if (!isLoginMode) return;
+    const pending = readPendingLoginMobileVerify();
+    if (!pending?.loginPendingToken || !pending?.mobileNumber) return;
+
+    setLoginToken(pending.loginPendingToken);
+    setMobile(pending.mobileNumber);
+    setEditMobile(pending.mobileNumber);
+    setOtpSent(true);
+    setSendFailed(false);
+    setError('');
+    setOtp('');
+    setCountdown(RESEND_SECONDS);
+
+    const focusTimer = window.setTimeout(() => otpInputRef.current?.focus(), 200);
+    return () => window.clearTimeout(focusTimer);
+  }, [isLoginMode]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -76,34 +110,107 @@ export function VerifyMobilePage() {
     return () => window.clearInterval(t);
   }, [countdown]);
 
-  const sendOtp = async ({ force }: { force?: boolean } = {}) => {
-    if (isSending || !mobile) return;
-    if (!force && countdown > 0 && initialSent) return;
-
-    setError('');
-    try {
-      setIsSending(true);
-      await sendMobileOtp(mobile, 'mobile_verify');
-      setInitialSent(true);
-      setCountdown(RESEND_SECONDS);
-      setTimeout(() => otpInputRef.current?.focus(), 80);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not send OTP.');
-    } finally {
-      setIsSending(false);
+  const persistMobileUpdate = async (nextMobile: string) => {
+    if (nextMobile === mobile) return;
+    const updated = await updateVerifyMobileNumber({
+      new_mobile_number: nextMobile,
+      email: isLoginMode ? undefined : query.email || pendingLogin?.email,
+      login_pending_token: isLoginMode ? loginToken : undefined,
+    });
+    setMobile(updated.mobile_number);
+    setEditMobile(updated.mobile_number);
+    if (updated.login_pending_token) {
+      setLoginToken(updated.login_pending_token);
+      savePendingLoginMobileVerify({
+        loginPendingToken: updated.login_pending_token,
+        mobileNumber: updated.mobile_number,
+        email: pendingLogin?.email,
+        password: pendingLogin?.password,
+      });
     }
+    const params = new URLSearchParams(window.location.search);
+    params.set('mobile', updated.mobile_number);
+    window.history.replaceState({}, '', `/verify-mobile?${params.toString()}`);
   };
 
+  const sendOtp = useCallback(
+    async (options?: { force?: boolean }) => {
+      const force = options?.force ?? false;
+      if (isSending) return;
+      if (!force && countdown > 0 && otpSent && !sendFailed) return;
+
+      const targetMobile = sendFailed ? formatIndianMobileInput(editMobile) : mobile;
+
+      if (!/^[6-9]\d{9}$/.test(targetMobile)) {
+        setError('Please enter a valid 10-digit WhatsApp number.');
+        setSendFailed(true);
+        setOtpSent(false);
+        return;
+      }
+
+      setError('');
+      setIsSending(true);
+      try {
+        if (sendFailed || targetMobile !== mobile) {
+          await persistMobileUpdate(targetMobile);
+        }
+        await sendMobileOtp(targetMobile, 'mobile_verify');
+        setSendFailed(false);
+        setOtpSent(true);
+        setCountdown(RESEND_SECONDS);
+        setOtp('');
+        window.setTimeout(() => otpInputRef.current?.focus(), 80);
+      } catch (err) {
+        const raw = err instanceof Error ? err.message : '';
+        const kind = classifyOtpSendError(raw);
+        if (kind === 'cooldown') {
+          setCountdown(RESEND_SECONDS);
+          setError('');
+          if (isLoginMode || otpSent) {
+            setOtpSent(true);
+            setSendFailed(false);
+          }
+          return;
+        }
+        setOtp('');
+        setError(otpSendErrorMessage(kind));
+        if (kind === 'whatsapp') {
+          setSendFailed(true);
+          setOtpSent(false);
+        }
+      } finally {
+        setIsSending(false);
+      }
+    },
+    [
+      countdown,
+      editMobile,
+      isLoginMode,
+      isSending,
+      mobile,
+      otpSent,
+      sendFailed,
+    ],
+  );
+
   useEffect(() => {
+    if (isLoginMode) return;
     if (sentOnMount.current || !mobile) return;
+    if (!/^[6-9]\d{9}$/.test(mobile)) return;
     sentOnMount.current = true;
     void sendOtp({ force: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobile]);
+  }, [isLoginMode, mobile, sendOtp]);
+
+  const handleBack = () => {
+    if (isLoginMode) {
+      clearPendingLoginMobileVerify();
+    }
+    window.location.href = isLoginMode ? '/login' : '/signup';
+  };
 
   const handleVerify = async (event?: FormEvent) => {
     event?.preventDefault();
-    if (isVerifying) return;
+    if (isVerifying || !showOtpInput) return;
 
     const code = otp.trim();
     if (!/^\d{6}$/.test(code)) {
@@ -115,7 +222,7 @@ export function VerifyMobilePage() {
     setIsVerifying(true);
     try {
       if (isLoginMode) {
-        const token = pendingLogin?.loginPendingToken;
+        const token = loginToken || pendingLogin?.loginPendingToken;
         if (!token) {
           throw new Error('Login session expired. Please sign in again.');
         }
@@ -147,10 +254,10 @@ export function VerifyMobilePage() {
   };
 
   useEffect(() => {
-    if (otp.length !== OTP_SIZE || isVerifying) return;
+    if (!showOtpInput || otp.length !== OTP_SIZE || isVerifying) return;
     void handleVerify();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [otp]);
+  }, [otp, showOtpInput]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-gradient-to-br from-slate-50 via-teal-50/30 to-blue-50">
@@ -165,53 +272,83 @@ export function VerifyMobilePage() {
 
             <div className="grid lg:grid-cols-[0.95fr_1.05fr]">
               <div className="flex flex-col justify-center px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-7">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="mb-3 inline-flex size-9 items-center justify-center rounded-full border border-slate-200 bg-white text-[#00a897] shadow-sm transition hover:bg-slate-50"
+                  aria-label="Go back"
+                >
+                  <ChevronLeft className="size-5" />
+                </button>
+
                 <div className="mb-4 border-b border-slate-100 pb-4">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-teal-100 bg-gradient-to-r from-teal-50 to-cyan-50 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-teal-800">
-                    <Sparkles className="size-3.5 text-[#00a897]" />
-                    WhatsApp verify
-                  </div>
-                  <h1 className="mt-3 text-xl font-bold tracking-tight text-slate-950 sm:text-2xl">
-                    Verify mobile number
-                  </h1>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600 sm:text-sm">
-                    Type the verification code we have sent to your WhatsApp number
-                  </p>
-                  <p className="mt-1 text-sm font-bold text-[#00a897]">{maskedMobile}</p>
+                  {sendFailed ? (
+                    <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                      Please enter your WhatsApp number.
+                    </p>
+                  ) : (
+                    <>
+                      <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
+                        Type the verification code we have sent to your WhatsApp number
+                      </p>
+                      <p className="mt-1 text-sm font-bold text-[#00a897]">{maskedMobile}</p>
+                    </>
+                  )}
                 </div>
 
                 <form onSubmit={handleVerify} className="space-y-4">
                   {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
 
-                  {isSending && !initialSent ? (
+                  {sendFailed ? (
+                    <AuthField label="WhatsApp number" htmlFor="verify_mobile_edit">
+                      <div className="relative">
+                        <input
+                          id="verify_mobile_edit"
+                          type="tel"
+                          className={authCompactInputClass}
+                          value={editMobile}
+                          onChange={(e) =>
+                            setEditMobile(formatIndianMobileInput(e.target.value))
+                          }
+                          placeholder="10-digit WhatsApp number"
+                          inputMode="numeric"
+                          autoComplete="tel"
+                        />
+                        <MessageCircle
+                          className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#25D366]"
+                          aria-hidden
+                        />
+                      </div>
+                    </AuthField>
+                  ) : null}
+
+                  {isSending ? (
                     <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
                       <MessageCircle className="size-4 text-[#25D366]" />
                       Sending code on WhatsApp…
                     </div>
                   ) : null}
 
-                  <input
-                    ref={otpInputRef}
-                    className={`${authCompactInputClass} text-center text-lg tracking-[0.35em]`}
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(e.target.value.replace(/\D/g, '').slice(0, OTP_SIZE))
-                    }
-                    placeholder="6-digit OTP"
-                    inputMode="numeric"
-                    maxLength={OTP_SIZE}
-                    autoComplete="one-time-code"
-                  />
+                  {showOtpInput ? (
+                    <input
+                      ref={otpInputRef}
+                      className={`${authCompactInputClass} text-center text-lg tracking-[0.35em]`}
+                      value={otp}
+                      onChange={(e) =>
+                        setOtp(e.target.value.replace(/\D/g, '').slice(0, OTP_SIZE))
+                      }
+                      placeholder="6-digit OTP"
+                      inputMode="numeric"
+                      maxLength={OTP_SIZE}
+                      autoComplete="one-time-code"
+                    />
+                  ) : null}
 
-                  <div className="flex items-center justify-center gap-2 text-xs font-semibold text-slate-600">
-                    <Timer className="size-4 text-slate-500" />
-                    {countdown > 0
-                      ? `Resend available in ${formatCountdown(countdown)}`
-                      : 'You can resend the code now'}
-                  </div>
-
-                  <AuthPrimaryButton loading={isVerifying} loadingText="Verifying…">
-                    Verify
-                  </AuthPrimaryButton>
+                  {showOtpInput ? (
+                    <AuthPrimaryButton loading={isVerifying} loadingText="Verifying…">
+                      Verify
+                    </AuthPrimaryButton>
+                  ) : null}
 
                   <button
                     type="button"
@@ -222,8 +359,10 @@ export function VerifyMobilePage() {
                     {isSending
                       ? 'Sending…'
                       : countdown > 0
-                        ? `Resend OTP (${formatCountdown(countdown)})`
-                        : 'Resend OTP on WhatsApp'}
+                        ? `Resend OTP (${formatVerifyCountdown(countdown)})`
+                        : sendFailed
+                          ? 'Send OTP on WhatsApp'
+                          : 'Resend OTP on WhatsApp'}
                   </button>
                 </form>
               </div>

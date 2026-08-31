@@ -1,4 +1,4 @@
-import { Lock, MessageCircle, Sparkles } from 'lucide-react';
+import { Lock, Sparkles } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 import { forgotPassword } from '../api/auth-api';
@@ -6,33 +6,40 @@ import { looksLikeMobileInput, resolveResetIdentifier } from '../lib/auth-identi
 import { savePendingResetIdentifier } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
-  AuthAlert,
+  AuthAlertModal,
   AuthField,
   AuthFooterLink,
   AuthPageBackground,
   AuthPrimaryButton,
   authInputClass,
 } from './auth-ui';
+import { authErrorAlertVariant } from '../lib/verify-mobile-ui';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
 export function ForgotPasswordPage() {
   const [identifier, setIdentifier] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [info, setInfo] = useState('');
-  const showWhatsAppHint = looksLikeMobileInput(identifier);
+  const [alert, setAlert] = useState<{
+    title: string;
+    message: string;
+    variant: 'error' | 'warning';
+  } | null>(null);
+  const showIndianMobile = looksLikeMobileInput(identifier);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (isSaving) return;
 
-    setError('');
-    setInfo('');
+    setAlert(null);
 
     const resolved = resolveResetIdentifier(identifier.trim());
     if (!resolved) {
-      setError('Please enter your registered email or 10-digit mobile number.');
+      setAlert({
+        title: 'Missing details',
+        message: 'Please enter your registered email or 10-digit mobile number.',
+        variant: 'warning',
+      });
       return;
     }
 
@@ -55,7 +62,12 @@ export function ForgotPasswordPage() {
       if (resolved.mobile_number) params.set('mobile', resolved.mobile_number);
       window.location.href = `/verify-reset-otp?${params.toString()}`;
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not send reset code.');
+      const message = err instanceof Error ? err.message : 'Could not send reset code.';
+      setAlert({
+        title: 'Could not send OTP',
+        message,
+        variant: authErrorAlertVariant(message),
+      });
     } finally {
       setIsSaving(false);
     }
@@ -93,11 +105,29 @@ export function ForgotPasswordPage() {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
-                  {!error && info ? <AuthAlert variant="success">{info}</AuthAlert> : null}
-
                   <AuthField label="Email or mobile number" htmlFor="reset_identifier">
-                    <div className="relative">
+                    {showIndianMobile ? (
+                      <div className="flex overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/60 focus-within:border-[#00a897] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a897]/15">
+                        <span
+                          className="flex shrink-0 items-center gap-1.5 border-r border-slate-200/90 px-2.5 py-3.5 text-xs font-semibold text-slate-700"
+                          aria-label="India country code"
+                        >
+                          <span className="text-base leading-none" aria-hidden>
+                            🇮🇳
+                          </span>
+                          +91
+                        </span>
+                        <input
+                          id="reset_identifier"
+                          type="text"
+                          className="min-w-0 flex-1 bg-transparent px-3 py-3.5 text-sm outline-none"
+                          value={identifier}
+                          onChange={(e) => setIdentifier(e.target.value)}
+                          placeholder="Email or 10-digit mobile"
+                          autoComplete="username"
+                        />
+                      </div>
+                    ) : (
                       <input
                         id="reset_identifier"
                         type="text"
@@ -107,13 +137,7 @@ export function ForgotPasswordPage() {
                         placeholder="Email or 10-digit mobile"
                         autoComplete="username"
                       />
-                      {showWhatsAppHint ? (
-                        <MessageCircle
-                          className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#25D366]"
-                          aria-hidden
-                        />
-                      ) : null}
-                    </div>
+                    )}
                   </AuthField>
 
                   <AuthPrimaryButton loading={isSaving} loadingText="Sending OTP…">
@@ -128,6 +152,14 @@ export function ForgotPasswordPage() {
           </div>
         </div>
       </main>
+
+      <AuthAlertModal
+        open={Boolean(alert)}
+        title={alert?.title || ''}
+        message={alert?.message || ''}
+        variant={alert?.variant || 'error'}
+        onClose={() => setAlert(null)}
+      />
     </div>
   );
 }

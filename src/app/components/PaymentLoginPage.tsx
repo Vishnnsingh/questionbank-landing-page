@@ -1,11 +1,12 @@
-import { CheckCircle2, LogIn, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react';
-import { FormEvent, useState } from 'react';
+import { CheckCircle2, LogIn, ShieldCheck, Sparkles } from 'lucide-react';
+import { FormEvent, useEffect, useState } from 'react';
 
 import { fetchAuthMe, loginUser } from '../api/auth-api';
-import { resolveLoginIdentifier } from '../lib/auth-identifier';
+import { looksLikeMobileInput, resolveLoginIdentifier } from '../lib/auth-identifier';
 import { redirectAfterAuthenticatedLogin } from '../lib/auth-post-login';
 import { isValidLoginPassword } from '../lib/password-policy';
 import {
+  clearPendingLoginMobileVerify,
   readPendingLoginEmail,
   savePendingLoginMobileVerify,
   savePendingOnboardCredentials,
@@ -30,10 +31,11 @@ export function PaymentLoginPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const showSignupSuccess = Boolean(pendingEmail);
-  const showWhatsAppHint =
-    identifier.trim().length > 0 &&
-    !identifier.includes('@') &&
-    /\d/.test(identifier);
+  const showIndianMobile = looksLikeMobileInput(identifier);
+
+  useEffect(() => {
+    clearPendingLoginMobileVerify();
+  }, []);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -158,7 +160,28 @@ export function PaymentLoginPage() {
                   {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
 
                   <AuthField label="Email or mobile number" htmlFor="login_identifier">
-                    <div className="relative">
+                    {showIndianMobile ? (
+                      <div className="flex overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/60 focus-within:border-[#00a897] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a897]/15">
+                        <span
+                          className="flex shrink-0 items-center gap-1.5 border-r border-slate-200/90 px-2.5 py-3.5 text-xs font-semibold text-slate-700"
+                          aria-label="India country code"
+                        >
+                          <span className="text-base leading-none" aria-hidden>
+                            🇮🇳
+                          </span>
+                          +91
+                        </span>
+                        <input
+                          id="login_identifier"
+                          type="text"
+                          className="min-w-0 flex-1 bg-transparent px-3 py-3.5 text-sm outline-none"
+                          value={identifier}
+                          onChange={(e) => setIdentifier(e.target.value)}
+                          placeholder="Email or 10-digit mobile"
+                          autoComplete="username"
+                        />
+                      </div>
+                    ) : (
                       <input
                         id="login_identifier"
                         type="text"
@@ -168,13 +191,7 @@ export function PaymentLoginPage() {
                         placeholder="Email or 10-digit mobile"
                         autoComplete="username"
                       />
-                      {showWhatsAppHint ? (
-                        <MessageCircle
-                          className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#25D366]"
-                          aria-hidden
-                        />
-                      ) : null}
-                    </div>
+                    )}
                   </AuthField>
 
                   <AuthField label="Password" htmlFor="login_password">

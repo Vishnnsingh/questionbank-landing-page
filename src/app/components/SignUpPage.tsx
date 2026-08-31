@@ -152,7 +152,13 @@ export function SignUpPage() {
                         Mobile
                       </label>
                       <div className="flex overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/60 focus-within:border-[#00a897] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#00a897]/15">
-                        <span className="flex items-center border-r border-slate-200/90 px-2.5 text-xs font-medium text-slate-600">
+                        <span
+                          className="flex shrink-0 items-center gap-1.5 border-r border-slate-200/90 px-2.5 py-2.5 text-xs font-semibold text-slate-700"
+                          aria-label="India country code"
+                        >
+                          <span className="text-base leading-none" aria-hidden>
+                            🇮🇳
+                          </span>
                           +91
                         </span>
                         <input
@@ -162,7 +168,7 @@ export function SignUpPage() {
                           onChange={(e) =>
                             setMobileNumber(formatIndianMobileInput(e.target.value))
                           }
-                          placeholder="9876543210"
+                          placeholder="Mobile number"
                           inputMode="numeric"
                           maxLength={10}
                           autoComplete="tel"

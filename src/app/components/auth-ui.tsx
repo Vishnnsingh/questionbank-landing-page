@@ -1,4 +1,4 @@
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, AlertCircle, CheckCircle2, Info, AlertTriangle } from 'lucide-react';
 import type { FormEvent, ReactNode } from 'react';
 
 import { Footer } from './Footer';
@@ -112,6 +112,92 @@ export function AuthAlert({
 
   return (
     <div className={`rounded-xl border px-4 py-3 text-sm leading-relaxed ${styles}`}>{children}</div>
+  );
+}
+
+type AuthAlertModalVariant = 'error' | 'warning' | 'info' | 'success';
+
+const AUTH_ALERT_MODAL_STYLES: Record<
+  AuthAlertModalVariant,
+  { icon: typeof AlertCircle; iconClass: string; iconWrapClass: string }
+> = {
+  error: {
+    icon: AlertCircle,
+    iconClass: 'text-red-600',
+    iconWrapClass: 'border-red-100 bg-red-50',
+  },
+  warning: {
+    icon: AlertTriangle,
+    iconClass: 'text-amber-600',
+    iconWrapClass: 'border-amber-100 bg-amber-50',
+  },
+  info: {
+    icon: Info,
+    iconClass: 'text-[#00a897]',
+    iconWrapClass: 'border-teal-100 bg-teal-50',
+  },
+  success: {
+    icon: CheckCircle2,
+    iconClass: 'text-[#00a897]',
+    iconWrapClass: 'border-teal-100 bg-teal-50',
+  },
+};
+
+export function AuthAlertModal({
+  open,
+  title,
+  message,
+  variant = 'error',
+  okLabel = 'OK',
+  onClose,
+}: {
+  open: boolean;
+  title: string;
+  message: string;
+  variant?: AuthAlertModalVariant;
+  okLabel?: string;
+  onClose: () => void;
+}) {
+  if (!open) return null;
+
+  const theme = AUTH_ALERT_MODAL_STYLES[variant];
+  const Icon = theme.icon;
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/45 px-4 backdrop-blur-[2px]"
+      role="presentation"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-[340px] overflow-hidden rounded-[20px] border border-slate-200/90 bg-white px-6 pb-6 pt-2 text-center shadow-[0_24px_60px_-16px_rgba(15,23,42,0.28)]"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="auth-alert-title"
+        aria-describedby="auth-alert-message"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#00a897] via-teal-500 to-blue-500" />
+        <div
+          className={`mx-auto mt-5 flex size-[72px] items-center justify-center rounded-full border ${theme.iconWrapClass}`}
+        >
+          <Icon className={`size-10 ${theme.iconClass}`} aria-hidden />
+        </div>
+        <h2 id="auth-alert-title" className="mt-4 text-lg font-bold text-slate-950">
+          {title}
+        </h2>
+        <p id="auth-alert-message" className="mt-2 text-sm leading-relaxed text-slate-600">
+          {message}
+        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-5 inline-flex h-[46px] w-full items-center justify-center rounded-xl bg-[#00a897] px-6 text-[15px] font-bold text-white shadow-lg shadow-teal-900/10 transition hover:bg-teal-700"
+        >
+          {okLabel}
+        </button>
+      </div>
+    </div>
   );
 }
 
