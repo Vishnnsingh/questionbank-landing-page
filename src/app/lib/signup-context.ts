@@ -169,3 +169,42 @@ export function clearPendingLoginMobileVerify() {
   sessionStorage.removeItem(PENDING_LOGIN_MOBILE_KEY);
 }
 
+const PENDING_RESET_ID_KEY = 'Prepmagic_pending_reset_id';
+const RESET_TOKEN_KEY = 'Prepmagic_reset_token';
+
+export type PendingResetIdentifier = {
+  email?: string;
+  mobileNumber?: string;
+  channel: 'email' | 'whatsapp';
+};
+
+export function savePendingResetIdentifier(data: PendingResetIdentifier) {
+  sessionStorage.setItem(PENDING_RESET_ID_KEY, JSON.stringify(data));
+}
+
+export function readPendingResetIdentifier(): PendingResetIdentifier | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_RESET_ID_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as PendingResetIdentifier;
+  } catch {
+    return null;
+  }
+}
+
+export function clearPendingResetIdentifier() {
+  sessionStorage.removeItem(PENDING_RESET_ID_KEY);
+}
+
+export function savePasswordResetToken(token: string) {
+  sessionStorage.setItem(RESET_TOKEN_KEY, String(token || '').trim());
+}
+
+export function readPasswordResetToken(): string {
+  return sessionStorage.getItem(RESET_TOKEN_KEY) || '';
+}
+
+export function clearPasswordResetToken() {
+  sessionStorage.removeItem(RESET_TOKEN_KEY);
+}
+

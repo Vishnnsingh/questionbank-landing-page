@@ -1,7 +1,8 @@
-import { CheckCircle2, LogIn, ShieldCheck, Sparkles } from 'lucide-react';
+import { CheckCircle2, LogIn, MessageCircle, ShieldCheck, Sparkles } from 'lucide-react';
 import { FormEvent, useState } from 'react';
 
 import { fetchAuthMe, loginUser } from '../api/auth-api';
+import { resolveLoginIdentifier } from '../lib/auth-identifier';
 import { isValidLoginPassword } from '../lib/password-policy';
 import {
   clearPendingLoginEmail,
@@ -30,11 +31,15 @@ function normalizeClass(value: string | undefined): '10' | '12' {
 
 export function PaymentLoginPage() {
   const pendingEmail = readPendingLoginEmail();
-  const [email, setEmail] = useState(pendingEmail);
+  const [identifier, setIdentifier] = useState(pendingEmail);
   const [password, setPassword] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const showSignupSuccess = Boolean(pendingEmail);
+  const showWhatsAppHint =
+    identifier.trim().length > 0 &&
+    !identifier.includes('@') &&
+    /\d/.test(identifier);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -42,14 +47,19 @@ export function PaymentLoginPage() {
 
     setError('');
 
-    const normalizedEmail = email.trim().toLowerCase();
+    const trimmedIdentifier = identifier.trim();
     const trimmedPassword = password.trim();
+    const resolved = resolveLoginIdentifier(trimmedIdentifier);
 
-    if (!normalizedEmail || !trimmedPassword) {
-      setError('Please enter email and password.');
+    if (!trimmedIdentifier || !trimmedPassword) {
+      setError('Please enter your email or mobile number and password.');
       return;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+    if (!resolved) {
+      setError('Enter a valid email address or 10-digit mobile number.');
+      return;
+    }
+    if ('email' in resolved && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(resolved.email)) {
       setError('Please enter a valid email address.');
       return;
     }
@@ -60,7 +70,9 @@ export function PaymentLoginPage() {
 
     setIsSaving(true);
     try {
-      const login = await loginUser(normalizedEmail, trimmedPassword);
+      const login = await loginUser(trimmedIdentifier, trimmedPassword);
+      const loginEmail =
+        'email' in resolved && resolved.email ? resolved.email : undefined;
 
       if (login.needs_mobile_verify) {
         const mobile = String(login.mobile_number || '').replace(/\D/g, '').slice(0, 10);
@@ -71,7 +83,7 @@ export function PaymentLoginPage() {
         savePendingLoginMobileVerify({
           loginPendingToken: token,
           mobileNumber: mobile,
-          email: normalizedEmail,
+          email: loginEmail,
         });
         const params = new URLSearchParams({
           mode: 'login',
@@ -82,11 +94,12 @@ export function PaymentLoginPage() {
       }
 
       const profile = await fetchAuthMe(login.accessToken);
+      const profileEmail = String(profile.email || loginEmail || '').trim().toLowerCase();
 
       savePaymentUserContext({
         class: normalizeClass(profile.class),
         fullName: String(profile.full_name || login.fullName || 'Student').trim(),
-        email: String(profile.email || normalizedEmail).trim().toLowerCase(),
+        email: profileEmail,
         accessToken: login.accessToken,
         refreshToken: login.refreshToken,
         expiresAt: Date.now() + (login.expiresIn ?? 3600) * 1000,
@@ -98,8 +111,13 @@ export function PaymentLoginPage() {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed. Please try again.';
       if (/onboarding/i.test(message)) {
+        const resolvedId = resolveLoginIdentifier(trimmedIdentifier);
+        const onboardEmail =
+          resolvedId && 'email' in resolvedId && resolvedId.email
+            ? resolvedId.email
+            : trimmedIdentifier.toLowerCase();
         savePendingOnboardCredentials({
-          email: normalizedEmail,
+          email: onboardEmail,
           password: trimmedPassword,
         });
         window.location.href = '/onboarding';
@@ -135,7 +153,7 @@ export function PaymentLoginPage() {
                   </div>
                   <h1 className="mt-4 text-2xl font-bold tracking-tight text-slate-950">Welcome back</h1>
                   <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-                    Sign in to choose a plan and pay securely.
+                    Sign in with email or mobile to choose a plan and pay securely.
                   </p>
                 </div>
 
@@ -151,16 +169,24 @@ export function PaymentLoginPage() {
 
                   {error ? <AuthAlert variant="error">{error}</AuthAlert> : null}
 
-                  <AuthField label="Email" htmlFor="login_email">
-                    <input
-                      id="login_email"
-                      type="email"
-                      className={authInputClass}
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                    />
+                  <AuthField label="Email or mobile number" htmlFor="login_identifier">
+                    <div className="relative">
+                      <input
+                        id="login_identifier"
+                        type="text"
+                        className={authInputClass}
+                        value={identifier}
+                        onChange={(e) => setIdentifier(e.target.value)}
+                        placeholder="Email or 10-digit mobile"
+                        autoComplete="username"
+                      />
+                      {showWhatsAppHint ? (
+                        <MessageCircle
+                          className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-[#25D366]"
+                          aria-hidden
+                        />
+                      ) : null}
+                    </div>
                   </AuthField>
 
                   <AuthField label="Password" htmlFor="login_password">
@@ -172,6 +198,15 @@ export function PaymentLoginPage() {
                       autoComplete="current-password"
                     />
                   </AuthField>
+
+                  <div className="flex justify-end">
+                    <a
+                      href="/forgot-password"
+                      className="text-xs font-semibold text-[#00a897] transition hover:text-teal-700"
+                    >
+                      Forgot password?
+                    </a>
+                  </div>
 
                   <p className="flex items-center gap-2 text-xs text-slate-500">
                     <ShieldCheck className="size-4 shrink-0 text-[#00a897]" />

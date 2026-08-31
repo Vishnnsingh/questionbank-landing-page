@@ -12,6 +12,9 @@ import { SeoLandingPage } from './components/SeoLandingPage';
 import { ChoosePlanPage } from './components/ChoosePlanPage';
 import { ShareApplicationPage } from './components/ShareApplicationPage';
 import { PaymentLoginPage } from './components/PaymentLoginPage';
+import { ForgotPasswordPage } from './components/ForgotPasswordPage';
+import { VerifyResetOtpPage } from './components/VerifyResetOtpPage';
+import { ResetPasswordPage } from './components/ResetPasswordPage';
 import { PaymentReturnPage } from './components/PaymentReturnPage';
 import { SignUpPage } from './components/SignUpPage';
 import { VerifyMobilePage } from './components/VerifyMobilePage';
@@ -39,6 +42,18 @@ export default function App() {
 
   if (path === '/login') {
     return <PaymentLoginPage />;
+  }
+
+  if (path === '/forgot-password') {
+    return <ForgotPasswordPage />;
+  }
+
+  if (path === '/verify-reset-otp') {
+    return <VerifyResetOtpPage />;
+  }
+
+  if (path === '/reset-password') {
+    return <ResetPasswordPage />;
   }
 
   if (path === '/choose-plan') {

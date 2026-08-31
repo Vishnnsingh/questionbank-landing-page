@@ -245,15 +245,30 @@ export type LoginResult = {
   resend_cooldown_seconds?: number;
 };
 
-export async function loginUser(email: string, password: string): Promise<LoginResult> {
+export async function loginUser(identifier: string, password: string): Promise<LoginResult> {
   try {
+    const trimmed = String(identifier || '').trim();
+    let digits = trimmed.replace(/\D/g, '');
+    if (digits.startsWith('91') && digits.length === 12) digits = digits.slice(2);
+    if (digits.startsWith('0') && digits.length === 11) digits = digits.slice(1);
+
+    const body: { email?: string; mobile_number?: string; password: string } = {
+      password,
+    };
+    if (/^[6-9]\d{9}$/.test(digits) && !trimmed.includes('@')) {
+      body.mobile_number = digits;
+    } else if (trimmed.includes('@')) {
+      body.email = trimmed.toLowerCase();
+    } else if (/^[6-9]\d{9}$/.test(digits)) {
+      body.mobile_number = digits;
+    } else if (trimmed) {
+      body.email = trimmed.toLowerCase();
+    }
+
     const { data } = await withNetworkRetry(({ timeout, headers, baseURL }) =>
       apiClient.post<ApiPayload<LoginResult>>(
         '/api/v1/auth/login',
-        {
-          email: email.trim().toLowerCase(),
-          password,
-        },
+        body,
         { timeout, headers, baseURL },
       ),
     );
@@ -270,6 +285,73 @@ export async function loginUser(email: string, password: string): Promise<LoginR
     return session;
   } catch (error) {
     throw new Error(getApiErrorMessage(error, 'Login failed.'));
+  }
+}
+
+/** POST /api/v1/auth/forgot-password — email or mobile */
+export async function forgotPassword(payload: { email?: string; mobile_number?: string }) {
+  try {
+    const body: { email?: string; mobile_number?: string } = {};
+    const email = String(payload.email || '').trim().toLowerCase();
+    const mobile = String(payload.mobile_number || '').replace(/\D/g, '').slice(0, 10);
+    if (mobile && /^[6-9]\d{9}$/.test(mobile)) {
+      body.mobile_number = mobile;
+    } else if (email.includes('@')) {
+      body.email = email;
+    }
+    const { data } = await apiClient.post<ApiPayload>('/api/v1/auth/forgot-password', body);
+    return data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not send reset code.'));
+  }
+}
+
+/** POST /api/v1/auth/verify-reset-otp */
+export async function verifyResetOtp(payload: {
+  email?: string;
+  mobile_number?: string;
+  otp: string;
+}): Promise<{ reset_token: string }> {
+  try {
+    const body: { email?: string; mobile_number?: string; otp: string } = {
+      otp: String(payload.otp || '').trim(),
+    };
+    const email = String(payload.email || '').trim().toLowerCase();
+    const mobile = String(payload.mobile_number || '').replace(/\D/g, '').slice(0, 10);
+    if (mobile && /^[6-9]\d{9}$/.test(mobile)) {
+      body.mobile_number = mobile;
+    } else if (email) {
+      body.email = email;
+    }
+    const { data } = await apiClient.post<ApiPayload<{ reset_token?: string }>>(
+      '/api/v1/auth/verify-reset-otp',
+      body,
+    );
+    const token = data?.data?.reset_token;
+    if (typeof token !== 'string' || !token) {
+      throw new Error('Invalid response: missing reset token.');
+    }
+    return { reset_token: token };
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'OTP verification failed.'));
+  }
+}
+
+/** POST /api/v1/auth/reset-password */
+export async function resetPasswordWithToken(payload: {
+  token: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}) {
+  try {
+    const { data } = await apiClient.post<ApiPayload>('/api/v1/auth/reset-password', {
+      token: String(payload.token || '').trim(),
+      new_password: String(payload.newPassword || ''),
+      confirm_new_password: String(payload.confirmNewPassword || ''),
+    });
+    return data;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Could not reset password.'));
   }
 }
 
