@@ -127,21 +127,13 @@ export function VerifyMobilePage() {
         clearPendingLoginMobileVerify();
 
         const { fetchAuthMe } = await import('../api/auth-api');
-        const { savePaymentUserContext, clearPendingLoginEmail } = await import('../lib/signup-context');
-        const { DEFAULT_TENANT_ID, setSessionTenantId } = await import('../lib/tenant-rbac');
+        const { redirectAfterAuthenticatedLogin } = await import('../lib/auth-post-login');
 
         const profile = await fetchAuthMe(login.accessToken);
-        savePaymentUserContext({
-          class: String(profile.class || '10').replace(/\D/g, '') === '12' ? '12' : '10',
-          fullName: String(profile.full_name || login.fullName || 'Student').trim(),
-          email: String(profile.email || pendingLogin?.email || '').trim().toLowerCase(),
-          accessToken: login.accessToken,
-          refreshToken: login.refreshToken,
-          expiresAt: Date.now() + (login.expiresIn ?? 3600) * 1000,
+        redirectAfterAuthenticatedLogin(login, profile, {
+          email: pendingLogin?.email || profile.email,
+          password: pendingLogin?.password,
         });
-        setSessionTenantId(DEFAULT_TENANT_ID);
-        clearPendingLoginEmail();
-        window.location.href = '/choose-plan';
         return;
       }
 

@@ -3,15 +3,13 @@ import { FormEvent, useState } from 'react';
 
 import { fetchAuthMe, loginUser } from '../api/auth-api';
 import { resolveLoginIdentifier } from '../lib/auth-identifier';
+import { redirectAfterAuthenticatedLogin } from '../lib/auth-post-login';
 import { isValidLoginPassword } from '../lib/password-policy';
 import {
-  clearPendingLoginEmail,
   readPendingLoginEmail,
-  savePaymentUserContext,
   savePendingLoginMobileVerify,
   savePendingOnboardCredentials,
 } from '../lib/signup-context';
-import { DEFAULT_TENANT_ID, setSessionTenantId } from '../lib/tenant-rbac';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
   AuthAlert,
@@ -24,10 +22,6 @@ import {
 import { PasswordInput } from './PasswordInput';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
-
-function normalizeClass(value: string | undefined): '10' | '12' {
-  return String(value || '').replace(/\D/g, '') === '12' ? '12' : '10';
-}
 
 export function PaymentLoginPage() {
   const pendingEmail = readPendingLoginEmail();
@@ -77,13 +71,17 @@ export function PaymentLoginPage() {
       if (login.needs_mobile_verify) {
         const mobile = String(login.mobile_number || '').replace(/\D/g, '').slice(0, 10);
         const token = String(login.login_pending_token || '').trim();
+        const accountEmail =
+          String(login.email || '').trim().toLowerCase() ||
+          (loginEmail ?? '');
         if (!token || !/^[6-9]\d{9}$/.test(mobile)) {
           throw new Error('Could not start mobile verification. Try again.');
         }
         savePendingLoginMobileVerify({
           loginPendingToken: token,
           mobileNumber: mobile,
-          email: loginEmail,
+          email: accountEmail || undefined,
+          password: trimmedPassword,
         });
         const params = new URLSearchParams({
           mode: 'login',
@@ -94,20 +92,10 @@ export function PaymentLoginPage() {
       }
 
       const profile = await fetchAuthMe(login.accessToken);
-      const profileEmail = String(profile.email || loginEmail || '').trim().toLowerCase();
-
-      savePaymentUserContext({
-        class: normalizeClass(profile.class),
-        fullName: String(profile.full_name || login.fullName || 'Student').trim(),
-        email: profileEmail,
-        accessToken: login.accessToken,
-        refreshToken: login.refreshToken,
-        expiresAt: Date.now() + (login.expiresIn ?? 3600) * 1000,
+      redirectAfterAuthenticatedLogin(login, profile, {
+        email: loginEmail,
+        password: trimmedPassword,
       });
-      setSessionTenantId(DEFAULT_TENANT_ID);
-
-      clearPendingLoginEmail();
-      window.location.href = '/choose-plan';
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed. Please try again.';
       if (/onboarding/i.test(message)) {

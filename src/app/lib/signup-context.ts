@@ -140,6 +140,7 @@ export type PendingLoginMobileVerify = {
   loginPendingToken: string;
   mobileNumber: string;
   email?: string;
+  password?: string;
 };
 
 export function savePendingLoginMobileVerify(data: PendingLoginMobileVerify) {
@@ -149,6 +150,7 @@ export function savePendingLoginMobileVerify(data: PendingLoginMobileVerify) {
       loginPendingToken: String(data.loginPendingToken || '').trim(),
       mobileNumber: String(data.mobileNumber || '').replace(/\D/g, '').slice(0, 10),
       email: data.email ? String(data.email).trim().toLowerCase() : undefined,
+      password: data.password ? String(data.password) : undefined,
     }),
   );
 }

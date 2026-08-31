@@ -242,6 +242,7 @@ export type LoginResult = {
   needs_mobile_verify?: boolean;
   login_pending_token?: string;
   mobile_number?: string;
+  email?: string;
   resend_cooldown_seconds?: number;
 };
 
@@ -359,6 +360,7 @@ export type AuthMeUser = {
   full_name?: string;
   email?: string;
   class?: string;
+  onboarding_completed?: boolean;
 };
 
 export async function fetchAuthMe(accessToken: string): Promise<AuthMeUser> {
