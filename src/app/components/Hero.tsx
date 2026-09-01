@@ -30,7 +30,7 @@ const ASSETS = {
   heroBg: '/image/hero-bg-main.svg',
   heroBgOverlay: '/image/hero-bg-layer2.svg',
   girl: '/image/girl-hero.png',
-  qr: '/image/qr-code.jpeg',
+  qr: '/image/qr-code.png',
   ellipse: '/image/ellipse-dot.svg',
 } as const;
 
