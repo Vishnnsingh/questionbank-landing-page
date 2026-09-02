@@ -335,7 +335,7 @@ function ContactPageLayout({
             className="mt-1 text-sm font-semibold sm:text-base"
             style={{ fontFamily: fontBody, color: F.heading }}
           >
-            Patna, Bihar, India
+            B 272 alpha 1, Block B, Alpha I, Greater Noida, Uttar Pradesh 201310, India, B block, Aashirwad, Uttar Pradesh, Noida, 201310
           </p>
         </div>
       </div>
