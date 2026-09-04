@@ -3,17 +3,21 @@ import { Sparkles } from 'lucide-react';
 
 import {
   completeUserOnboarding,
+  fetchAuthMe,
   fetchSignupBoards,
   fetchSignupClasses,
   fetchSignupDistricts,
   fetchSignupMedia,
   fetchSignupStates,
   fetchSignupStreams,
+  loginUser,
 } from '../api/auth-api';
+import { redirectAfterAuthenticatedLogin } from '../lib/auth-post-login';
 import {
   clearPendingOnboardCredentials,
   readPendingOnboardCredentials,
   savePendingLoginEmail,
+  savePendingLoginMobileVerify,
   savePendingOnboardCredentials,
 } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
@@ -362,8 +366,39 @@ export function OnboardingPage() {
       });
 
       clearPendingOnboardCredentials();
-      savePendingLoginEmail(normalizedEmail);
-      window.location.href = '/login';
+
+      // First-time create → onboard success: auto-login → choose-plan (no login screen).
+      try {
+        const login = await loginUser(normalizedEmail, trimmedPassword);
+
+        if (login.needs_mobile_verify) {
+          const mobile = String(login.mobile_number || '').replace(/\D/g, '').slice(0, 10);
+          const token = String(login.login_pending_token || '').trim();
+          if (token && /^[6-9]\d{9}$/.test(mobile)) {
+            savePendingLoginMobileVerify({
+              loginPendingToken: token,
+              mobileNumber: mobile,
+              email: normalizedEmail,
+              password: trimmedPassword,
+            });
+            const params = new URLSearchParams({ mode: 'login', mobile });
+            window.location.href = `/verify-mobile?${params.toString()}`;
+            return;
+          }
+          savePendingLoginEmail(normalizedEmail);
+          window.location.href = '/login';
+          return;
+        }
+
+        const profile = await fetchAuthMe(login.accessToken);
+        redirectAfterAuthenticatedLogin(login, profile, {
+          email: normalizedEmail,
+          password: trimmedPassword,
+        });
+      } catch {
+        savePendingLoginEmail(normalizedEmail);
+        window.location.href = '/login';
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Onboarding failed. Please try again.');
     } finally {
