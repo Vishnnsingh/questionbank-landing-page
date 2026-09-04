@@ -255,15 +255,6 @@ export async function registerUser(payload: RegisterPayload) {
   }
 }
 
-export async function completeUserOnboarding(payload: OnboardPayload) {
-  try {
-    const { data } = await apiClient.post<ApiPayload>('/api/v1/auth/onboard', payload);
-    return data;
-  } catch (error) {
-    throw new Error(getApiErrorMessage(error, 'Onboarding failed.'));
-  }
-}
-
 export type LoginResult = {
   accessToken: string;
   refreshToken: string;
@@ -275,6 +266,31 @@ export type LoginResult = {
   email?: string;
   resend_cooldown_seconds?: number;
 };
+
+export async function completeUserOnboarding(payload: OnboardPayload): Promise<
+  Partial<LoginResult> & {
+    email?: string;
+    onboarding_completed?: boolean;
+  }
+> {
+  try {
+    const { data } = await apiClient.post<
+      ApiPayload<
+        Partial<LoginResult> & {
+          email?: string;
+          onboarding_completed?: boolean;
+        }
+      >
+    >('/api/v1/auth/onboard', payload);
+    const result = data?.data;
+    if (!result) {
+      throw new Error('Invalid onboarding response.');
+    }
+    return result;
+  } catch (error) {
+    throw new Error(getApiErrorMessage(error, 'Onboarding failed.'));
+  }
+}
 
 export async function loginUser(identifier: string, password: string): Promise<LoginResult> {
   try {

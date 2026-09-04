@@ -352,7 +352,7 @@ export function OnboardingPage() {
 
     setIsSaving(true);
     try {
-      await completeUserOnboarding({
+      const onboardSession = await completeUserOnboarding({
         email: normalizedEmail,
         password: trimmedPassword,
         gender: selectedGender as 'male' | 'female' | 'other',
@@ -367,9 +367,15 @@ export function OnboardingPage() {
 
       clearPendingOnboardCredentials();
 
-      // First-time create → onboard success: auto-login → choose-plan (no login screen).
+      // Prefer session from onboard; fallback to login for older backends.
       try {
-        const login = await loginUser(normalizedEmail, trimmedPassword);
+        let login = onboardSession;
+        const hasSession =
+          typeof login?.accessToken === 'string' && login.accessToken.length > 0;
+
+        if (!hasSession) {
+          login = await loginUser(normalizedEmail, trimmedPassword);
+        }
 
         if (login.needs_mobile_verify) {
           const mobile = String(login.mobile_number || '').replace(/\D/g, '').slice(0, 10);
