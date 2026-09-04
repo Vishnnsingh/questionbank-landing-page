@@ -21,7 +21,6 @@ import {
   AuthPrimaryButton,
 } from './auth-ui';
 import { PasswordInput } from './PasswordInput';
-import { PasswordStrengthHint } from './PasswordStrengthHint';
 import { SEO } from './SEO';
 import { SideNav } from './SideNav';
 
@@ -123,7 +122,6 @@ export function ResetPasswordPage() {
                       autoComplete="new-password"
                       maxLength={PASSWORD_MAX_LENGTH}
                     />
-                    <PasswordStrengthHint password={newPassword} />
                   </AuthField>
 
                   <AuthField label="Confirm password" htmlFor="confirm_password">
