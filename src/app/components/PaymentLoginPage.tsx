@@ -60,7 +60,7 @@ export function PaymentLoginPage() {
       return;
     }
     if (!isValidLoginPassword(trimmedPassword)) {
-      setError('Password must be 8–16 characters.');
+      setError('Password must be 6–16 characters.');
       return;
     }
 

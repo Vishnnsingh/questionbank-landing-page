@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Sparkles } from 'lucide-react';
 
 import { registerUser } from '../api/auth-api';
-import { isStrongPassword, STRONG_PASSWORD_MESSAGE } from '../lib/password-policy';
+import { isStrongPassword, PASSWORD_MAX_LENGTH, STRONG_PASSWORD_MESSAGE } from '../lib/password-policy';
 import { savePendingOnboardCredentials } from '../lib/signup-context';
 import { AuthLoginVisualPanel } from './AuthAppShowcase';
 import {
@@ -201,9 +201,10 @@ export function SignUpPage() {
                         id="password"
                         value={password}
                         onChange={setPassword}
-                        placeholder="8–16 characters"
+                        placeholder="6–15 characters"
                         autoComplete="new-password"
                         compact
+                        maxLength={PASSWORD_MAX_LENGTH}
                       />
                       <PasswordStrengthHint password={password} />
                     </div>
@@ -219,6 +220,7 @@ export function SignUpPage() {
                         placeholder="Re-enter password"
                         autoComplete="new-password"
                         compact
+                        maxLength={PASSWORD_MAX_LENGTH}
                       />
                     </div>
                   </div>

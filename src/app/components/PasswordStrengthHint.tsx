@@ -51,7 +51,7 @@ export function PasswordStrengthHint({
             role="tooltip"
             className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-[11px] leading-relaxed text-slate-600 opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
           >
-            <p className="mb-1 font-semibold text-slate-800">Strong password tips</p>
+            <p className="mb-1 font-semibold text-slate-800">Password requirement</p>
             <ul className="list-disc space-y-0.5 pl-4">
               {PASSWORD_RULES.map((rule) => (
                 <li key={rule}>{rule}</li>

@@ -98,7 +98,7 @@ export function ResetPasswordPage() {
                     Create new password
                   </h1>
                   <p className="mt-1.5 text-sm leading-relaxed text-slate-600">
-                    Use 8–16 characters with uppercase, lowercase, number &amp; special character.
+                    Use 6–15 characters. Letters, numbers, symbols, or any mix.
                   </p>
                 </div>
 

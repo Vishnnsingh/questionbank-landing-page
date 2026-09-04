@@ -1,26 +1,19 @@
-export const PASSWORD_MIN_LENGTH = 8;
-export const PASSWORD_MAX_LENGTH = 16;
+export const PASSWORD_MIN_LENGTH = 6;
+export const PASSWORD_MAX_LENGTH = 15;
+/** Existing accounts may still be 16 characters. */
+export const LOGIN_PASSWORD_MAX_LENGTH = 16;
 
-export const STRONG_PASSWORD_MESSAGE =
-  'Password must be 8–16 characters and include uppercase, lowercase, a number, and a special character';
-
-const STRONG_PASSWORD_PATTERN =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,16}$/;
+export const STRONG_PASSWORD_MESSAGE = 'Password must be 6–15 characters.';
 
 export type PasswordStrength = 'weak' | 'medium' | 'strong';
 
 export type PasswordChecks = {
   length: boolean;
-  lower: boolean;
-  upper: boolean;
-  digit: boolean;
-  special: boolean;
 };
 
 export function isStrongPassword(password: string): boolean {
   const pwd = String(password || '').trim();
-  if (pwd.length < PASSWORD_MIN_LENGTH || pwd.length > PASSWORD_MAX_LENGTH) return false;
-  return STRONG_PASSWORD_PATTERN.test(pwd);
+  return pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= PASSWORD_MAX_LENGTH;
 }
 
 export function assessPasswordStrength(password: string): {
@@ -29,35 +22,21 @@ export function assessPasswordStrength(password: string): {
   isValid: boolean;
 } {
   const pwd = String(password || '');
+  const len = pwd.length;
   const checks: PasswordChecks = {
-    length: pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= PASSWORD_MAX_LENGTH,
-    lower: /[a-z]/.test(pwd),
-    upper: /[A-Z]/.test(pwd),
-    digit: /\d/.test(pwd),
-    special: /[^A-Za-z0-9]/.test(pwd),
+    length: len >= PASSWORD_MIN_LENGTH && len <= PASSWORD_MAX_LENGTH,
   };
 
-  const passed = Object.values(checks).filter(Boolean).length;
   let strength: PasswordStrength = 'weak';
-
-  if (checks.length && checks.lower && checks.upper && checks.digit && checks.special) {
-    strength = 'strong';
-  } else if (passed >= 3 && pwd.length >= PASSWORD_MIN_LENGTH) {
-    strength = 'medium';
-  }
+  if (checks.length && len >= 12) strength = 'strong';
+  else if (checks.length && len >= 10) strength = 'medium';
 
   return { strength, checks, isValid: isStrongPassword(pwd) };
 }
 
-export const PASSWORD_RULES = [
-  '8 to 16 characters',
-  'One uppercase letter (A–Z)',
-  'One lowercase letter (a–z)',
-  'One number (0–9)',
-  'One special character (!@#$…)',
-] as const;
+export const PASSWORD_RULES = ['6 to 15 characters (letters, numbers, symbols, or mix)'] as const;
 
 export function isValidLoginPassword(password: string): boolean {
   const pwd = String(password || '').trim();
-  return pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= PASSWORD_MAX_LENGTH;
+  return pwd.length >= PASSWORD_MIN_LENGTH && pwd.length <= LOGIN_PASSWORD_MAX_LENGTH;
 }
